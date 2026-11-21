@@ -1,15 +1,16 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
     <title>{% block title %}Clinic Connect{% endblock %}</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="manifest" href="{% static 'manifest.json' %}">
-    <meta name="theme-color" content="#16a34a">
+    <meta name="theme-color" content="#111827">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,10 +23,29 @@
             padding: 0;
         }
 
+        html {
+            -webkit-text-size-adjust: 100%;
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background: #0b1120;
             color: #e5e7eb;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
         }
 
         .layout {
@@ -45,6 +65,7 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
+            z-index: 1001;
         }
 
         .logo {
@@ -128,11 +149,9 @@
             0% {
                 box-shadow: 0 0 0 0 rgba(245, 158, 11, .55);
             }
-
             70% {
                 box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
             }
-
             100% {
                 box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
             }
@@ -154,12 +173,10 @@
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
             }
-
             70% {
                 transform: scale(1.05);
                 box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
             }
-
             100% {
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
@@ -193,6 +210,7 @@
         .main {
             margin-left: 250px;
             width: calc(100% - 250px);
+            min-width: 0;
             min-height: 100vh;
         }
 
@@ -204,18 +222,21 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 30px;
+            gap: 15px;
         }
 
         .topbar-title {
             font-size: 18px;
             font-weight: 600;
             color: #f8fafc;
+            min-width: 0;
         }
 
         .user-area {
             display: flex;
             align-items: center;
             gap: 18px;
+            flex-shrink: 0;
         }
 
         .topbar-clock {
@@ -284,6 +305,7 @@
         .content {
             padding: 30px;
             min-height: calc(100vh - 70px);
+            min-width: 0;
         }
 
         .messages {
@@ -304,7 +326,7 @@
             position: fixed;
             top: 88px;
             right: 24px;
-            z-index: 9999;
+            z-index: 1100;
             width: min(390px, calc(100vw - 30px));
             background: #111827;
             border: 1px solid #f59e0b;
@@ -325,7 +347,6 @@
                 opacity: 0;
                 transform: translateX(25px);
             }
-
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -355,7 +376,9 @@
             color: #94a3b8;
             font-size: 19px;
             cursor: pointer;
-            padding: 2px 5px;
+            padding: 5px;
+            min-width: 32px;
+            min-height: 32px;
         }
 
         .appointment-toast-close:hover {
@@ -385,12 +408,12 @@
         .appointment-toast-action {
             display: inline-block;
             margin-top: 13px;
-            padding: 8px 12px;
+            padding: 10px 14px;
             background: #f59e0b;
             color: #111827;
             border-radius: 6px;
             text-decoration: none;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
         }
 
@@ -398,14 +421,33 @@
             background: #fbbf24;
         }
 
+        .mobile-menu-toggle {
+            display: none;
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 9px;
+            color: #e5e7eb;
+            font-size: 19px;
+            cursor: pointer;
+        }
+
+        .mobile-sidebar-overlay {
+            display: none;
+        }
+
         @media (max-width: 800px) {
             .sidebar {
-                width: 210px;
+                width: 230px;
             }
 
             .main {
-                margin-left: 210px;
-                width: calc(100% - 210px);
+                margin-left: 230px;
+                width: calc(100% - 230px);
             }
 
             .topbar {
@@ -422,44 +464,141 @@
         }
 
         @media (max-width: 600px) {
+            .layout {
+                display: block;
+                min-height: 100vh;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
             .sidebar {
-                width: 190px;
-                padding: 18px 10px;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                width: min(300px, 85vw);
+                max-width: 300px;
+                height: 100vh;
+                height: 100dvh;
+                padding: 20px 14px;
+                z-index: 1001;
+                transform: translateX(-105%);
+                transition: transform .25s ease;
+                box-shadow: 12px 0 35px rgba(0, 0, 0, .35);
+                overflow-y: auto;
+                overscroll-behavior: contain;
+            }
+
+            body.mobile-menu-open .sidebar {
+                transform: translateX(0);
+            }
+
+            .mobile-sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 1000;
+                background: rgba(0, 0, 0, .65);
+                backdrop-filter: blur(2px);
+            }
+
+            body.mobile-menu-open .mobile-sidebar-overlay {
+                display: block;
+            }
+
+            body.mobile-menu-open {
+                overflow: hidden;
             }
 
             .main {
-                margin-left: 190px;
-                width: calc(100% - 190px);
+                width: 100%;
+                margin-left: 0;
+                min-height: 100vh;
             }
 
             .topbar {
-                padding: 0 12px;
+                height: 64px;
+                padding: 0 14px;
+                gap: 12px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
             }
 
             .topbar-title {
-                font-size: 15px;
+                flex: 1;
+                min-width: 0;
+                font-size: 16px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             .user-area {
-                gap: 10px;
+                gap: 8px;
             }
 
-            .user-info {
+            .user-info,
+            .topbar-clock {
                 display: none;
             }
 
             .user-avatar-link {
-                width: 34px;
-                height: 34px;
+                width: 38px;
+                height: 38px;
             }
 
             .content {
-                padding: 15px;
+                width: 100%;
+                min-height: calc(100vh - 64px);
+                padding: 16px 14px;
             }
 
             .appointment-toast {
-                top: 80px;
+                top: 74px;
                 right: 10px;
+                width: calc(100vw - 20px);
+            }
+
+            .nav-link {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+
+            .appointment-nav-link {
+                justify-content: space-between;
+            }
+
+            .sidebar-logout {
+                min-height: 44px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .topbar {
+                padding: 0 10px;
+                gap: 8px;
+            }
+
+            .content {
+                padding: 12px 10px;
+            }
+
+            .topbar-title {
+                font-size: 14px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
             }
         }
     </style>
@@ -469,7 +608,7 @@
 
 <div class="layout">
 
-    <aside class="sidebar">
+    <aside class="sidebar" id="mobile-sidebar">
 
         <div class="logo">
             <h2>Clinic Connect</h2>
@@ -513,7 +652,7 @@
                 </a>
 
                 <a href="{% url 'accounts:staff_medicines' %}"
-                    class="nav-link{% if current == 'staff_medicines' %} active{% endif %}">
+                   class="nav-link{% if current == 'staff_medicines' %} active{% endif %}">
                     Medicines
                 </a>
 
@@ -599,9 +738,20 @@
 
     </aside>
 
+    <div class="mobile-sidebar-overlay" id="mobile-sidebar-overlay"></div>
+
     <main class="main">
 
         <header class="topbar">
+
+            <button type="button"
+                    class="mobile-menu-toggle"
+                    id="mobile-menu-toggle"
+                    aria-label="Open navigation menu"
+                    aria-controls="mobile-sidebar"
+                    aria-expanded="false">
+                <i class="fa-solid fa-bars"></i>
+            </button>
 
             <div class="topbar-title">
                 {% block page_title %}Clinic Connect{% endblock %}
@@ -654,19 +804,13 @@
         <section class="content">
 
             {% if messages %}
-
                 <div class="messages">
-
                     {% for message in messages %}
-
                         <div class="message">
                             {{ message }}
                         </div>
-
                     {% endfor %}
-
                 </div>
-
             {% endif %}
 
             {% block content %}
@@ -707,6 +851,56 @@
 
 <script>
 (function () {
+    const menuButton = document.getElementById('mobile-menu-toggle');
+    const sidebar = document.getElementById('mobile-sidebar');
+    const overlay = document.getElementById('mobile-sidebar-overlay');
+
+    if (!menuButton || !sidebar || !overlay) return;
+
+    function openMenu() {
+        document.body.classList.add('mobile-menu-open');
+        menuButton.setAttribute('aria-expanded', 'true');
+        menuButton.setAttribute('aria-label', 'Close navigation menu');
+        menuButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    }
+
+    function closeMenu() {
+        document.body.classList.remove('mobile-menu-open');
+        menuButton.setAttribute('aria-expanded', 'false');
+        menuButton.setAttribute('aria-label', 'Open navigation menu');
+        menuButton.innerHTML = '<i class="fa-solid fa-bars"></i>';
+    }
+
+    menuButton.addEventListener('click', function () {
+        if (document.body.classList.contains('mobile-menu-open')) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    });
+
+    overlay.addEventListener('click', closeMenu);
+
+    sidebar.querySelectorAll('.nav-link').forEach(function (link) {
+        link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeMenu();
+        }
+    });
+
+    window.addEventListener('resize', function () {
+        if (window.innerWidth > 600) {
+            closeMenu();
+        }
+    });
+})();
+</script>
+
+<script>
+(function () {
     var el = document.getElementById('topbar-clock');
 
     if (!el) return;
@@ -729,7 +923,6 @@
 
 <script>
 const baseTitle = document.title;
-
 let previousEmergencyCount = 0;
 
 function updateSidebarEmergencyBadge() {
@@ -739,7 +932,6 @@ function updateSidebarEmergencyBadge() {
             if (!response.ok) {
                 throw new Error("Emergency alert request failed.");
             }
-
             return response.json();
         })
         .then(data => {
@@ -772,7 +964,6 @@ function playEmergencyBeep() {
 function playNotificationTone(frequency, duration) {
     try {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-
         if (!AudioContextClass) return;
 
         const audioCtx = new AudioContextClass();
@@ -849,7 +1040,6 @@ function showAppointmentToast(appointment) {
             : 'A new appointment request has been submitted.';
 
     toast.classList.add('show');
-
     playAppointmentSound();
 }
 
@@ -865,7 +1055,6 @@ function updateAppointmentNotifications() {
         if (!response.ok) {
             throw new Error("Appointment notification request failed.");
         }
-
         return response.json();
     })
     .then(data => {
@@ -923,7 +1112,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     updateAppointmentNotifications();
-
     setInterval(updateAppointmentNotifications, 5000);
 });
 
