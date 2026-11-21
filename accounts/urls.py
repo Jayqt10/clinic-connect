@@ -321,8 +321,8 @@ path(
     name="email_sick_note",
 ),
 path(
-    "staff/medicines/", 
-    views.staff_medicines, 
+    "staff/medicines/",
+    views.staff_medicines,
     name="staff_medicines"
 ),
 path(

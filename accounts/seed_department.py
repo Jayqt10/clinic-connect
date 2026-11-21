@@ -6,7 +6,7 @@ departments = [
     ("DBM", "Department of Business Management"),
     ("DGTT", "Department of General Teacher Training"),
     ("CCJE", "College of Criminal Justice Education"),
-]  
+]
 
 for code, name in departments:
     department = (

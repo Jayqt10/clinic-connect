@@ -3,7 +3,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [ 
+    dependencies = [
         ('accounts', '0006_user_section_alter_referral_student_name'),
     ]
 
