@@ -1,0 +1,326 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if is_edit %}Edit{% else %}Add{% endif %} {{ label }} | Clinic Connect{% endblock %}
+
+{% block content %}
+<style>
+  .form-card-container {
+    max-width: 620px;
+    margin: 18px auto 40px;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 14px;
+    padding: 24px;
+    color: #f8fafc;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.25);
+  }
+
+  .form-card-container *,
+  .form-card-container *::before,
+  .form-card-container *::after {
+    box-sizing: border-box;
+  }
+
+  .form-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #1f2937;
+  }
+
+  .form-heading-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .form-header-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    color: #4ade80;
+    font-size: 16px;
+  }
+
+  .form-card-title {
+    font-size: 20px;
+    font-weight: 750;
+    letter-spacing: -0.3px;
+    color: #ffffff;
+    margin: 0 0 3px;
+  }
+
+  .form-card-subtitle {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 11.5px;
+  }
+
+  .btn-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #263449;
+    background: #0d1524;
+    font-size: 11.5px;
+    color: #86efac;
+    text-decoration: none;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background 0.16s, border-color 0.16s, color 0.16s;
+  }
+
+  .btn-back-link:hover {
+    background: #10251b;
+    border-color: #22c55e;
+    color: #bbf7d0;
+  }
+
+  .form-error-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    background: #2a1215;
+    border: 1px solid #991b1b;
+    color: #fca5a5;
+    font-size: 12px;
+  }
+
+  .form-field-wrapper {
+    margin-bottom: 15px;
+  }
+
+  .form-field-wrapper > label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 6px;
+  }
+
+  .form-field-wrapper input:not([type="checkbox"]),
+  .form-field-wrapper select,
+  .form-field-wrapper textarea,
+  .form-field {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    background: #0b1120;
+    border: 1px solid #2b3b52;
+    border-radius: 8px;
+    color: #f8fafc;
+    font-size: 12.5px;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  }
+
+  .form-field-wrapper textarea {
+    height: auto;
+    min-height: 84px;
+    padding: 10px 12px;
+  }
+
+  .form-field-wrapper input:focus,
+  .form-field-wrapper select:focus,
+  .form-field-wrapper textarea:focus,
+  .form-field:focus {
+    border-color: #22c55e;
+    background: #0d1728;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+  }
+
+  .form-field-wrapper select option {
+    background: #111827;
+    color: #f8fafc;
+  }
+
+  .checkbox-field-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #23324a;
+    background: #0d1524;
+    color: #e2e8f0;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .checkbox-field-row input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: #22c55e;
+    cursor: pointer;
+  }
+
+  .field-hint-text {
+    display: block;
+    font-size: 10.5px;
+    color: #7c8ea6;
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+
+  .field-error-text {
+    font-size: 11px;
+    color: #fca5a5;
+    font-weight: 600;
+    margin-top: 5px;
+  }
+
+  .form-actions-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #1f2937;
+  }
+
+  .btn-submit-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    height: 41px;
+    padding: 0 16px;
+    background: #16a34a;
+    border: 1px solid #16a34a;
+    color: #ffffff;
+    font-weight: 750;
+    font-size: 12.5px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background 0.16s, border-color 0.16s;
+  }
+
+  .btn-submit-action:hover {
+    background: #15803d;
+    border-color: #15803d;
+  }
+
+  @media (max-width: 600px) {
+    .form-card-container {
+      margin: 12px;
+      padding: 18px 15px;
+    }
+
+    .form-card-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .form-card-title {
+      font-size: 18px;
+    }
+  }
+</style>
+
+<div class="form-card-container">
+  <div class="form-card-header">
+    <div class="form-heading-group">
+      <div class="form-header-icon" aria-hidden="true">
+        {% if kind == "building" %}
+          <i class="fa-solid fa-building"></i>
+        {% elif kind == "room" %}
+          <i class="fa-solid fa-door-open"></i>
+        {% elif kind == "course" %}
+          <i class="fa-solid fa-book-open"></i>
+        {% else %}
+          <i class="fa-solid fa-building-columns"></i>
+        {% endif %}
+      </div>
+      <div>
+        <h1 class="form-card-title">
+          {% if is_edit %}Edit{% else %}Add New{% endif %} {{ label }}
+        </h1>
+        <p class="form-card-subtitle">
+          {% if kind == "building" %}
+            Register or update a campus building under a department.
+          {% elif kind == "room" %}
+            Register or update a floor and room inside a building.
+          {% elif kind == "course" %}
+            Register or update a course under a department.
+          {% else %}
+            Register or update department facility information.
+          {% endif %}
+        </p>
+      </div>
+    </div>
+
+    <a href="{{ return_url }}" class="btn-back-link">
+      <i class="fa-solid fa-arrow-left"></i>
+      Cancel
+    </a>
+  </div>
+
+  {% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+      <div class="form-error-banner">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span>{{ error }}</span>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+
+    <input type="hidden" name="next" value="{{ return_url }}">
+
+    {% for field in form %}
+      <div class="form-field-wrapper">
+        {% if field.field.widget.input_type == "checkbox" %}
+          <label class="checkbox-field-row" for="{{ field.id_for_label }}">
+            {{ field }}
+            <span>{{ field.label }}</span>
+          </label>
+        {% else %}
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+          {{ field }}
+
+          {% if field.help_text %}
+            <span class="field-hint-text">{{ field.help_text }}</span>
+          {% elif kind == "room" and field.name == "floor" %}
+            <span class="field-hint-text">Enter the floor number (e.g., 1, 2).</span>
+          {% elif kind == "room" and field.name == "room_number" %}
+            <span class="field-hint-text">Enter the room number or code (e.g., 01, 101).</span>
+          {% elif kind == "room" and field.name == "room_name" %}
+            <span class="field-hint-text">Optional room label such as Lecture or Laboratory.</span>
+          {% elif kind == "building" and field.name == "name" %}
+            <span class="field-hint-text">Enter the official building name.</span>
+          {% endif %}
+        {% endif %}
+
+        {% if field.errors %}
+          {% for error in field.errors %}
+            <div class="field-error-text">{{ error }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <div class="form-actions-footer">
+      <button type="submit" class="btn-submit-action">
+        <i class="fa-solid fa-check"></i>
+        {% if is_edit %}Save Changes{% else %}Create {{ label }}{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

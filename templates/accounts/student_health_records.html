@@ -1,0 +1,583 @@
+
+{% extends 'base.html' %}
+
+{% block title %}My Health Records | Clinic Connect{% endblock %}
+
+{% block content %}
+
+<style>
+    .health-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding-bottom: 20px;
+        color: #e5e7eb;
+    }
+
+    .health-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .health-header-icon {
+        width: 43px;
+        height: 43px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        background: #123d35;
+        border: 1px solid #1d5a4b;
+        border-radius: 11px;
+        color: #6ee7b7;
+        font-size: 22px;
+    }
+
+    .health-header h1 {
+        margin: 0;
+        color: #f8fafc;
+        font-size: 22px;
+        font-weight: 750;
+        letter-spacing: -.4px;
+    }
+
+    .health-header p {
+        margin: 4px 0 0;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .health-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 13px 16px;
+        margin-bottom: 23px;
+        background: #111827;
+        border: 1px solid #263548;
+        border-radius: 11px;
+    }
+
+    .summary-info {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+    }
+
+    .summary-icon {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        background: #123d35;
+        border: 1px solid #1d5a4b;
+        border-radius: 9px;
+        color: #6ee7b7;
+        font-size: 18px;
+    }
+
+    .summary-label {
+        display: block;
+        margin-bottom: 3px;
+        color: #94a3b8;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: .6px;
+        text-transform: uppercase;
+    }
+
+    .summary-number {
+        color: #f8fafc;
+        font-size: 23px;
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
+    .summary-description {
+        margin-top: 3px;
+        color: #64748b;
+        font-size: 10px;
+    }
+
+    .privacy-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 10px;
+        background: #0b1120;
+        border: 1px solid #263548;
+        border-radius: 7px;
+        color: #94a3b8;
+        font-size: 10px;
+        white-space: nowrap;
+    }
+
+    .privacy-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #6ee7b7;
+    }
+
+    .records-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .records-heading h2 {
+        margin: 0;
+        color: #f8fafc;
+        font-size: 15px;
+        font-weight: 750;
+    }
+
+    .records-heading p {
+        margin: 4px 0 0;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .records-count {
+        padding: 5px 10px;
+        background: #172c2a;
+        border: 1px solid #245447;
+        border-radius: 20px;
+        color: #6ee7b7;
+        font-size: 10px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .records-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+        gap: 13px;
+    }
+
+    .record-card {
+        min-width: 0;
+        overflow: hidden;
+        background: #111827;
+        border: 1px solid #263548;
+        border-radius: 12px;
+        transition: border-color .18s, transform .18s;
+    }
+
+    .record-card:hover {
+        border-color: #356052;
+        transform: translateY(-2px);
+    }
+
+    .record-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        background: #131e2e;
+        border-bottom: 1px solid #263548;
+    }
+
+    .record-title-group {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-width: 0;
+    }
+
+    .record-icon {
+        width: 34px;
+        height: 34px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        background: #123d35;
+        border: 1px solid #1d5a4b;
+        border-radius: 9px;
+        color: #6ee7b7;
+        font-size: 16px;
+    }
+
+    .record-title-group h3 {
+        margin: 0;
+        color: #f8fafc;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .record-title-group p {
+        margin: 3px 0 0;
+        color: #94a3b8;
+        font-size: 10px;
+    }
+
+    .record-date {
+        flex-shrink: 0;
+        padding: 6px 8px;
+        background: #0b1120;
+        border: 1px solid #263548;
+        border-radius: 7px;
+        color: #cbd5e1;
+        font-size: 9px;
+        white-space: nowrap;
+    }
+
+    .record-date span {
+        margin-right: 4px;
+        color: #6ee7b7;
+    }
+
+    .record-card-body {
+        padding: 14px;
+    }
+
+    .clinical-heading {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 12px;
+        color: #f8fafc;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .clinical-heading span {
+        color: #6ee7b7;
+        font-size: 14px;
+    }
+
+    .clinical-list {
+        overflow: hidden;
+        background: #0b1120;
+        border: 1px solid #263548;
+        border-radius: 9px;
+    }
+
+    .clinical-field {
+        display: grid;
+        grid-template-columns: minmax(145px, 42%) minmax(0, 1fr);
+        align-items: start;
+        gap: 12px;
+        padding: 12px;
+        border-bottom: 1px solid #263548;
+    }
+
+    .clinical-field:last-child {
+        border-bottom: none;
+    }
+
+    .clinical-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 7px;
+        color: #94a3b8;
+        font-size: 10px;
+        font-weight: 650;
+        line-height: 1.5;
+    }
+
+    .clinical-label span {
+        flex-shrink: 0;
+        color: #6ee7b7;
+        font-size: 12px;
+    }
+
+    .clinical-value {
+        min-width: 0;
+        color: #e2e8f0;
+        font-size: 11px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+    }
+
+    .record-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 13px;
+        padding-top: 11px;
+        border-top: 1px solid #263548;
+    }
+
+    .last-updated {
+        color: #cbd5e1;
+        font-size: 10px;
+    }
+
+    .last-updated strong {
+        display: block;
+        margin-bottom: 3px;
+        color: #64748b;
+        font-size: 9px;
+        font-weight: 750;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    .record-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 9px;
+        background: #123d35;
+        border: 1px solid #1d5a4b;
+        border-radius: 7px;
+        color: #6ee7b7;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .record-status span {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #6ee7b7;
+    }
+
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 220px;
+        padding: 28px 18px;
+        background: #111827;
+        border: 1px solid #263548;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 50px;
+        height: 50px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 12px;
+        background: #123d35;
+        border: 1px solid #1d5a4b;
+        border-radius: 13px;
+        color: #6ee7b7;
+        font-size: 23px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 6px;
+        color: #f8fafc;
+        font-size: 15px;
+        font-weight: 750;
+    }
+
+    .empty-state p {
+        max-width: 360px;
+        margin: 0;
+        color: #94a3b8;
+        font-size: 11px;
+        line-height: 1.7;
+    }
+
+    .empty-hint {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 13px;
+        padding: 7px 10px;
+        background: #0b1120;
+        border: 1px solid #263548;
+        border-radius: 7px;
+        color: #94a3b8;
+        font-size: 10px;
+    }
+
+    .empty-hint span {
+        color: #6ee7b7;
+    }
+
+    @media (max-width: 850px) {
+        .records-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 550px) {
+        .health-header h1 {
+            font-size: 20px;
+        }
+
+        .health-summary {
+            padding: 12px;
+        }
+
+        .record-card-header,
+        .record-card-body {
+            padding: 12px;
+        }
+
+        .clinical-field {
+            grid-template-columns: 1fr;
+            gap: 5px;
+            padding: 11px;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .privacy-label {
+            display: none;
+        }
+
+        .record-card-header {
+            align-items: flex-start;
+        }
+
+        .record-date {
+            font-size: 8px;
+        }
+    }
+</style>
+
+<div class="health-page">
+
+    <header class="health-header">
+        <div class="health-header-icon" aria-hidden="true">♡</div>
+        <div>
+            <h1>My Health Records</h1>
+            <p>View your clinic checkup records and health information.</p>
+        </div>
+    </header>
+
+    <section class="health-summary">
+        <div class="summary-info">
+            <div class="summary-icon" aria-hidden="true">✓</div>
+            <div>
+                <span class="summary-label">Total Health Records</span>
+                <div class="summary-number">{{ health_records|length }}</div>
+                <div class="summary-description">Medical records available to you</div>
+            </div>
+        </div>
+
+        <div class="privacy-label">
+            <span class="privacy-dot"></span>
+            Private records
+        </div>
+    </section>
+
+    <section aria-labelledby="records-heading">
+        <div class="records-heading">
+            <div>
+                <h2 id="records-heading">Clinic Health Records</h2>
+                <p>Clinical information recorded by the school clinic.</p>
+            </div>
+
+            <span class="records-count">
+                {{ health_records|length }} record{{ health_records|length|pluralize }}
+            </span>
+        </div>
+
+        {% if health_records %}
+            <div class="records-grid">
+                {% for record in health_records %}
+                    <article class="record-card">
+
+                        <header class="record-card-header">
+                            <div class="record-title-group">
+                                <div class="record-icon" aria-hidden="true">+</div>
+                                <div>
+                                    <h3>Clinic Visit</h3>
+                                    <p>Clinical Health Record</p>
+                                </div>
+                            </div>
+
+                            <div class="record-date">
+                                <span>●</span>
+                                {% if record.created_at %}
+                                    {{ record.created_at|date:"M d, Y" }}
+                                {% else %}
+                                    Date unavailable
+                                {% endif %}
+                            </div>
+                        </header>
+
+                        <div class="record-card-body">
+
+                            <h4 class="clinical-heading">
+                                <span>✚</span>
+                                Clinical Information
+                            </h4>
+
+                            <div class="clinical-list">
+
+                                <div class="clinical-field">
+                                    <div class="clinical-label">
+                                        <span>✚</span>
+                                        Observed Symptoms
+                                    </div>
+                                    <div class="clinical-value">{{ record.symptoms|default:"Not specified" }}</div>
+                                </div>
+
+                                <div class="clinical-field">
+                                    <div class="clinical-label">
+                                        <span>✚</span>
+                                        Treatment
+                                    </div>
+                                    <div class="clinical-value">{{ record.treatment|default:"Not specified" }}</div>
+                                </div>
+
+                                <div class="clinical-field">
+                                    <div class="clinical-label">
+                                        <span>▤</span>
+                                        Additional Clinical Notes
+                                    </div>
+                                    <div class="clinical-value">{{ record.notes|default:"No additional notes" }}</div>
+                                </div>
+
+                            </div>
+
+                            <div class="record-footer">
+                                <div class="last-updated">
+                                    <strong>Last Updated</strong>
+                                    {% if record.updated_at %}
+                                        {{ record.updated_at|date:"F d, Y" }}
+                                    {% elif record.created_at %}
+                                        {{ record.created_at|date:"F d, Y" }}
+                                    {% else %}
+                                        Date unavailable
+                                    {% endif %}
+                                </div>
+
+                                <div class="record-status">
+                                    <span></span>
+                                    Recorded
+                                </div>
+                            </div>
+
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon" aria-hidden="true">+</div>
+                <h3>No Health Records Yet</h3>
+                <p>
+                    Your clinic checkup records will appear here once
+                    clinic staff adds them to your account.
+                </p>
+                <div class="empty-hint">
+                    <span>✓</span>
+                    Your health information is kept private.
+                </div>
+            </div>
+        {% endif %}
+    </section>
+
+</div>
+
+{% endblock %}

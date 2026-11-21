@@ -1,0 +1,511 @@
+{% extends 'base.html' %}
+
+{% block title %}Departments | Clinic Connect{% endblock %}
+
+{% block content %}
+<style>
+  .dept-grid-wrapper {
+    --brand-emerald: #22c55e;
+    --brand-sky: #38bdf8;
+    --brand-purple: #c084fc;
+    --brand-amber: #fbbf24;
+    --brand-teal: #2dd4bf;
+    color: #f8fafc;
+  }
+
+  .dept-header-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-bottom: 1px solid rgba(51, 65, 85, 0.8);
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+  }
+
+  @media (min-width: 640px) {
+    .dept-header-container {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .dept-main-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .dept-subtitle {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-top: 4px;
+    margin-bottom: 0;
+  }
+
+  .dept-search-box {
+    position: relative;
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .dept-search-box {
+      width: 280px;
+    }
+  }
+
+  .dept-search-icon-svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: #64748b;
+    pointer-events: none;
+  }
+
+  .dept-search-input-field {
+    width: 100%;
+    padding: 10px 14px 10px 40px;
+    background-color: rgba(15, 23, 42, 0.9);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    color: #f1f5f9;
+    font-size: 13px;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+  }
+
+  .dept-search-input-field:focus {
+    border-color: rgba(34, 197, 94, 0.6);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+  }
+
+  .dept-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .dept-cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .dept-cards-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .dept-card-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+    background-color: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(51, 65, 85, 0.8);
+    border-radius: 18px;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+    overflow: hidden;
+  }
+
+  .dept-card-item:hover {
+    transform: translateY(-4px);
+    background-color: rgba(15, 23, 42, 0.95);
+    box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
+  }
+
+  .dept-card-top-bar {
+    position: absolute;
+    top: 0;
+    left: 24px;
+    right: 24px;
+    height: 2px;
+    opacity: 0.8;
+  }
+
+  .dept-card-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .dept-icon-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+  }
+
+  .dept-code-pill {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    border: 1px solid transparent;
+  }
+
+  .dept-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0;
+    line-height: 1.35;
+  }
+
+  .dept-card-stats-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+    font-size: 12px;
+    color: #94a3b8;
+  }
+
+  .dept-stat-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dept-stat-item svg {
+    width: 14px;
+    height: 14px;
+    color: #64748b;
+  }
+
+  .dept-card-footer-row {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(51, 65, 85, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .dept-footer-caption {
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  .dept-action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+
+  .dept-action-link:hover {
+    transform: translateX(3px);
+  }
+
+  .dept-theme-cs .dept-card-top-bar { background: linear-gradient(90deg, #22c55e, transparent); }
+  .dept-theme-cs .dept-icon-badge { background: rgba(34, 197, 94, 0.1); color: #4ade80; border-color: rgba(34, 197, 94, 0.25); }
+  .dept-theme-cs .dept-code-pill { background: rgba(34, 197, 94, 0.1); color: #4ade80; border-color: rgba(34, 197, 94, 0.25); }
+  .dept-theme-cs .dept-action-link { color: #4ade80; }
+  .dept-theme-cs:hover { border-color: rgba(34, 197, 94, 0.4); }
+
+  .dept-theme-dit .dept-card-top-bar { background: linear-gradient(90deg, #38bdf8, transparent); }
+  .dept-theme-dit .dept-icon-badge { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border-color: rgba(56, 189, 248, 0.25); }
+  .dept-theme-dit .dept-code-pill { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border-color: rgba(56, 189, 248, 0.25); }
+  .dept-theme-dit .dept-action-link { color: #38bdf8; }
+  .dept-theme-dit:hover { border-color: rgba(56, 189, 248, 0.4); }
+
+  .dept-theme-dbm .dept-card-top-bar { background: linear-gradient(90deg, #c084fc, transparent); }
+  .dept-theme-dbm .dept-icon-badge { background: rgba(192, 132, 252, 0.1); color: #c084fc; border-color: rgba(192, 132, 252, 0.25); }
+  .dept-theme-dbm .dept-code-pill { background: rgba(192, 132, 252, 0.1); color: #c084fc; border-color: rgba(192, 132, 252, 0.25); }
+  .dept-theme-dbm .dept-action-link { color: #c084fc; }
+  .dept-theme-dbm:hover { border-color: rgba(192, 132, 252, 0.4); }
+
+  .dept-theme-dgtt .dept-card-top-bar { background: linear-gradient(90deg, #fbbf24, transparent); }
+  .dept-theme-dgtt .dept-icon-badge { background: rgba(251, 191, 36, 0.1); color: #fbbf24; border-color: rgba(251, 191, 36, 0.25); }
+  .dept-theme-dgtt .dept-code-pill { background: rgba(251, 191, 36, 0.1); color: #fbbf24; border-color: rgba(251, 191, 36, 0.25); }
+  .dept-theme-dgtt .dept-action-link { color: #fbbf24; }
+  .dept-theme-dgtt:hover { border-color: rgba(251, 191, 36, 0.4); }
+
+  .dept-theme-ccje .dept-card-top-bar { background: linear-gradient(90deg, #2dd4bf, transparent); }
+  .dept-theme-ccje .dept-icon-badge { background: rgba(45, 212, 191, 0.1); color: #2dd4bf; border-color: rgba(45, 212, 191, 0.25); }
+  .dept-theme-ccje .dept-code-pill { background: rgba(45, 212, 191, 0.1); color: #2dd4bf; border-color: rgba(45, 212, 191, 0.25); }
+  .dept-theme-ccje .dept-action-link { color: #2dd4bf; }
+  .dept-theme-ccje:hover { border-color: rgba(45, 212, 191, 0.4); }
+
+  .dept-hidden {
+    display: none !important;
+  }
+</style>
+
+<div class="dept-grid-wrapper">
+  <div class="dept-header-container">
+    <div>
+      <h1 class="dept-main-title">Departments</h1>
+      <p class="dept-subtitle">North Eastern Mindanao State University — Cantilan Campus</p>
+    </div>
+
+    <div class="dept-search-box">
+      <svg class="dept-search-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+      <input id="deptSearch" type="search" placeholder="Search departments..." aria-label="Search departments" class="dept-search-input-field">
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; font-size: 12px; color: #94a3b8; margin-bottom: 16px; padding: 0 4px;">
+    <span>Overview of active academic units</span>
+    <span>
+      Showing <strong id="deptVisibleCount" style="color: #f1f5f9;">{% if departments %}{{ departments|length }}{% else %}5{% endif %}</strong> departments
+    </span>
+  </div>
+
+  <div id="deptGrid" class="dept-cards-grid">
+    {% if departments %}
+      {% for department in departments %}
+        {% with code=department.code|default:''|upper %}
+        <article data-search="{{ department.name|default:''|lower }} {{ department.code|default:''|lower }}" class="dept-card-item {% if code == 'CS' or code == 'DCS' %}dept-theme-cs{% elif code == 'DIT' %}dept-theme-dit{% elif code == 'DBM' %}dept-theme-dbm{% elif code == 'DGTT' %}dept-theme-dgtt{% elif code == 'CCJE' %}dept-theme-ccje{% else %}dept-theme-cs{% endif %}">
+          <div class="dept-card-top-bar"></div>
+
+          <div>
+            <div class="dept-card-header-row">
+              <div class="dept-icon-badge">
+                {% if code == 'CS' or code == 'DCS' %}
+                  <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 21h8M12 17v4M8 9l-2 2 2 2M16 9l2 2-2 2M13 8l-2 6"></path></svg>
+                {% elif code == 'DIT' %}
+                  <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" stroke-width="1.8"></rect><rect x="9" y="9" width="6" height="6" rx="1" stroke-width="1.8"></rect><path stroke-width="1.8" d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"></path></svg>
+                {% elif code == 'DBM' %}
+                  <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2"></path></svg>
+                {% elif code == 'DGTT' %}
+                  <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M20.5 3.5C12 3 5 6.5 5 13a5 5 0 0 0 5 5c6.5 0 10-7 10.5-14.5Z"></path><path stroke-width="1.8" d="M3 21c4-6 7-8 12-11"></path></svg>
+                {% elif code == 'CCJE' %}
+                  <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M12 3v18M5 6h14M4 6 1.5 13h5L4 6ZM20 6l-2.5 7h5L20 6ZM8 21h8"></path><path stroke-width="1.8" d="M2 13c.5 2 3.5 2 4 0M18 13c.5 2 3.5 2 4 0"></path></svg>
+                {% else %}
+                  <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1M10 21v-4h4v4"></path></svg>
+                {% endif %}
+              </div>
+
+              {% if department.code %}
+                <span class="dept-code-pill">{{ department.code }}</span>
+              {% endif %}
+            </div>
+
+            <h2 class="dept-card-title">{{ department.name }}</h2>
+
+            <div class="dept-card-stats-row">
+              <span class="dept-stat-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
+                {{ department.building_total|default:0 }} building{{ department.building_total|default:0|pluralize }}
+              </span>
+              <span class="dept-stat-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
+                {{ department.room_total|default:0 }} room{{ department.room_total|default:0|pluralize }}
+              </span>
+            </div>
+          </div>
+
+          <div class="dept-card-footer-row">
+            <span class="dept-footer-caption">View department info</span>
+            <a href="{% url 'accounts:teacher_department_detail' pk=department.pk %}" class="dept-action-link">
+              View Department <span style="font-size:14px;">→</span>
+            </a>
+          </div>
+        </article>
+        {% endwith %}
+      {% endfor %}
+
+    {% else %}
+
+      <!-- Static 5 Departments Fallback Layout -->
+
+      <!-- 1. DCS -->
+      <article data-search="department of computer science dcs dcs" class="dept-card-item dept-theme-cs">
+        <div class="dept-card-top-bar"></div>
+        <div>
+          <div class="dept-card-header-row">
+            <div class="dept-icon-badge">
+              <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 21h8M12 17v4M8 9l-2 2 2 2M16 9l2 2-2 2M13 8l-2 6"></path></svg>
+            </div>
+            <span class="dept-code-pill">CS</span>
+          </div>
+          <h2 class="dept-card-title">Department of Computer Science</h2>
+          <div class="dept-card-stats-row">
+            <span class="dept-stat-item">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
+              0 buildings
+            </span>
+            <span class="dept-stat-item">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
+              0 rooms
+            </span>
+          </div>
+        </div>
+        <div class="dept-card-footer-row">
+          <span class="dept-footer-caption">View department info</span>
+          <a href="{% url 'accounts:teacher_department_detail' pk=1 %}" class="dept-action-link">
+            View Department <span style="font-size:14px;">→</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- 2. DIT -->
+      <article data-search="department of industrial technology dit" class="dept-card-item dept-theme-dit">
+        <div class="dept-card-top-bar"></div>
+        <div>
+          <div class="dept-card-header-row">
+            <div class="dept-icon-badge">
+              <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" stroke-width="1.8"></rect><rect x="9" y="9" width="6" height="6" rx="1" stroke-width="1.8"></rect><path stroke-width="1.8" d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"></path></svg>
+            </div>
+            <span class="dept-code-pill">DIT</span>
+          </div>
+          <h2 class="dept-card-title">Department of Industrial Technology</h2>
+          <div class="dept-card-stats-row">
+            <span class="dept-stat-item">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
+              0 buildings
+            </span>
+            <span class="dept-stat-item">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
+              0 rooms
+            </span>
+          </div>
+        </div>
+        <div class="dept-card-footer-row">
+          <span class="dept-footer-caption">View department info</span>
+          <a href="{% url 'accounts:teacher_department_detail' pk=2 %}" class="dept-action-link">
+            View Department <span style="font-size:14px;">→</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- 3. DBM -->
+      <article data-search="department of business management dbm" class="dept-card-item dept-theme-dbm">
+        <div class="dept-card-top-bar"></div>
+        <div>
+          <div class="dept-card-header-row">
+            <div class="dept-icon-badge">
+              <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2"></path></svg>
+            </div>
+            <span class="dept-code-pill">DBM</span>
+          </div>
+          <h2 class="dept-card-title">Department of Business Management</h2>
+          <div class="dept-card-stats-row">
+            <span class="dept-stat-item">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
+              0 buildings
+            </span>
+            <span class="dept-stat-item">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
+              0 rooms
+            </span>
+          </div>
+        </div>
+        <div class="dept-card-footer-row">
+          <span class="dept-footer-caption">View department info</span>
+          <a href="{% url 'accounts:teacher_department_detail' pk=3 %}" class="dept-action-link">
+            View Department <span style="font-size:14px;">→</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- 4. DGTT -->
+      <article data-search="department of general teacher training dgtt" class="dept-card-item dept-theme-dgtt">
+        <div class="dept-card-top-bar"></div>
+        <div>
+          <div class="dept-card-header-row">
+            <div class="dept-icon-badge">
+              <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M20.5 3.5C12 3 5 6.5 5 13a5 5 0 0 0 5 5c6.5 0 10-7 10.5-14.5Z"></path><path stroke-width="1.8" d="M3 21c4-6 7-8 12-11"></path></svg>
+            </div>
+            <span class="dept-code-pill">DGTT</span>
+          </div>
+          <h2 class="dept-card-title">Department of General Teachers Training</h2>
+          <div class="dept-card-stats-row">
+            <span class="dept-stat-item">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
+              0 buildings
+            </span>
+            <span class="dept-stat-item">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
+              0 rooms
+            </span>
+          </div>
+        </div>
+        <div class="dept-card-footer-row">
+          <span class="dept-footer-caption">View department info</span>
+          <a href="{% url 'accounts:teacher_department_detail' pk=4 %}" class="dept-action-link">
+            View Department <span style="font-size:14px;">→</span>
+          </a>
+        </div>
+      </article>
+
+      
+      <article data-search="college of criminal justice education ccje" class="dept-card-item dept-theme-ccje">
+        <div class="dept-card-top-bar"></div>
+        <div>
+          <div class="dept-card-header-row">
+            <div class="dept-icon-badge">
+              <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M12 3v18M5 6h14M4 6 1.5 13h5L4 6ZM20 6l-2.5 7h5L20 6ZM8 21h8"></path><path stroke-width="1.8" d="M2 13c.5 2 3.5 2 4 0M18 13c.5 2 3.5 2 4 0"></path></svg>
+            </div>
+            <span class="dept-code-pill">CCJE</span>
+          </div>
+          <h2 class="dept-card-title">College of Criminal Justice Education</h2>
+          <div class="dept-card-stats-row">
+            <span class="dept-stat-item">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
+              0 buildings
+            </span>
+            <span class="dept-stat-item">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
+              0 rooms
+            </span>
+          </div>
+        </div>
+        <div class="dept-card-footer-row">
+          <span class="dept-footer-caption">View department info</span>
+          <a href="{% url 'accounts:teacher_department_detail' pk=5 %}" class="dept-action-link">
+            View Department <span style="font-size:14px;">→</span>
+          </a>
+        </div>
+      </article>
+
+    {% endif %}
+  </div>
+</div>
+
+<script>
+(function () {
+  const search = document.getElementById('deptSearch');
+  const grid = document.getElementById('deptGrid');
+  if (!search || !grid) return;
+
+  const cards = Array.from(grid.querySelectorAll('.dept-card-item'));
+  const visibleCount = document.getElementById('deptVisibleCount');
+
+  search.addEventListener('input', function () {
+    const query = search.value.trim().toLowerCase();
+    let visible = 0;
+
+    cards.forEach(card => {
+      const text = card.dataset.search || card.innerText.toLowerCase();
+      const matches = text.includes(query);
+      card.classList.toggle('dept-hidden', !matches);
+      if (matches) visible++;
+    });
+
+    if (visibleCount) visibleCount.textContent = visible;
+  });
+})();
+</script>
+{% endblock %}

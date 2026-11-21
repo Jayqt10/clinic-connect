@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Student | Clinic Connect{% endblock %}
+
+{% block content %}
+
+<style>
+    .edit-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        margin-bottom: 22px;
+    }
+
+    .page-header h1 {
+        color: #f8fafc;
+        font-size: 24px;
+        margin: 0 0 6px;
+    }
+
+    .page-header p {
+        color: #819092;
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .form-card {
+        background: #071011;
+        border: 1px solid #172426;
+        border-radius: 9px;
+        padding: 24px;
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 20px;
+        margin-bottom: 22px;
+        border-bottom: 1px solid #172426;
+    }
+
+    .student-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #14532d;
+        border: 1px solid #166534;
+        color: #86efac;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 16px;
+    }
+
+    .student-name {
+        color: #f8fafc;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .student-id {
+        color: #64748b;
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        color: #cbd5e1;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 7px;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 10px 12px;
+        background: #0b1415;
+        border: 1px solid #263638;
+        border-radius: 6px;
+        color: #f8fafc;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #22c55e;
+    }
+
+    .error {
+        color: #fca5a5;
+        font-size: 11px;
+        margin-top: 5px;
+    }
+
+    .help-text {
+        color: #64748b;
+        font-size: 11px;
+        margin-top: 5px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #172426;
+    }
+
+    .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 15px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .cancel-button {
+        background: #1f2937;
+        border: 1px solid #374151;
+        color: #cbd5e1;
+    }
+
+    .cancel-button:hover {
+        background: #374151;
+        color: #fff;
+    }
+
+    .save-button {
+        background: #22c55e;
+        border: 1px solid #22c55e;
+        color: #041008;
+    }
+
+    .save-button:hover {
+        background: #16a34a;
+        color: #fff;
+    }
+
+    @media (max-width: 650px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+
+        .form-card {
+            padding: 18px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="edit-page">
+
+    <div class="page-header">
+        <h1>Edit Student</h1>
+        <p>Update the student's information below.</p>
+    </div>
+
+    <div class="form-card">
+
+        <div class="student-info">
+
+            <div class="student-avatar">
+                {{ student.first_name|first|default:student.username|first|upper }}
+            </div>
+
+            <div>
+                <div class="student-name">
+                    {{ student.get_full_name|default:student.username }}
+                </div>
+
+                <div class="student-id">
+                    Student ID: {{ student.id_number|default:"Not provided" }}
+                </div>
+            </div>
+
+        </div>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                {% for field in form %}
+
+                    <div class="form-group">
+
+                        {{ field.label_tag }}
+
+                        {{ field }}
+
+                        {% for error in field.errors %}
+                            <div class="error">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="form-actions">
+
+                <a
+                    href="{% url 'accounts:teacher_students' %}"
+                    class="button cancel-button"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="button save-button"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

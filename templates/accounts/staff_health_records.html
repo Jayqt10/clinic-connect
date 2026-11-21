@@ -1,0 +1,1933 @@
+{% extends 'base.html' %}
+
+{% block title %}Health Records | Clinic Connect{% endblock %}
+
+{% block content %}
+
+<style>
+.records-page {
+    --bg: #0b1120;
+    --panel: #111827;
+    --border: #263247;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --green: #86efac;
+    max-width: 1450px;
+    margin: 0 auto;
+    padding: 4px 0 28px;
+    color: var(--text);
+}
+
+.records-page *,
+.records-page *::before,
+.records-page *::after,
+.health-modal *,
+.health-modal *::before,
+.health-modal *::after {
+    box-sizing: border-box;
+}
+
+.records-page a,
+.health-modal a {
+    text-decoration: none;
+}
+
+.records-page button,
+.records-page input,
+.records-page select,
+.health-modal button {
+    font: inherit;
+}
+
+.records-page button:focus-visible,
+.records-page select:focus-visible,
+.records-page a:focus-visible,
+.health-modal button:focus-visible,
+.health-modal a:focus-visible {
+    outline: 2px solid #4ade80;
+    outline-offset: 2px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.page-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.page-icon,
+.overview-icon,
+.records-heading-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.page-icon {
+    width: 42px;
+    height: 42px;
+    border: 1px solid #1c4931;
+    border-radius: 12px;
+    background: #10291f;
+    color: var(--green);
+}
+
+.page-icon svg {
+    width: 21px;
+    height: 21px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: clamp(22px, 2.6vw, 27px);
+    font-weight: 750;
+    letter-spacing: -.5px;
+}
+
+.page-header p {
+    margin: 3px 0 0;
+    color: var(--muted);
+    font-size: 11.5px;
+    line-height: 1.5;
+}
+
+.header-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 11px;
+    border: 1px solid #1c4931;
+    border-radius: 8px;
+    background: #10291f;
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.header-label svg {
+    width: 15px;
+    height: 15px;
+}
+
+.overview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.overview-card {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 14px 17px;
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    background: radial-gradient(ellipse at top right, #1e3a2b20, transparent 55%), var(--panel);
+}
+
+.overview-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #10291f;
+    color: #4ade80;
+}
+
+.overview-icon.blue {
+    background: #172554;
+    color: #93c5fd;
+}
+
+.overview-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.overview-copy {
+    min-width: 0;
+}
+
+.overview-label {
+    margin: 0 0 2px;
+    color: var(--muted);
+    font-size: 10.5px;
+}
+
+.overview-value {
+    margin: 0;
+    color: var(--text);
+    font-size: 21px;
+    font-weight: 750;
+    line-height: 1.2;
+}
+
+.overview-description {
+    margin: 3px 0 0;
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.records-card {
+    overflow: hidden;
+    border: 1px solid #1f2937;
+    border-radius: 14px;
+    background: var(--panel);
+    box-shadow: 0 10px 30px #00000012;
+}
+
+.records-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 18px;
+    border-bottom: 1px solid #1f2937;
+}
+
+.records-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.records-heading-icon {
+    width: 34px;
+    height: 34px;
+    border: 1px solid #263447;
+    border-radius: 9px;
+    background: #182335;
+    color: #cbd5e1;
+}
+
+.records-heading-icon svg {
+    width: 17px;
+    height: 17px;
+}
+
+.records-header h2 {
+    margin: 0 0 2px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.records-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 10.5px;
+}
+
+.record-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 9px;
+    border: 1px solid #293548;
+    border-radius: 8px;
+    background: var(--bg);
+    color: #cbd5e1;
+    font-size: 10px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.count-dot,
+.status-dot {
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #4ade80;
+}
+
+.search-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 18px;
+    border-bottom: 1px solid #1f2937;
+}
+
+.search-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 0;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 210px;
+    max-width: 100%;
+    height: 30px;
+    padding: 0 8px;
+    border: 1px solid #2a374b;
+    border-radius: 7px;
+    background: var(--bg);
+    transition: border-color .15s, background .15s;
+}
+
+.search-box:focus-within {
+    border-color: #22c55e;
+    background: #0d1728;
+    outline: none;
+    box-shadow: none;
+}
+
+.search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #64748b;
+    transition: color .15s;
+}
+
+.search-box:focus-within .search-icon {
+    color: #86efac;
+}
+
+.search-icon svg {
+    width: 13px;
+    height: 13px;
+}
+
+.search-input {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent;
+    color: var(--text);
+    font-size: 10.5px;
+}
+
+.search-input::placeholder {
+    color: #64748b;
+}
+
+.search-input::-webkit-search-cancel-button {
+    display: none;
+}
+
+.clear-search {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.clear-search:hover {
+    background: #1f2937;
+    color: white;
+}
+
+.department-filter-select {
+    height: 30px;
+    padding: 0 8px;
+    border: 1px solid #2a374b;
+    border-radius: 7px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 10.5px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+}
+
+.department-filter-select:focus {
+    border-color: #22c55e;
+    background: #0d1728;
+    outline: none;
+}
+
+.department-filter-select option {
+    background: #111827;
+    color: var(--text);
+}
+
+.search-result-count {
+    color: var(--muted);
+    font-size: 10px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-color: #334155 #111827;
+    scrollbar-width: thin;
+}
+
+.records-page table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.records-page thead {
+    background: #0b1120;
+}
+
+.records-page th {
+    padding: 10px 18px;
+    color: #64748b;
+    font-size: 9px;
+    font-weight: 750;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    white-space: nowrap;
+}
+
+.records-page th:nth-child(1) {
+    width: 44%;
+}
+
+.records-page th:nth-child(2) {
+    width: 16%;
+}
+
+.records-page th:nth-child(3) {
+    width: 16%;
+}
+
+.records-page th:nth-child(4) {
+    width: 24%;
+}
+
+.records-page td {
+    padding: 12px 18px;
+    border-top: 1px solid #1f2937;
+    color: #cbd5e1;
+    font-size: 11px;
+    vertical-align: middle;
+}
+
+.health-record-row {
+    transition: background .15s;
+}
+
+.health-record-row:hover {
+    background: #151e2f;
+}
+
+.student-cell {
+    min-width: 190px;
+}
+
+.student-info {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.student-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 1px solid #294436;
+    border-radius: 50%;
+    background: #183126;
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 750;
+    text-transform: uppercase;
+}
+
+.student-avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.student-copy {
+    min-width: 0;
+}
+
+.student-name {
+    max-width: 320px;
+    overflow-wrap: anywhere;
+    color: #f1f5f9;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.student-username {
+    margin-top: 1px;
+    color: #64748b;
+    font-size: 10px;
+    overflow-wrap: anywhere;
+}
+
+.student-submeta {
+    margin-top: 1px;
+    color: #94a3b8;
+    font-size: 9.5px;
+    overflow-wrap: anywhere;
+}
+
+.dept-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border: 1px solid rgba(129, 140, 248, .25);
+    border-radius: 6px;
+    background: rgba(129, 140, 248, .1);
+    color: #a5b4fc;
+    font-size: 9.5px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.dept-badge.is-muted {
+    border-color: #293548;
+    background: #0d1727;
+    color: #64748b;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    border: 1px solid #14532d;
+    border-radius: 999px;
+    background: #052e16;
+    color: #86efac;
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-dot {
+    width: 5px;
+    height: 5px;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 7px 10px;
+    border: 1px solid #374151;
+    border-radius: 7px;
+    background: #1f2937;
+    color: #cbd5e1;
+    font-size: 9.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: .15s;
+}
+
+.action-btn svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+}
+
+.action-btn:hover {
+    border-color: #475569;
+    background: #374151;
+    color: white;
+}
+
+.view-btn {
+    border-color: #166534;
+    background: #052e16;
+    color: #86efac;
+}
+
+.view-btn:hover {
+    border-color: #15803d;
+    background: #14532d;
+    color: #bbf7d0;
+}
+
+.edit-btn {
+    border-color: #1e3a8a;
+    background: #172554;
+    color: #93c5fd;
+}
+
+.edit-btn:hover {
+    border-color: #1d4ed8;
+    background: #1e3a8a;
+    color: #dbeafe;
+}
+
+.table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 18px;
+    border-top: 1px solid #1f2937;
+    background: #0e1523;
+}
+
+.table-footer p {
+    margin: 0;
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.footer-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--green);
+    font-size: 9px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.footer-indicator svg {
+    width: 13px;
+    height: 13px;
+}
+
+.empty-state,
+.no-search-results {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.empty-illustration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 12px;
+    border: 1px solid #293548;
+    border-radius: 14px;
+    background: #172033;
+    color: #94a3b8;
+}
+
+.empty-illustration svg {
+    width: 24px;
+    height: 24px;
+}
+
+.empty-state h3,
+.no-search-results h3 {
+    margin: 0 0 6px;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.empty-state p,
+.no-search-results p {
+    max-width: 400px;
+    margin: 0 auto;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.no-search-results {
+    display: none;
+}
+
+.reset-search-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 8px 12px;
+    border: 1px solid #166534;
+    border-radius: 7px;
+    background: #052e16;
+    color: #86efac;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.reset-search-btn:hover {
+    background: #14532d;
+}
+
+.reset-search-btn svg {
+    width: 12px;
+    height: 12px;
+}
+
+.health-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(2, 6, 15, .82);
+    backdrop-filter: blur(5px);
+}
+
+.health-modal.is-open {
+    display: flex;
+}
+
+.health-modal-dialog {
+    width: 100%;
+    max-width: 680px;
+    max-height: min(92vh, 760px);
+    overflow-y: auto;
+    border: 1px solid #293548;
+    border-radius: 15px;
+    background: #111827;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, .55);
+    animation: modalIn .18s ease-out;
+}
+
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(.99);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.health-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: #0f172a;
+}
+
+.health-modal-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.health-modal-heading-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border: 1px solid #1c4931;
+    border-radius: 10px;
+    background: #10291f;
+    color: var(--green);
+}
+
+.health-modal-heading-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.health-modal-heading h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.health-modal-heading p {
+    margin: 3px 0 0;
+    color: #64748b;
+    font-size: 10px;
+}
+
+.health-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 31px;
+    height: 31px;
+    flex-shrink: 0;
+    border: 1px solid #293548;
+    border-radius: 8px;
+    background: #172033;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.health-modal-close:hover {
+    background: #263247;
+    color: white;
+}
+
+.health-modal-body {
+    padding: 16px 18px;
+}
+
+.health-modal-student {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border: 1px solid #263247;
+    border-radius: 11px;
+    background: #0b1120;
+}
+
+.health-modal-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 1px solid #294436;
+    border-radius: 50%;
+    background: #183126;
+    color: var(--green);
+    font-size: 15px;
+    font-weight: 750;
+    text-transform: uppercase;
+}
+
+.health-modal-avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.health-modal-student-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.health-modal-student-name {
+    margin: 0;
+    color: var(--text);
+    font-size: 13.5px;
+    font-weight: 750;
+    overflow-wrap: anywhere;
+}
+
+.health-modal-student-username {
+    margin: 2px 0 0;
+    color: #64748b;
+    font-size: 10px;
+}
+
+.health-modal-meta-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 7px;
+}
+
+.health-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid #263447;
+    background: #131d2e;
+    color: #cbd5e1;
+    font-size: 9.5px;
+    font-weight: 650;
+}
+
+.health-meta-chip.accent {
+    border-color: rgba(129, 140, 248, .28);
+    background: rgba(129, 140, 248, .1);
+    color: #a5b4fc;
+}
+
+.health-modal-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 9px;
+    border: 1px solid #14532d;
+    border-radius: 999px;
+    background: #052e16;
+    color: #86efac;
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.health-modal-status span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+}
+
+.health-modal-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.health-modal-field {
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid #263247;
+    border-radius: 9px;
+    background: #151f30;
+}
+
+.health-modal-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.health-modal-field-label {
+    display: block;
+    margin-bottom: 6px;
+    color: #94a3b8;
+    font-size: 9px;
+    font-weight: 750;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+}
+
+.health-modal-field-value {
+    margin: 0;
+    color: #e2e8f0;
+    font-size: 11px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.health-modal-field-value.is-empty {
+    color: #64748b;
+    font-style: italic;
+}
+
+.modal-dispensed-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.modal-dispensed-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 6px;
+    border: 1px solid #1d5a4b;
+    background: #123d35;
+    color: #6ee7b7;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.health-modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--border);
+    background: #0e1523;
+}
+
+.health-modal-updated {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.health-modal-updated svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: #93c5fd;
+}
+
+.health-modal-updated strong {
+    color: #cbd5e1;
+    font-weight: 650;
+}
+
+.health-modal-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.health-modal-footer button,
+.health-modal-footer a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 34px;
+    padding: 7px 12px;
+    border: 1px solid #374151;
+    border-radius: 7px;
+    background: #1f2937;
+    color: #cbd5e1;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.health-modal-footer button:hover {
+    background: #374151;
+    color: white;
+}
+
+.health-modal-footer a {
+    border-color: #1e3a8a;
+    background: #172554;
+    color: #93c5fd;
+}
+
+.health-modal-footer a:hover {
+    border-color: #1d4ed8;
+    background: #1e3a8a;
+    color: #dbeafe;
+}
+
+.health-modal-footer svg {
+    width: 14px;
+    height: 14px;
+}
+
+@media (max-width: 800px) {
+    .page-header {
+        align-items: flex-start;
+    }
+
+    .overview-card {
+        padding: 14px;
+    }
+
+    .records-header,
+    .search-section {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+@media (max-width: 600px) {
+    .records-page {
+        padding-top: 2px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .page-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .page-header h1 {
+        font-size: 22px;
+    }
+
+    .overview-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .overview-value {
+        font-size: 20px;
+    }
+
+    .records-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px;
+    }
+
+    .search-section {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 6px;
+        padding: 8px 14px;
+    }
+
+    .search-box,
+    .department-filter-select {
+        width: 100%;
+    }
+
+    .search-result-count {
+        text-align: left;
+        white-space: normal;
+    }
+
+    .table-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 11px 14px;
+    }
+
+    .empty-state,
+    .no-search-results {
+        padding: 34px 15px;
+    }
+
+    .health-modal {
+        padding: 10px;
+    }
+
+    .health-modal-dialog {
+        max-height: 94vh;
+    }
+
+    .health-modal-header,
+    .health-modal-footer {
+        padding: 12px 14px;
+    }
+
+    .health-modal-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .health-modal-actions {
+        justify-content: flex-end;
+    }
+
+    .health-modal-body {
+        padding: 14px;
+    }
+
+    .health-modal-student {
+        flex-wrap: wrap;
+    }
+
+    .health-modal-status {
+        margin-left: 58px;
+    }
+
+    .health-modal-fields {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .records-page *,
+    .records-page *::before,
+    .records-page *::after,
+    .health-modal *,
+    .health-modal *::before,
+    .health-modal *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+    }
+}
+</style>
+
+<div class="records-page">
+
+    <header class="page-header">
+        <div class="page-heading">
+            <div class="page-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/>
+                    <path d="M12 8v8M8 12h8"/>
+                </svg>
+            </div>
+
+            <div>
+                <h1>Health Records</h1>
+                <p>View and manage student health information in one place.</p>
+            </div>
+        </div>
+
+        <div class="header-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 12l2 2 4-4"/>
+                <circle cx="12" cy="12" r="9"/>
+            </svg>
+            Clinic Staff Workspace
+        </div>
+    </header>
+
+    <section class="overview-grid" aria-label="Health record overview">
+
+        <article class="overview-card">
+            <div class="overview-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M20 8v6M23 11h-6"/>
+                </svg>
+            </div>
+
+            <div class="overview-copy">
+                <p class="overview-label">Total Health Records</p>
+                <p class="overview-value">{{ health_records|length }}</p>
+                <p class="overview-description">Student records currently listed in the clinic.</p>
+            </div>
+        </article>
+
+        <article class="overview-card">
+            <div class="overview-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3"/>
+                    <path d="M16 3h5v5"/>
+                    <path d="m10 14 11-11"/>
+                    <path d="M7 8h4M7 12h2M7 16h5"/>
+                </svg>
+            </div>
+
+            <div class="overview-copy">
+                <p class="overview-label">Record Management</p>
+                <p class="overview-value">Organized</p>
+                <p class="overview-description">Search, review, and update student health information.</p>
+            </div>
+        </article>
+
+    </section>
+
+    <section class="records-card">
+
+        <div class="records-header">
+            <div class="records-heading">
+                <div class="records-heading-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <path d="M14 2v6h6M8 13h8M8 17h8"/>
+                    </svg>
+                </div>
+
+                <div>
+                    <h2>Student Health Records</h2>
+                    <p>Health information recorded during clinic appointments.</p>
+                </div>
+            </div>
+
+            <div class="record-count">
+                <span class="count-dot"></span>
+                {{ health_records|length }} record{{ health_records|length|pluralize }}
+            </div>
+        </div>
+
+        <div class="search-section">
+            <div class="search-controls">
+                <div class="search-box">
+                    <span class="search-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="7"/>
+                            <path d="m16 16 4 4"/>
+                        </svg>
+                    </span>
+
+                    <input
+                        type="search"
+                        id="healthRecordSearch"
+                        class="search-input"
+                        placeholder="Search student or ID..."
+                        aria-label="Search health records"
+                        autocomplete="off"
+                    >
+
+                    <button
+                        type="button"
+                        id="clearHealthSearch"
+                        class="clear-search"
+                        aria-label="Clear search"
+                        title="Clear search"
+                    >
+                        &times;
+                    </button>
+                </div>
+
+                <select
+                    id="healthDepartmentFilter"
+                    class="department-filter-select"
+                    aria-label="Filter by department"
+                >
+                    <option value="">All Depts</option>
+                    {% if departments %}
+                        {% for dept in departments %}
+                            <option value="{{ dept.name|default:dept|lower }}">{{ dept.name|default:dept }}</option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="dit">DIT</option>
+                        <option value="dbm">DBM</option>
+                        <option value="dgtt">DGTT</option>
+                        <option value="ccje">CCJE</option>
+                        <option value="dcs">DCS</option>
+                    {% endif %}
+                </select>
+            </div>
+
+            <span class="search-result-count" id="healthSearchCount" aria-live="polite">
+                Showing {{ health_records|length }} of {{ health_records|length }} records
+            </span>
+        </div>
+
+        {% if health_records %}
+
+        <div class="table-wrapper" id="healthRecordsTableWrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="healthRecordsTableBody">
+
+                    {% for record in health_records %}
+
+                    <tr
+                        class="health-record-row"
+                        data-department="{{ record.student.department.name|default:record.student.department|default:''|lower }}"
+                        data-search="{{ record.student.get_full_name|default:record.student.username|lower }} {{ record.student.username|lower }} {{ record.student.id_number|default:''|lower }} {{ record.student.department.name|default:record.student.department|default:''|lower }} {{ record.student.course|default:''|lower }} {{ record.student.year_block|default:''|lower }} {{ record.symptoms|default:''|lower }} {{ record.treatment|default:''|lower }} {{ record.notes|default:''|lower }} {{ record.updated_at|date:'M d Y'|lower }}"
+                    >
+                        <td class="student-cell">
+                            <div class="student-info">
+
+                                <div class="student-avatar">
+                                    {% if record.student.profile_picture %}
+                                        <img
+                                            src="{{ record.student.profile_picture.url }}"
+                                            alt="{{ record.student.get_full_name|default:record.student.username }}"
+                                            loading="lazy"
+                                        >
+                                    {% else %}
+                                        {{ record.student.first_name|default:record.student.username|first|upper }}
+                                    {% endif %}
+                                </div>
+
+                                <div class="student-copy">
+                                    <div class="student-name">
+                                        {{ record.student.get_full_name|default:record.student.username }}
+                                    </div>
+
+                                    <div class="student-username">
+                                        @{{ record.student.username }}
+                                    </div>
+
+                                    {% if record.student.id_number or record.student.course or record.student.year_block %}
+                                        <div class="student-submeta">
+                                            {% if record.student.id_number %}ID: {{ record.student.id_number }}{% endif %}
+                                            {% if record.student.id_number and record.student.course or record.student.id_number and record.student.year_block %} · {% endif %}
+                                            {{ record.student.course|default:"" }}{% if record.student.course and record.student.year_block %} · {% endif %}{{ record.student.year_block|default:"" }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        </td>
+
+                        <td>
+                            {% if record.student.department %}
+                                <span class="dept-badge">{{ record.student.department.name|default:record.student.department }}</span>
+                            {% else %}
+                                <span class="dept-badge is-muted">Unassigned</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <span class="status">
+                                <span class="status-dot"></span>
+                                Recorded
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="actions">
+
+                                <button
+                                    type="button"
+                                    class="action-btn view-btn view-record-btn"
+                                    data-student-name="{{ record.student.get_full_name|default:record.student.username }}"
+                                    data-student-username="{{ record.student.username }}"
+                                    data-student-id="{{ record.student.id_number|default:'' }}"
+                                    data-student-department="{{ record.student.department.name|default:record.student.department|default:'' }}"
+                                    data-student-course="{{ record.student.course|default:'' }}"
+                                    data-student-year="{{ record.student.year_block|default:'' }}"
+                                    data-initial="{{ record.student.first_name|default:record.student.username|first|upper }}"
+                                    data-profile-picture="{% if record.student.profile_picture %}{{ record.student.profile_picture.url }}{% endif %}"
+                                    data-symptoms="{{ record.symptoms|default:'' }}"
+                                    data-treatment="{{ record.treatment|default:'' }}"
+                                    data-notes="{{ record.notes|default:'' }}"
+                                    data-updated="{{ record.updated_at|date:'F d, Y - h:i A' }}"
+                                    data-edit-url="{% url 'accounts:edit_health_record' record_id=record.pk %}"
+                                >
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                    View
+                                </button>
+
+                                <a
+                                    href="{% url 'accounts:edit_health_record' record_id=record.pk %}"
+                                    class="action-btn edit-btn"
+                                >
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9"/>
+                                        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L9 17l-4 1 1-4Z"/>
+                                    </svg>
+                                    Edit
+                                </a>
+
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="no-search-results" id="noHealthSearchResults">
+            <div class="empty-illustration">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="7"/>
+                    <path d="m16 16 4 4M8 11h6"/>
+                </svg>
+            </div>
+
+            <h3>No Matching Records</h3>
+            <p>We couldn't find any health records matching your current search or department filter.</p>
+
+            <button type="button" class="reset-search-btn" id="resetHealthSearch">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
+                    <path d="M3 3v5h5"/>
+                </svg>
+                Reset Filters
+            </button>
+        </div>
+
+        <div class="table-footer" id="healthRecordsFooter">
+            <p>Student health information is intended for authorized clinic staff.</p>
+
+            <span class="footer-indicator">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/>
+                    <path d="m9 12 2 2 4-4"/>
+                </svg>
+                Clinic Records
+            </span>
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <div class="empty-illustration">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <path d="M14 2v6h6M12 11v6M9 14h6"/>
+                </svg>
+            </div>
+
+            <h3>No Health Records Found</h3>
+
+            <p>
+                There are currently no student health records to display.
+                Records will appear here after health information has been recorded.
+            </p>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+<div
+    class="health-modal"
+    id="healthRecordModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="healthModalTitle"
+    aria-hidden="true"
+>
+    <div class="health-modal-dialog">
+
+        <div class="health-modal-header">
+            <div class="health-modal-heading">
+                <div class="health-modal-heading-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <path d="M14 2v6h6M8 13h8M8 17h8"/>
+                    </svg>
+                </div>
+
+                <div>
+                    <h2 id="healthModalTitle">Health Record Details</h2>
+                    <p>Student clinical record</p>
+                </div>
+            </div>
+
+            <button type="button" class="health-modal-close" id="closeHealthModal" aria-label="Close modal">
+                &times;
+            </button>
+        </div>
+
+        <div class="health-modal-body">
+
+            <div class="health-modal-student">
+
+                <div class="health-modal-avatar" id="modalStudentAvatar">
+                    <span id="modalStudentInitial">S</span>
+                    <img id="modalStudentPhoto" src="" alt="" hidden>
+                </div>
+
+                <div class="health-modal-student-info">
+                    <h3 class="health-modal-student-name" id="modalStudentName">Student Name</h3>
+                    <p class="health-modal-student-username" id="modalStudentUsername">@username</p>
+                    <div class="health-modal-meta-chips" id="modalStudentChips"></div>
+                </div>
+
+                <span class="health-modal-status">
+                    <span></span>
+                    Recorded
+                </span>
+
+            </div>
+
+            <div class="health-modal-fields">
+
+                <div class="health-modal-field">
+                    <span class="health-modal-field-label">Symptoms</span>
+                    <p class="health-modal-field-value" id="modalSymptoms">No symptoms recorded.</p>
+                </div>
+
+                <div class="health-modal-field">
+                    <span class="health-modal-field-label">Treatment &amp; Dispensed Medicine</span>
+                    <p class="health-modal-field-value" id="modalTreatment">No treatment recorded.</p>
+                    <div class="modal-dispensed-wrap" id="modalDispensedBadges" style="display: none;"></div>
+                </div>
+
+                <div class="health-modal-field full-width">
+                    <span class="health-modal-field-label">Clinical Notes</span>
+                    <p class="health-modal-field-value" id="modalNotes">No additional notes recorded.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="health-modal-footer">
+            <div class="health-modal-updated">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 7v5l3 2"/>
+                </svg>
+
+                <span>Updated: <strong id="modalUpdated">Not available</strong></span>
+            </div>
+
+            <div class="health-modal-actions">
+                <button type="button" id="cancelHealthModal">Close</button>
+
+                <a href="#" id="modalEditHealthRecord">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9"/>
+                        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L9 17l-4 1 1-4Z"/>
+                    </svg>
+                    Edit Record
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("healthRecordSearch");
+    const departmentSelect = document.getElementById("healthDepartmentFilter");
+    const clearButton = document.getElementById("clearHealthSearch");
+    const resetButton = document.getElementById("resetHealthSearch");
+    const searchCount = document.getElementById("healthSearchCount");
+    const noResults = document.getElementById("noHealthSearchResults");
+    const tableWrapper = document.getElementById("healthRecordsTableWrapper");
+    const footer = document.getElementById("healthRecordsFooter");
+    const rows = Array.from(document.querySelectorAll(".health-record-row"));
+
+    if (searchInput || departmentSelect) {
+        const totalRecords = rows.length;
+
+        function filterHealthRecords() {
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
+            const selectedDept = departmentSelect ? departmentSelect.value.trim().toLowerCase() : "";
+            let visibleRecords = 0;
+
+            rows.forEach(function (row) {
+                const searchableText = (
+                    row.dataset.search || row.textContent || ""
+                ).toLowerCase();
+                const rowDept = (row.dataset.department || "").toLowerCase();
+
+                const matchesSearch = !query || searchableText.includes(query);
+                const matchesDept = !selectedDept || rowDept === selectedDept || rowDept.includes(selectedDept);
+                const isMatch = matchesSearch && matchesDept;
+
+                row.style.display = isMatch ? "" : "none";
+
+                if (isMatch) {
+                    visibleRecords++;
+                }
+            });
+
+            if (searchCount) {
+                const labelWord = totalRecords === 1 ? "record" : "records";
+                const hasFilter = Boolean(query || selectedDept);
+                searchCount.textContent = hasFilter
+                    ? "Showing " + visibleRecords + " matching of " + totalRecords + " " + labelWord
+                    : "Showing " + visibleRecords + " of " + totalRecords + " " + labelWord;
+            }
+
+            if (clearButton) {
+                clearButton.style.display = query ? "inline-flex" : "none";
+            }
+
+            if (noResults) {
+                noResults.style.display =
+                    totalRecords > 0 && visibleRecords === 0 ? "block" : "none";
+            }
+
+            if (tableWrapper) {
+                tableWrapper.style.display = visibleRecords === 0 ? "none" : "";
+            }
+
+            if (footer) {
+                footer.style.display = visibleRecords === 0 ? "none" : "";
+            }
+        }
+
+        function clearSearch() {
+            if (searchInput) {
+                searchInput.value = "";
+            }
+            filterHealthRecords();
+            if (searchInput) {
+                searchInput.focus();
+            }
+        }
+
+        function resetAllFilters() {
+            if (searchInput) {
+                searchInput.value = "";
+            }
+            if (departmentSelect) {
+                departmentSelect.value = "";
+            }
+            filterHealthRecords();
+            if (searchInput) {
+                searchInput.focus();
+            }
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener("input", filterHealthRecords);
+        }
+
+        if (departmentSelect) {
+            departmentSelect.addEventListener("change", filterHealthRecords);
+        }
+
+        if (clearButton) {
+            clearButton.addEventListener("click", clearSearch);
+        }
+
+        if (resetButton) {
+            resetButton.addEventListener("click", resetAllFilters);
+        }
+
+        filterHealthRecords();
+    }
+
+    const modal = document.getElementById("healthRecordModal");
+    const closeButton = document.getElementById("closeHealthModal");
+    const cancelButton = document.getElementById("cancelHealthModal");
+    const viewButtons = document.querySelectorAll(".view-record-btn");
+    const editButton = document.getElementById("modalEditHealthRecord");
+    const chipsContainer = document.getElementById("modalStudentChips");
+    const dispensedContainer = document.getElementById("modalDispensedBadges");
+
+    const studentInitial = document.getElementById("modalStudentInitial");
+    const studentPhoto = document.getElementById("modalStudentPhoto");
+
+    if (!modal) {
+        return;
+    }
+
+    let previouslyFocusedElement = null;
+
+    function setModalValue(elementId, value, fallback) {
+        const element = document.getElementById(elementId);
+
+        if (!element) {
+            return;
+        }
+
+        const content = value && value.trim() ? value.trim() : fallback;
+
+        element.textContent = content;
+        element.classList.toggle("is-empty", content === fallback);
+    }
+
+    function renderTreatmentAndMedicine(rawTreatment) {
+        const treatmentEl = document.getElementById("modalTreatment");
+        if (!treatmentEl || !dispensedContainer) return;
+
+        dispensedContainer.replaceChildren();
+        dispensedContainer.style.display = "none";
+
+        const trimmedRaw = (rawTreatment || "").trim();
+        if (!trimmedRaw) {
+            treatmentEl.textContent = "No treatment recorded.";
+            treatmentEl.classList.add("is-empty");
+            return;
+        }
+
+        const normalLines = [];
+        const dispensedLines = [];
+
+        trimmedRaw.split(/\r?\n/).forEach(function (line) {
+            const cleanLine = line.trim();
+            if (!cleanLine) return;
+            if (/^dispensed:/i.test(cleanLine)) {
+                dispensedLines.push(cleanLine.replace(/^dispensed:\s*/i, ""));
+            } else {
+                normalLines.push(cleanLine);
+            }
+        });
+
+        if (normalLines.length > 0) {
+            treatmentEl.textContent = normalLines.join("\n");
+            treatmentEl.classList.remove("is-empty");
+        } else if (dispensedLines.length > 0) {
+            treatmentEl.textContent = "Clinic medication dispensed";
+            treatmentEl.classList.remove("is-empty");
+        } else {
+            treatmentEl.textContent = "No treatment recorded.";
+            treatmentEl.classList.add("is-empty");
+        }
+
+        if (dispensedLines.length > 0) {
+            dispensedLines.forEach(function (item) {
+                const badge = document.createElement("span");
+                badge.className = "modal-dispensed-badge";
+                badge.textContent = "💊 Dispensed: " + item;
+                dispensedContainer.appendChild(badge);
+            });
+            dispensedContainer.style.display = "flex";
+        }
+    }
+
+    function renderStudentChips(data) {
+        if (!chipsContainer) return;
+        chipsContainer.replaceChildren();
+
+        const entries = [];
+        if (data.studentId) entries.push({ text: "ID: " + data.studentId, accent: false });
+        if (data.studentDepartment) entries.push({ text: data.studentDepartment, accent: true });
+        if (data.studentCourse) entries.push({ text: data.studentCourse, accent: false });
+        if (data.studentYear) entries.push({ text: data.studentYear, accent: false });
+
+        if (entries.length === 0) {
+            entries.push({ text: "ID: Not provided", accent: false });
+        }
+
+        entries.forEach(function (entry) {
+            const chip = document.createElement("span");
+            chip.className = entry.accent ? "health-meta-chip accent" : "health-meta-chip";
+            chip.textContent = entry.text;
+            chipsContainer.appendChild(chip);
+        });
+    }
+
+    function setStudentPhoto(photoUrl, initial, studentName) {
+        studentInitial.textContent = initial || "S";
+        studentInitial.hidden = false;
+
+        studentPhoto.hidden = true;
+        studentPhoto.removeAttribute("src");
+        studentPhoto.alt = "";
+
+        if (!photoUrl) {
+            return;
+        }
+
+        studentPhoto.onload = function () {
+            studentInitial.hidden = true;
+            studentPhoto.hidden = false;
+        };
+
+        studentPhoto.onerror = function () {
+            studentPhoto.hidden = true;
+            studentInitial.hidden = false;
+            studentPhoto.removeAttribute("src");
+        };
+
+        studentPhoto.alt = studentName
+            ? "Profile picture of " + studentName
+            : "Student profile picture";
+
+        studentPhoto.src = photoUrl;
+
+        if (studentPhoto.complete && studentPhoto.naturalWidth > 0) {
+            studentInitial.hidden = true;
+            studentPhoto.hidden = false;
+        }
+    }
+
+    function openHealthModal(button) {
+        previouslyFocusedElement = document.activeElement;
+
+        const data = button.dataset;
+        const studentName = data.studentName || "Student";
+
+        document.getElementById("modalStudentName").textContent = studentName;
+        document.getElementById("modalStudentUsername").textContent =
+            data.studentUsername ? "@" + data.studentUsername : "";
+
+        renderStudentChips(data);
+
+        setStudentPhoto(
+            data.profilePicture,
+            data.initial || "S",
+            studentName
+        );
+
+        setModalValue(
+            "modalSymptoms",
+            data.symptoms,
+            "No symptoms recorded."
+        );
+
+        renderTreatmentAndMedicine(data.treatment);
+
+        setModalValue(
+            "modalNotes",
+            data.notes,
+            "No additional clinical notes recorded."
+        );
+
+        document.getElementById("modalUpdated").textContent =
+            data.updated || "Not available";
+
+        editButton.href = data.editUrl || "#";
+
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+
+        closeButton.focus();
+    }
+
+    function closeHealthModal() {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+
+        if (previouslyFocusedElement) {
+            previouslyFocusedElement.focus();
+        }
+    }
+
+    viewButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            openHealthModal(button);
+        });
+    });
+
+    if (closeButton) {
+        closeButton.addEventListener("click", closeHealthModal);
+    }
+
+    if (cancelButton) {
+        cancelButton.addEventListener("click", closeHealthModal);
+    }
+
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            closeHealthModal();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (
+            event.key === "Escape" &&
+            modal.classList.contains("is-open")
+        ) {
+            closeHealthModal();
+        }
+    });
+
+});
+</script>
+
+{% endblock %}

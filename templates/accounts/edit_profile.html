@@ -1,0 +1,887 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile | Clinic Connect{% endblock %}
+{% block page_title %}Edit Profile{% endblock %}
+
+{% block content %}
+
+<style>
+.edit-profile {
+    --card: #111827;
+    --input: #0b1120;
+    --border: #263247;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --accent: #22c55e;
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 4px 12px 20px;
+    color: var(--text);
+    font-size: 13px;
+}
+
+.edit-profile * {
+    box-sizing: border-box;
+}
+
+.ep-card {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .14);
+}
+
+.ep-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: #151e2e;
+}
+
+.ep-card-top h2 {
+    margin: 0 0 3px;
+    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.ep-card-top p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.ep-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.ep-role {
+    padding: 5px 11px;
+    border: 1px solid #245039;
+    border-radius: 20px;
+    background: #123323;
+    color: #4ade80;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .6px;
+    white-space: nowrap;
+}
+
+.ep-subrole {
+    padding: 5px 11px;
+    border: 1px solid #263247;
+    border-radius: 20px;
+    background: #172033;
+    color: #cbd5e1;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    white-space: nowrap;
+}
+
+.ep-form {
+    padding: 17px 18px 14px;
+}
+
+.ep-photo-section {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    padding: 13px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #0e1728;
+}
+
+.ep-photo-preview {
+    width: 88px;
+    height: 88px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border: 2px solid #334155;
+    border-radius: 50%;
+    background: #172033;
+    color: #4ade80;
+    font-size: 32px;
+    font-weight: 800;
+}
+
+.ep-photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.ep-photo-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.ep-photo-content h3 {
+    margin: 0 0 4px;
+    color: #f1f5f9;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.ep-photo-content p {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.ep-photo-content input[type="file"] {
+    width: 100%;
+    max-width: 360px;
+    color: #cbd5e1;
+    font-size: 10px;
+}
+
+.ep-photo-content input[type="file"]::file-selector-button {
+    margin-right: 9px;
+    padding: 7px 10px;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    background: #1e293b;
+    color: #e2e8f0;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.ep-photo-content input[type="file"]::file-selector-button:hover {
+    background: #293548;
+}
+
+.ep-photo-help {
+    display: block;
+    margin-top: 7px;
+    color: #64748b;
+    font-size: 9px;
+}
+
+.ep-clear {
+    margin-top: 9px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.ep-clear input {
+    width: 13px;
+    height: 13px;
+    accent-color: #ef4444;
+}
+
+.ep-clear label {
+    color: #fca5a5;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.ep-sections {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: 20px;
+}
+
+.ep-section {
+    min-width: 0;
+}
+
+.ep-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 13px;
+}
+
+.ep-section-icon {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: #172033;
+    color: #4ade80;
+    font-size: 15px;
+}
+
+.ep-section-heading h3 {
+    margin: 0 0 3px;
+    color: #f1f5f9;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.ep-section-heading p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.ep-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px 12px;
+}
+
+.ep-field {
+    min-width: 0;
+}
+
+.ep-field-full {
+    grid-column: 1 / -1;
+}
+
+.ep-field label {
+    display: block;
+    margin-bottom: 5px;
+    color: #cbd5e1;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.ep-required {
+    color: #f87171;
+}
+
+.ep-field input,
+.ep-field select,
+.ep-field textarea {
+    width: 100%;
+    min-width: 0;
+    height: 37px;
+    padding: 8px 10px;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    outline: none;
+    background: var(--input);
+    color: #f1f5f9;
+    font-family: inherit;
+    font-size: 11px;
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.ep-field textarea {
+    height: 70px;
+    resize: vertical;
+}
+
+.ep-field input:focus,
+.ep-field select:focus,
+.ep-field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, .12);
+}
+
+.ep-field select option {
+    background: #111827;
+    color: #e5e7eb;
+}
+
+.ep-readonly {
+    display: flex;
+    align-items: center;
+    min-height: 37px;
+    padding: 8px 10px;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    background: #172033;
+    color: #4ade80;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.ep-readonly-muted {
+    color: #e2e8f0;
+    font-weight: 600;
+}
+
+.ep-readonly-note {
+    margin-top: 6px;
+    color: #64748b;
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+.ep-errors {
+    margin: 5px 0 0;
+    padding: 0;
+    color: #fca5a5;
+    font-size: 10px;
+    list-style: none;
+}
+
+.ep-errors li {
+    margin-bottom: 2px;
+}
+
+.ep-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 13px;
+    border-top: 1px solid var(--border);
+}
+
+.ep-note {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+.ep-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.ep-button {
+    min-height: 36px;
+    padding: 0 14px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 750;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .18s ease;
+}
+
+.ep-cancel {
+    border-color: #334155;
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+.ep-cancel:hover {
+    background: #293548;
+    color: #fff;
+}
+
+.ep-save {
+    border-color: #22c55e;
+    background: #22c55e;
+    color: #052e16;
+}
+
+.ep-save:hover {
+    border-color: #4ade80;
+    background: #4ade80;
+}
+
+.ep-messages {
+    margin-bottom: 12px;
+}
+
+.ep-message {
+    margin-bottom: 7px;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--text);
+    font-size: 11px;
+}
+
+.ep-message.success {
+    border-color: #166534;
+    background: #10291d;
+    color: #86efac;
+}
+
+.ep-message.error {
+    border-color: #7f1d1d;
+    background: #301819;
+    color: #fca5a5;
+}
+
+@media (max-width: 760px) {
+    .ep-sections {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .ep-card-top {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .ep-form,
+    .ep-card-top {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .edit-profile {
+        padding: 4px 5px 18px;
+    }
+
+    .ep-footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .ep-actions {
+        width: 100%;
+    }
+
+    .ep-button {
+        flex: 1;
+    }
+
+    .ep-photo-section {
+        align-items: flex-start;
+        gap: 12px;
+        padding: 10px;
+    }
+
+    .ep-photo-preview {
+        width: 70px;
+        height: 70px;
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 380px) {
+    .ep-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ep-photo-section {
+        flex-direction: column;
+    }
+}
+</style>
+
+<div class="edit-profile">
+
+    {% if messages %}
+        <div class="ep-messages">
+            {% for message in messages %}
+                <div class="ep-message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main class="ep-card">
+
+        <div class="ep-card-top">
+            <div>
+                <h2>Personal Information</h2>
+                <p>Manage the information associated with your Clinic Connect account.</p>
+            </div>
+
+            <div class="ep-badges">
+                <div class="ep-role">
+                    {{ request.user.get_role_display|default:request.user.role|upper }}
+                </div>
+                {% if request.user.role == "staff" and request.user.staff_position %}
+                    <div class="ep-subrole">
+                        {{ request.user.get_staff_position_display }}
+                    </div>
+                {% elif request.user.role == "teacher" and request.user.department %}
+                    <div class="ep-subrole">
+                        {{ request.user.department }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <form method="post"
+              enctype="multipart/form-data"
+              class="ep-form"
+              id="editProfileForm">
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="ep-message error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% if "profile_picture" in form.fields %}
+                <section class="ep-photo-section">
+
+                    <div class="ep-photo-preview" id="profilePhotoPreview">
+
+                        {% if request.user.profile_picture %}
+                            <img
+                                src="{{ request.user.profile_picture.url }}"
+                                alt="Current profile picture"
+                                id="profilePhotoImage"
+                                data-current-src="{{ request.user.profile_picture.url }}"
+                            >
+                            <span id="profilePhotoInitial" style="display:none;">
+                                {{ request.user.first_name|default:request.user.username|first|upper }}
+                            </span>
+                        {% else %}
+                            <span id="profilePhotoInitial">
+                                {{ request.user.first_name|default:request.user.username|first|upper }}
+                            </span>
+                            <img
+                                id="profilePhotoImage"
+                                src=""
+                                alt="Profile picture preview"
+                                style="display:none;"
+                            >
+                        {% endif %}
+
+                    </div>
+
+                    <div class="ep-photo-content">
+
+                        <h3>Profile Picture</h3>
+
+                        <p>
+                            Upload a photo to personalize your Clinic Connect account.
+                            If you do not upload one, your first initial will be displayed.
+                        </p>
+
+                        {{ form.profile_picture }}
+
+                        {% if form.profile_picture.help_text %}
+                            <span class="ep-photo-help">
+                                {{ form.profile_picture.help_text }}
+                            </span>
+                        {% else %}
+                            <span class="ep-photo-help">
+                                JPG, JPEG, PNG, or WEBP. Maximum file size: 5 MB.
+                            </span>
+                        {% endif %}
+
+                        {% if form.profile_picture.errors %}
+                            <ul class="ep-errors">
+                                {% for error in form.profile_picture.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        {% if request.user.profile_picture %}
+                            <div class="ep-clear">
+                                <input
+                                    type="checkbox"
+                                    name="profile_picture-clear"
+                                    id="id_profile_picture-clear"
+                                >
+                                <label for="id_profile_picture-clear">
+                                    Remove current profile picture
+                                </label>
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </section>
+            {% endif %}
+
+            <div class="ep-sections">
+
+                <section class="ep-section">
+
+                    <div class="ep-section-heading">
+                        <div class="ep-section-icon">♙</div>
+                        <div>
+                            <h3>Personal Details</h3>
+                            <p>Your name, gender, and contact information</p>
+                        </div>
+                    </div>
+
+                    <div class="ep-grid">
+
+                        {% for field in form %}
+                            {% if field.name == "first_name" or field.name == "middle_name" or field.name == "last_name" or field.name == "sex" or field.name == "contact_number" or field.name == "email" %}
+
+                                <div class="ep-field {% if field.name == 'email' %}ep-field-full{% endif %}">
+                                    <label for="{{ field.id_for_label }}">
+                                        {{ field.label }}
+                                        {% if field.field.required %}
+                                            <span class="ep-required">*</span>
+                                        {% endif %}
+                                    </label>
+
+                                    {{ field }}
+
+                                    {% if field.errors %}
+                                        <ul class="ep-errors">
+                                            {% for error in field.errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+
+                            {% endif %}
+                        {% endfor %}
+
+                    </div>
+                </section>
+
+                <section class="ep-section">
+
+                    <div class="ep-section-heading">
+                        <div class="ep-section-icon">▤</div>
+                        <div>
+                            <h3>
+                                {% if request.user.role == "student" %}
+                                    Student Information
+                                {% elif request.user.role == "teacher" %}
+                                    Teacher Information
+                                {% elif request.user.role == "staff" %}
+                                    Clinic Staff Information
+                                {% else %}
+                                    Account Information
+                                {% endif %}
+                            </h3>
+
+                            <p>
+                                {% if request.user.role == "student" %}
+                                    Your ID and academic details
+                                {% elif request.user.role == "teacher" %}
+                                    Your ID and department assignment
+                                {% elif request.user.role == "staff" %}
+                                    Your ID and assigned position
+                                {% else %}
+                                    Account details
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="ep-grid">
+
+                        <div class="ep-field ep-field-full">
+                            <label>Username</label>
+                            <div class="ep-readonly ep-readonly-muted">
+                                {{ request.user.username }}
+                            </div>
+                        </div>
+
+                        {% for field in form %}
+
+                            {% if field.name == "id_number" %}
+                                <div class="ep-field">
+                                    <label for="{{ field.id_for_label }}">
+                                        {% if request.user.role == "staff" %}
+                                            Employee ID
+                                        {% elif request.user.role == "teacher" %}
+                                            Teacher ID
+                                        {% elif request.user.role == "student" %}
+                                            Student ID
+                                        {% else %}
+                                            {{ field.label }}
+                                        {% endif %}
+                                        {% if field.field.required %}
+                                            <span class="ep-required">*</span>
+                                        {% endif %}
+                                    </label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <ul class="ep-errors">
+                                            {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+
+                            {% if request.user.role == "student" and field.name == "course" %}
+                                <div class="ep-field">
+                                    <label for="{{ field.id_for_label }}">
+                                        {{ field.label }}
+                                        {% if field.field.required %}<span class="ep-required">*</span>{% endif %}
+                                    </label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <ul class="ep-errors">
+                                            {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+
+                            {% if request.user.role == "student" and field.name == "year_block" %}
+                                <div class="ep-field">
+                                    <label for="{{ field.id_for_label }}">
+                                        {{ field.label }}
+                                        {% if field.field.required %}<span class="ep-required">*</span>{% endif %}
+                                    </label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <ul class="ep-errors">
+                                            {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+
+                            {% if request.user.role == "teacher" and field.name == "department" %}
+                                <div class="ep-field">
+                                    <label for="{{ field.id_for_label }}">
+                                        {{ field.label }}
+                                        {% if field.field.required %}<span class="ep-required">*</span>{% endif %}
+                                    </label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <ul class="ep-errors">
+                                            {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if request.user.role == "staff" %}
+                            <div class="ep-field">
+                                <label>Staff Position</label>
+                                <div class="ep-readonly">
+                                    {{ request.user.get_staff_position_display|default:"Not assigned" }}
+                                </div>
+                            </div>
+                            <div class="ep-field ep-field-full">
+                                <p class="ep-readonly-note">
+                                    Your staff position is assigned by the Clinic Administrator and cannot be changed here.
+                                </p>
+                            </div>
+                        {% endif %}
+
+                    </div>
+                </section>
+
+            </div>
+
+            <footer class="ep-footer">
+
+                <div class="ep-note">
+                    <span class="ep-required">*</span> Required fields
+                    <br>
+                    Changes are saved to your Clinic Connect account.
+                </div>
+
+                <div class="ep-actions">
+                    <a href="{% url 'accounts:profile' %}" class="ep-button ep-cancel">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="ep-button ep-save">
+                        ✓ Save Changes
+                    </button>
+                </div>
+
+            </footer>
+
+        </form>
+    </main>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const fileInput = document.getElementById("id_profile_picture");
+    const previewImage = document.getElementById("profilePhotoImage");
+    const initial = document.getElementById("profilePhotoInitial");
+    const clearCheckbox = document.getElementById("id_profile_picture-clear");
+
+    if (!fileInput || !previewImage) {
+        return;
+    }
+
+    const currentImage = previewImage.dataset.currentSrc || "";
+
+    fileInput.addEventListener("change", function () {
+        const file = this.files && this.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+            alert("Please select a JPG, JPEG, PNG, or WEBP image.");
+            this.value = "";
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert("Profile picture must not exceed 5 MB.");
+            this.value = "";
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+            previewImage.src = event.target.result;
+            previewImage.style.display = "block";
+
+            if (initial) {
+                initial.style.display = "none";
+            }
+
+            if (clearCheckbox) {
+                clearCheckbox.checked = false;
+            }
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    if (clearCheckbox) {
+        clearCheckbox.addEventListener("change", function () {
+            if (this.checked) {
+                previewImage.style.display = "none";
+                previewImage.removeAttribute("src");
+
+                if (initial) {
+                    initial.style.display = "block";
+                }
+
+                fileInput.value = "";
+            } else {
+                if (currentImage) {
+                    previewImage.src = currentImage;
+                    previewImage.style.display = "block";
+
+                    if (initial) {
+                        initial.style.display = "none";
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% block title %}Reschedule Reason{% endblock %}
+
+{% block content %}
+
+<style>
+    .reason-page {
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .page-header h1 {
+        margin: 0;
+        color: #f8fafc;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    .page-header p {
+        margin: 7px 0 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .reason-card {
+        background: #071011;
+        border: 1px solid #1b292a;
+        border-radius: 15px;
+        padding: 28px;
+    }
+
+    .appointment-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+        margin-bottom: 25px;
+    }
+
+    .info-item {
+        background: #0b1120;
+        border: 1px solid #1f2937;
+        border-radius: 9px;
+        padding: 15px;
+    }
+
+    .info-label {
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        margin-bottom: 6px;
+    }
+
+    .info-value {
+        color: #cbd5e1;
+        font-size: 13px;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 20px;
+        background: #172554;
+        color: #60a5fa;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .reason-section {
+        margin-top: 10px;
+    }
+
+    .reason-title {
+        color: #f8fafc;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .reason-box {
+        background: #0c1b35;
+        border: 1px solid #1e3a5f;
+        border-radius: 9px;
+        padding: 18px;
+        color: #bfdbfe;
+        font-size: 13px;
+        line-height: 1.7;
+        white-space: pre-wrap;
+    }
+
+    .no-reason {
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 9px;
+        padding: 18px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .back-button {
+        display: inline-block;
+        margin-top: 22px;
+        padding: 10px 15px;
+        border-radius: 7px;
+        background: #22c55e;
+        border: 1px solid #22c55e;
+        color: #052e16;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 700;
+        transition: .2s;
+    }
+
+    .back-button:hover {
+        background: #16a34a;
+        border-color: #16a34a;
+        color: white;
+    }
+
+    @media (max-width: 600px) {
+        .appointment-info {
+            grid-template-columns: 1fr;
+        }
+
+        .reason-card {
+            padding: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 23px;
+        }
+    }
+</style>
+
+<div class="reason-page">
+
+    <div class="page-header">
+
+        <h1>Reschedule Reason</h1>
+
+        <p>
+            View the reason provided by the clinic staff for rescheduling your appointment.
+        </p>
+
+    </div>
+
+    <div class="reason-card">
+
+        <div class="appointment-info">
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Appointment Date
+                </div>
+
+                <div class="info-value">
+                    {% if appointment.scheduled_date %}
+                        {{ appointment.scheduled_date|date:"F d, Y" }}
+                    {% else %}
+                        Not available
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Appointment Time
+                </div>
+
+                <div class="info-value">
+                    {% if appointment.scheduled_time %}
+                        {{ appointment.scheduled_time|time:"g:i A" }}
+                    {% else %}
+                        Not available
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Health Concern
+                </div>
+
+                <div class="info-value">
+                    {{ appointment.concern }}
+                </div>
+
+            </div>
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Status
+                </div>
+
+                <div class="info-value">
+                    <span class="status">
+                        Rescheduled
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="reason-section">
+
+            <div class="reason-title">
+                Reason for Rescheduling
+            </div>
+
+            {% if appointment.staff_notes %}
+
+                <div class="reason-box">
+                    {{ appointment.staff_notes }}
+                </div>
+
+            {% else %}
+
+                <div class="no-reason">
+                    No reason was provided by the clinic staff.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <a
+            href="{% url 'accounts:student_appointments' %}"
+            class="back-button"
+        >
+            ← Back to My Appointments
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

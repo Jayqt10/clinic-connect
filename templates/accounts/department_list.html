@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Department | Clinic Connect{% endblock %}
+
+{% block content %}
+
+<style>
+    .dept-list-page {
+        padding: 12px 0 20px;
+    }
+
+    .dept-list-heading h1 {
+        font-size: 26px;
+        color: #f8fafc;
+        letter-spacing: -0.5px;
+        margin-bottom: 10px;
+    }
+
+    .dept-list-heading p {
+        color: #94a3b8;
+        font-size: 13px;
+        margin-bottom: 30px;
+    }
+
+    .dept-list-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .dept-list-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 22px;
+        background: #07140f;
+        border: 1px solid #1c3328;
+        border-radius: 14px;
+    }
+
+    .dept-list-code {
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 8px;
+        background: rgba(32, 201, 87, 0.14);
+        border: 1px solid rgba(32, 201, 87, 0.3);
+        color: #4ade80;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    .dept-list-card h2 {
+        margin: 18px 0 12px;
+        color: #f8fafc;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
+    .dept-list-link {
+        color: #4ade80;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .dept-list-link:hover {
+        color: #86efac;
+    }
+
+    .dept-list-empty {
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    @media (max-width: 1000px) {
+        .dept-list-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 640px) {
+        .dept-list-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="dept-list-page">
+
+    <div class="dept-list-heading">
+        <h1>Departments</h1>
+        <p>North Eastern Mindanao State University — Cantilan Campus</p>
+    </div>
+
+    {% if departments %}
+    <div class="dept-list-grid">
+        {% for department in departments %}
+        <div class="dept-list-card">
+            <div>
+                {% if department.code %}
+                <span class="dept-list-code">{{ department.code }}</span>
+                {% endif %}
+                <h2>{{ department.name }}</h2>
+            </div>
+
+            <a class="dept-list-link"
+               href="{% url 'accounts:teacher_department_detail' department.pk %}">
+                View Department →
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="dept-list-empty">No departments have been added yet.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

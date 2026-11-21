@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Clinic Connect{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1120;
+            color: #e5e7eb;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #111827;
+            border-right: 1px solid #1f2937;
+            padding: 22px 16px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            padding: 5px 12px 25px;
+            border-bottom: 1px solid #1f2937;
+            margin-bottom: 20px;
+        }
+
+        .logo h2 {
+            color: #22c55e;
+            font-size: 21px;
+        }
+
+        .logo p {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+        }
+
+        .nav-title {
+            color: #94a3b8;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 12px 8px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 11px 12px;
+            margin-bottom: 4px;
+            border-radius: 7px;
+            border-left: 3px solid transparent;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #1f2937;
+            color: #f8fafc;
+        }
+
+        .nav-link.active {
+            background: rgba(34, 197, 94, 0.12);
+            border-left-color: #22c55e;
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        .appointment-nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .appointment-count-pill {
+            display: none;
+            min-width: 21px;
+            text-align: center;
+            background: #f59e0b;
+            color: #111827;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 7px;
+            border-radius: 20px;
+        }
+
+        .appointment-count-pill.has-count {
+            display: inline-block;
+            animation: pulse-appointment 2s infinite;
+        }
+
+        @keyframes pulse-appointment {
+            0% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, .55);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+            }
+        }
+
+        .emergency-count-pill {
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        .sidebar-bottom {
+            margin-top: 20px;
+            padding-top: 14px;
+            border-top: 1px solid #1f2937;
+        }
+
+        .sidebar-logout {
+            width: 100%;
+            margin-top: 4px;
+            padding: 10px 12px;
+            border: 1px solid #374151;
+            background: #1f2937;
+            color: #cbd5e1;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .sidebar-logout:hover {
+            background: #374151;
+            color: white;
+        }
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 70px;
+            background: #111827;
+            border-bottom: 1px solid #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .topbar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .topbar-clock {
+            color: #94a3b8;
+            font-size: 12px;
+            white-space: nowrap;
+            padding-right: 18px;
+            border-right: 1px solid #1f2937;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            color: #f8fafc;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            color: #94a3b8;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .user-avatar-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            text-decoration: none;
+            overflow: hidden;
+            border: 1px solid rgba(34, 197, 94, .35);
+            transition: .2s ease;
+        }
+
+        .user-avatar-link:hover {
+            border-color: #4ade80;
+            transform: translateY(-1px);
+        }
+
+        .user-avatar {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #20c957;
+            color: #07130b;
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .user-avatar img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .content {
+            padding: 30px;
+            min-height: calc(100vh - 70px);
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 12px 15px;
+            background: #14532d;
+            border: 1px solid #166534;
+            border-radius: 7px;
+            color: #dcfce7;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .appointment-toast {
+            position: fixed;
+            top: 88px;
+            right: 24px;
+            z-index: 9999;
+            width: min(390px, calc(100vw - 30px));
+            background: #111827;
+            border: 1px solid #f59e0b;
+            border-left: 4px solid #f59e0b;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, .45);
+            display: none;
+            animation: toast-slide-in .3s ease;
+        }
+
+        .appointment-toast.show {
+            display: block;
+        }
+
+        @keyframes toast-slide-in {
+            from {
+                opacity: 0;
+                transform: translateX(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .appointment-toast-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .appointment-toast-heading {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #fbbf24;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .appointment-toast-close {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 19px;
+            cursor: pointer;
+            padding: 2px 5px;
+        }
+
+        .appointment-toast-close:hover {
+            color: #ffffff;
+        }
+
+        .appointment-toast-student {
+            color: #f8fafc;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .appointment-toast-concern {
+            color: #cbd5e1;
+            font-size: 12px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .appointment-toast-time {
+            color: #94a3b8;
+            font-size: 11px;
+            margin-top: 9px;
+        }
+
+        .appointment-toast-action {
+            display: inline-block;
+            margin-top: 13px;
+            padding: 8px 12px;
+            background: #f59e0b;
+            color: #111827;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .appointment-toast-action:hover {
+            background: #fbbf24;
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 210px;
+            }
+
+            .main {
+                margin-left: 210px;
+                width: calc(100% - 210px);
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .topbar-clock {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar {
+                width: 190px;
+                padding: 18px 10px;
+            }
+
+            .main {
+                margin-left: 190px;
+                width: calc(100% - 190px);
+            }
+
+            .topbar {
+                padding: 0 12px;
+            }
+
+            .topbar-title {
+                font-size: 15px;
+            }
+
+            .user-area {
+                gap: 10px;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .user-avatar-link {
+                width: 34px;
+                height: 34px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .appointment-toast {
+                top: 80px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <h2>Clinic Connect</h2>
+            <p>School Clinic Management System</p>
+        </div>
+
+        {% with current=request.resolver_match.url_name %}
+
+        <nav class="sidebar-nav">
+
+            {% if request.user.role == 'staff' %}
+
+                <div class="nav-title">Clinic Staff</div>
+
+                <a href="{% url 'accounts:dashboard' %}"
+                   class="nav-link{% if current == 'dashboard' %} active{% endif %}">
+                    Dashboard
+                </a>
+
+                <a href="{% url 'accounts:staff_appointments' %}"
+                   class="nav-link appointment-nav-link{% if current == 'staff_appointments' %} active{% endif %}">
+                    <span>Appointments</span>
+                    <span id="appointment-nav-badge" class="appointment-count-pill">0</span>
+                </a>
+
+                <a href="{% url 'accounts:staff_referrals' %}"
+                   class="nav-link{% if current == 'staff_referrals' or current == 'referrals' %} active{% endif %}"
+                   style="display: flex; align-items: center; justify-content: space-between;">
+                    <span>Referrals</span>
+                    <span id="emergency-nav-badge" class="emergency-count-pill" style="display: none;">0</span>
+                </a>
+
+                <a href="{% url 'accounts:staff_health_records' %}"
+                   class="nav-link{% if current == 'staff_health_records' %} active{% endif %}">
+                    Health Records
+                </a>
+
+                <a href="{% url 'accounts:staff_student_verification' %}"
+                   class="nav-link{% if current == 'staff_student_verification' %} active{% endif %}">
+                    Student Verification
+                </a>
+
+                <a href="{% url 'accounts:staff_medicines' %}"
+                    class="nav-link{% if current == 'staff_medicines' %} active{% endif %}">
+                    Medicines
+                </a>
+
+                <a href="{% url 'accounts:staff_announcements' %}"
+                   class="nav-link{% if current == 'staff_announcements' %} active{% endif %}">
+                    Announcements
+                </a>
+
+                {% if request.user.staff_position == 'admin' %}
+                    <a href="{% url 'accounts:admin_user_management' %}"
+                       class="nav-link{% if current == 'admin_user_management' or current == 'admin_user_detail' %} active{% endif %}">
+                        User Management
+                    </a>
+
+                    <a href="{% url 'accounts:staff_settings' %}"
+                       class="nav-link{% if current == 'staff_settings' or current == 'settings' %} active{% endif %}">
+                        System Administration
+                    </a>
+                {% endif %}
+
+            {% elif request.user.role == 'teacher' %}
+
+                <div class="nav-title">Teacher</div>
+
+                <a href="{% url 'accounts:dashboard' %}"
+                   class="nav-link{% if current == 'dashboard' %} active{% endif %}">
+                    Dashboard
+                </a>
+
+                <a href="{% url 'accounts:teacher_referrals' %}"
+                   class="nav-link{% if current == 'teacher_referrals' %} active{% endif %}">
+                    Referrals
+                </a>
+
+                <a href="{% url 'accounts:teacher_department' %}"
+                   class="nav-link{% if current == 'teacher_department' or current == 'teacher_department_detail' %} active{% endif %}">
+                    Department
+                </a>
+
+            {% else %}
+
+                <div class="nav-title">Student</div>
+
+                <a href="{% url 'accounts:dashboard' %}"
+                   class="nav-link{% if current == 'dashboard' %} active{% endif %}">
+                    Dashboard
+                </a>
+
+                <a href="{% url 'accounts:student_appointments' %}"
+                   class="nav-link{% if current == 'student_appointments' %} active{% endif %}">
+                    Appointments
+                </a>
+
+                <a href="{% url 'accounts:student_health_records' %}"
+                   class="nav-link{% if current == 'student_health_records' %} active{% endif %}">
+                    Health Records
+                </a>
+
+                <a href="{% url 'accounts:student_sick_notes' %}"
+                   class="nav-link{% if current == 'student_sick_notes' %} active{% endif %}">
+                    Sick Notes
+                </a>
+
+            {% endif %}
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="{% url 'accounts:profile' %}"
+               class="nav-link{% if current == 'profile' or current == 'student_profile' or current == 'edit_profile' or current == 'password_change' %} active{% endif %}">
+                Profile
+            </a>
+
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="sidebar-logout">Logout</button>
+            </form>
+
+        </div>
+
+        {% endwith %}
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div class="topbar-title">
+                {% block page_title %}Clinic Connect{% endblock %}
+            </div>
+
+            <div class="user-area">
+
+                <div class="topbar-clock" id="topbar-clock"></div>
+
+                <div class="user-info">
+
+                    <div class="user-name">
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </div>
+
+                    <div class="user-role">
+                        {{ request.user.get_role_display }}
+                    </div>
+
+                </div>
+
+                <a href="{% url 'accounts:profile' %}"
+                   class="user-avatar-link"
+                   title="View Profile"
+                   aria-label="View Profile">
+
+                    <div class="user-avatar">
+
+                        {% if request.user.profile_picture %}
+                            <img
+                                src="{{ request.user.profile_picture.url }}"
+                                alt="Profile picture"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                            >
+                            <span style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">
+                                {{ request.user.first_name|default:request.user.username|first|upper|default:"U" }}
+                            </span>
+                        {% else %}
+                            {{ request.user.first_name|default:request.user.username|first|upper|default:"U" }}
+                        {% endif %}
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        </header>
+
+        <section class="content">
+
+            {% if messages %}
+
+                <div class="messages">
+
+                    {% for message in messages %}
+
+                        <div class="message">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+            {% block content %}
+            {% endblock %}
+
+        </section>
+
+    </main>
+
+</div>
+
+{% if request.user.is_authenticated and request.user.role == 'staff' %}
+<div id="appointment-toast" class="appointment-toast" role="status" aria-live="polite">
+    <div class="appointment-toast-header">
+        <div class="appointment-toast-heading">
+            <i class="fa-solid fa-bell"></i>
+            New Appointment Request
+        </div>
+
+        <button type="button"
+                class="appointment-toast-close"
+                id="appointment-toast-close"
+                aria-label="Close notification">
+            &times;
+        </button>
+    </div>
+
+    <div class="appointment-toast-student" id="appointment-toast-student"></div>
+    <div class="appointment-toast-concern" id="appointment-toast-concern"></div>
+    <div class="appointment-toast-time" id="appointment-toast-time"></div>
+
+    <a href="{% url 'accounts:staff_appointments' %}"
+       class="appointment-toast-action">
+        View Appointment
+    </a>
+</div>
+{% endif %}
+
+<script>
+(function () {
+    var el = document.getElementById('topbar-clock');
+
+    if (!el) return;
+
+    function tick() {
+        el.textContent = new Date().toLocaleString('en-PH', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+        });
+    }
+
+    tick();
+    setInterval(tick, 30000);
+})();
+</script>
+
+<script>
+const baseTitle = document.title;
+
+let previousEmergencyCount = 0;
+
+function updateSidebarEmergencyBadge() {
+    {% if request.user.is_authenticated and request.user.role == 'staff' %}
+    fetch("{% url 'accounts:staff_emergency_alerts' %}")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Emergency alert request failed.");
+            }
+
+            return response.json();
+        })
+        .then(data => {
+            const badge = document.getElementById('emergency-nav-badge');
+            const count = data.alerts ? data.alerts.length : 0;
+
+            if (badge) {
+                if (count > 0) {
+                    badge.innerText = count;
+                    badge.style.display = 'inline-block';
+
+                    if (count > previousEmergencyCount && previousEmergencyCount !== 0) {
+                        playEmergencyBeep();
+                    }
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+
+            previousEmergencyCount = count;
+        })
+        .catch(err => console.error("Emergency alert check error:", err));
+    {% endif %}
+}
+
+function playEmergencyBeep() {
+    playNotificationTone(880, 0.3);
+}
+
+function playNotificationTone(frequency, duration) {
+    try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+
+        if (!AudioContextClass) return;
+
+        const audioCtx = new AudioContextClass();
+
+        const playTone = () => {
+            const oscillator = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+
+            gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+            oscillator.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + duration);
+
+            oscillator.onended = function () {
+                audioCtx.close();
+            };
+        };
+
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume().then(playTone).catch(() => {});
+        } else {
+            playTone();
+        }
+    } catch (error) {
+        console.warn("Notification sound could not be played.", error);
+    }
+}
+
+function playAppointmentSound() {
+    playNotificationTone(660, 0.18);
+
+    setTimeout(function () {
+        playNotificationTone(880, 0.25);
+    }, 180);
+}
+
+setInterval(updateSidebarEmergencyBadge, 5000);
+document.addEventListener('DOMContentLoaded', updateSidebarEmergencyBadge);
+</script>
+
+<script>
+{% if request.user.is_authenticated and request.user.role == 'staff' %}
+
+let previousLatestAppointmentId = null;
+
+const appointmentAlertsUrl = "{% url 'accounts:staff_appointment_alerts' %}";
+
+function showAppointmentToast(appointment) {
+    const toast = document.getElementById('appointment-toast');
+
+    if (!toast || !appointment) return;
+
+    document.getElementById('appointment-toast-student').textContent =
+        appointment.student || 'A student';
+
+    document.getElementById('appointment-toast-concern').textContent =
+        'Concern: ' + (appointment.concern || 'No concern provided');
+
+    const submittedDate = appointment.created_at
+        ? new Date(appointment.created_at)
+        : null;
+
+    document.getElementById('appointment-toast-time').textContent =
+        submittedDate && !isNaN(submittedDate.getTime())
+            ? 'Submitted: ' + submittedDate.toLocaleString('en-PH')
+            : 'A new appointment request has been submitted.';
+
+    toast.classList.add('show');
+
+    playAppointmentSound();
+}
+
+function updateAppointmentNotifications() {
+    fetch(appointmentAlertsUrl, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        cache: 'no-store'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Appointment notification request failed.");
+        }
+
+        return response.json();
+    })
+    .then(data => {
+        const badge = document.getElementById('appointment-nav-badge');
+
+        const pendingCount = Number(data.pending_count || 0);
+        const latestAppointmentId = Number(data.latest_appointment_id || 0);
+        const latestPending = data.latest_pending;
+
+        if (badge) {
+            badge.textContent = pendingCount;
+
+            if (pendingCount > 0) {
+                badge.classList.add('has-count');
+            } else {
+                badge.classList.remove('has-count');
+            }
+        }
+
+        document.title = pendingCount > 0
+            ? '(' + pendingCount + ') Pending Appointments - ' + baseTitle
+            : baseTitle;
+
+        if (previousLatestAppointmentId === null) {
+            previousLatestAppointmentId = latestAppointmentId;
+            return;
+        }
+
+        const isNewAppointment =
+            latestAppointmentId > previousLatestAppointmentId;
+
+        const newestAppointmentIsPending =
+            latestPending &&
+            Number(latestPending.id) === latestAppointmentId;
+
+        if (isNewAppointment && newestAppointmentIsPending) {
+            showAppointmentToast(latestPending);
+        }
+
+        previousLatestAppointmentId = latestAppointmentId;
+    })
+    .catch(error => {
+        console.error("Appointment notification error:", error);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const closeButton = document.getElementById('appointment-toast-close');
+    const toast = document.getElementById('appointment-toast');
+
+    if (closeButton && toast) {
+        closeButton.addEventListener('click', function () {
+            toast.classList.remove('show');
+        });
+    }
+
+    updateAppointmentNotifications();
+
+    setInterval(updateAppointmentNotifications, 5000);
+});
+
+{% endif %}
+</script>
+
+</body>
+</html>

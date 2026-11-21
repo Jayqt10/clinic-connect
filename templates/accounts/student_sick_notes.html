@@ -1,0 +1,375 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Sick Notes{% endblock %}
+
+{% block content %}
+
+<style>
+    .sick-notes-page {
+        max-width: 1300px;
+        margin: 0 auto;
+        color: #e5e7eb;
+    }
+
+    .page-header {
+        margin-bottom: 24px;
+    }
+
+    .page-header h1 {
+        margin: 0;
+        color: #f8fafc;
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+    .page-header p {
+        margin: 7px 0 0;
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    .notes-card {
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 20px 22px;
+        border-bottom: 1px solid #1f2937;
+    }
+
+    .card-header h2 {
+        margin: 0 0 5px;
+        color: #f8fafc;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .card-header p {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .note-count {
+        color: #4ade80;
+        background: #052e16;
+        border: 1px solid #14532d;
+        padding: 7px 11px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        min-width: 850px;
+        border-collapse: collapse;
+    }
+
+    th {
+        padding: 13px 16px;
+        text-align: left;
+        color: #94a3b8;
+        background: #0b1120;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+        white-space: nowrap;
+    }
+
+    td {
+        padding: 15px 16px;
+        color: #cbd5e1;
+        font-size: 12px;
+        border-top: 1px solid #1f2937;
+        vertical-align: middle;
+    }
+
+    tbody tr {
+        transition: background .2s;
+    }
+
+    tbody tr:hover {
+        background: #0f172a;
+    }
+
+    .date {
+        color: #94a3b8;
+        white-space: nowrap;
+    }
+
+    .symptoms {
+        color: #f8fafc;
+        font-weight: 500;
+        max-width: 280px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .days {
+        color: #4ade80;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .issued-by {
+        color: #cbd5e1;
+        white-space: nowrap;
+    }
+
+    .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 10px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: .2s;
+    }
+
+    .view-btn {
+        background: #172554;
+        border: 1px solid #1e3a8a;
+        color: #93c5fd;
+    }
+
+    .view-btn:hover {
+        background: #1e3a8a;
+        color: #dbeafe;
+    }
+
+    .download-btn {
+        background: #14532d;
+        border: 1px solid #166534;
+        color: #bbf7d0;
+    }
+
+    .download-btn:hover {
+        background: #166534;
+        color: #dcfce7;
+    }
+
+    .email-btn {
+        background: #1f2937;
+        border: 1px solid #374151;
+        color: #cbd5e1;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .email-btn:hover {
+        background: #374151;
+        color: #f8fafc;
+    }
+
+    .email-form {
+        display: inline;
+        margin: 0;
+        padding: 0;
+    }
+
+    .empty-state {
+        padding: 55px 20px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 14px;
+        border-radius: 50%;
+        background: #1f2937;
+        color: #94a3b8;
+        font-size: 22px;
+    }
+
+    .empty-state h3 {
+        color: #f8fafc;
+        font-size: 16px;
+        margin: 0 0 7px;
+    }
+
+    .empty-state p {
+        color: #94a3b8;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    @media (max-width: 700px) {
+        .card-header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 17px;
+        }
+
+        .page-header h1 {
+            font-size: 23px;
+        }
+
+        td {
+            padding: 13px;
+        }
+    }
+</style>
+
+<div class="sick-notes-page">
+
+    <div class="page-header">
+        <h1>Sick Notes</h1>
+        <p>View and download your official sick notes issued by the school clinic.</p>
+    </div>
+
+    <div class="notes-card">
+
+        <div class="card-header">
+
+            <div>
+                <h2>My Sick Notes</h2>
+                <p>Official sick notes issued after completed clinic appointments.</p>
+            </div>
+
+            <div class="note-count">
+                {{ sick_notes|length }}
+                note{{ sick_notes|length|pluralize }}
+            </div>
+
+        </div>
+
+        {% if sick_notes %}
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Date Issued</th>
+                            <th>Symptoms</th>
+                            <th>Recommended Rest</th>
+                            <th>Issued By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for sick_note in sick_notes %}
+
+                        <tr>
+
+                            <td class="date">
+                                {{ sick_note.issued_at|date:"M d, Y" }}
+                            </td>
+
+                            <td class="symptoms">
+                                {% if sick_note.appointment.health_record.symptoms %}
+                                    {{ sick_note.appointment.health_record.symptoms|truncatechars:100 }}
+                                {% else %}
+                                    <span style="color: #64748b;">
+                                        No symptoms recorded
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="days">
+                                {{ sick_note.days_recommended }}
+                                day{{ sick_note.days_recommended|pluralize }}
+                            </td>
+
+                            <td class="issued-by">
+                                {{ sick_note.issued_by.get_full_name|default:sick_note.issued_by.username }}
+                            </td>
+
+                            <td>
+
+                                <div class="actions">
+
+                                    <a
+                                        href="{% url 'accounts:view_sick_note' sick_note.id %}"
+                                        class="action-btn view-btn">
+                                        View
+                                    </a>
+
+                                    <a
+                                        href="{% url 'accounts:download_sick_note' sick_note.id %}"
+                                        class="action-btn download-btn">
+                                        Download
+                                    </a>
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'accounts:email_sick_note' sick_note.id %}"
+                                        class="email-form">
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="action-btn email-btn">
+                                            Email
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <div class="empty-icon">□</div>
+
+                <h3>No Sick Notes</h3>
+
+                <p>
+                    You don't have any issued sick notes yet.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

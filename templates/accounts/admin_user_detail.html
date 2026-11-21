@@ -1,0 +1,832 @@
+{% extends 'base.html' %}
+
+{% block title %}User Identification | Clinic Connect{% endblock %}
+{% block page_title %}User Identification{% endblock %}
+
+{% block content %}
+<style>
+.admin-profile {
+    --panel: #111827;
+    --surface: #0b1120;
+    --border: #263449;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --green: #22c55e;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 4px 0 36px;
+    color: var(--text);
+}
+
+.admin-profile *,
+.admin-profile *::before,
+.admin-profile *::after {
+    box-sizing: border-box;
+}
+
+.ap-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.ap-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border: 1px solid #263449;
+    border-radius: 8px;
+    background: var(--panel);
+    color: #86efac;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 650;
+    transition: background .15s, border-color .15s, color .15s;
+}
+
+.ap-back:hover {
+    border-color: #22c55e;
+    background: #10251b;
+    color: #bbf7d0;
+}
+
+.ap-readonly {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    border: 1px solid #365044;
+    border-radius: 999px;
+    background: #10251b;
+    color: #86efac;
+    font-size: 10.5px;
+    font-weight: 700;
+}
+
+.ap-id-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #31523e;
+    border-radius: 16px;
+    background: linear-gradient(125deg, #0f241c 0%, #123a29 52%, #111827 100%);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .24);
+}
+
+.ap-id-card::before {
+    content: "";
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    right: -95px;
+    top: -165px;
+    border: 1px solid rgba(134, 239, 172, .12);
+    border-radius: 50%;
+    box-shadow: 0 0 0 24px rgba(134, 239, 172, .025),
+                0 0 0 54px rgba(134, 239, 172, .025);
+    pointer-events: none;
+}
+
+.ap-card-inner {
+    position: relative;
+    z-index: 1;
+    padding: 20px 24px;
+}
+
+.ap-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+
+.ap-brand-left {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.ap-brand-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(134, 239, 172, .35);
+    border-radius: 10px;
+    background: rgba(5, 46, 26, .55);
+    color: #86efac;
+    font-size: 15px;
+}
+
+.ap-brand-name {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    color: #f0fdf4;
+}
+
+.ap-brand-subtitle {
+    margin-top: 2px;
+    color: #a7cbb5;
+    font-size: 9.5px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.ap-card-label {
+    color: #bbf7d0;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+}
+
+.ap-card-content {
+    display: grid;
+    grid-template-columns: 124px minmax(0, 1fr);
+    align-items: center;
+    gap: 22px;
+    padding: 18px 0 16px;
+}
+
+.ap-photo-wrap {
+    width: 124px;
+    height: 142px;
+    padding: 4px;
+    border: 1px solid rgba(187, 247, 208, .38);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .07);
+}
+
+.ap-photo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #263449;
+    color: #86efac;
+    font-size: 44px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.ap-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ap-identity {
+    min-width: 0;
+}
+
+.ap-role {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 7px;
+    padding: 4px 9px;
+    border: 1px solid rgba(134, 239, 172, .28);
+    border-radius: 999px;
+    background: rgba(5, 46, 26, .45);
+    color: #bbf7d0;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+}
+
+.ap-full-name {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(21px, 2.6vw, 27px);
+    font-weight: 800;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.ap-identity-caption {
+    margin: 4px 0 14px;
+    color: #b6c9bd;
+    font-size: 11.5px;
+}
+
+.ap-identity-details {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px 18px;
+    max-width: 680px;
+}
+
+.ap-id-detail-box {
+    padding: 8px 11px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 8px;
+    background: rgba(11, 17, 32, .35);
+}
+
+.ap-id-detail-label {
+    display: block;
+    margin-bottom: 3px;
+    color: #a7cbb5;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: .9px;
+    text-transform: uppercase;
+}
+
+.ap-id-detail-value {
+    color: #f0fdf4;
+    font-size: 12px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.ap-card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 13px;
+    border-top: 1px solid rgba(255, 255, 255, .12);
+}
+
+.ap-card-bottom-label {
+    color: #a7cbb5;
+    font-size: 9.5px;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+}
+
+.ap-account-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.ap-account-status.active {
+    background: rgba(5, 46, 26, .7);
+    color: #86efac;
+    border: 1px solid rgba(134, 239, 172, .25);
+}
+
+.ap-account-status.inactive {
+    background: rgba(127, 29, 29, .35);
+    color: #fecaca;
+    border: 1px solid rgba(252, 165, 165, .25);
+}
+
+.ap-information-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.ap-info-card {
+    min-width: 0;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+}
+
+.ap-info-card.wide {
+    grid-column: 1 / -1;
+}
+
+.ap-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 14px;
+    padding-bottom: 11px;
+    border-bottom: 1px solid var(--border);
+}
+
+.ap-section-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border: 1px solid #31523e;
+    border-radius: 8px;
+    background: #10251b;
+    color: #86efac;
+    font-size: 12px;
+}
+
+.ap-section-heading h3 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ap-section-heading p {
+    margin: 2px 0 0;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.ap-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 18px;
+}
+
+.ap-fields.three-col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ap-field {
+    min-width: 0;
+    padding: 9px 11px;
+    border: 1px solid #1d293b;
+    border-radius: 8px;
+    background: var(--surface);
+}
+
+.ap-field-label {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+}
+
+.ap-field-value {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+}
+
+.ap-field-value.is-empty {
+    color: #64748b;
+    font-style: italic;
+    font-weight: 500;
+}
+
+.ap-verification {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    border: 1px solid #31523e;
+    border-radius: 999px;
+    background: #10251b;
+    color: #86efac;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.ap-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 14px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: #0d1524;
+    color: var(--muted);
+    font-size: 10.5px;
+    line-height: 1.6;
+}
+
+.ap-notice i {
+    margin-top: 2px;
+    color: #86efac;
+}
+
+.ap-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    color: #64748b;
+    font-size: 10px;
+}
+
+@media (max-width: 820px) {
+    .ap-identity-details,
+    .ap-fields.three-col {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .ap-information-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ap-info-card.wide {
+        grid-column: auto;
+    }
+
+    .ap-card-inner {
+        padding: 16px;
+    }
+
+    .ap-card-content {
+        grid-template-columns: 104px minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .ap-photo-wrap {
+        width: 104px;
+        height: 124px;
+    }
+
+    .ap-full-name {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ap-toolbar,
+    .ap-brand,
+    .ap-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .ap-card-content {
+        grid-template-columns: 1fr;
+        justify-items: start;
+        gap: 14px;
+    }
+
+    .ap-photo-wrap {
+        width: 98px;
+        height: 116px;
+    }
+
+    .ap-identity-details,
+    .ap-fields,
+    .ap-fields.three-col {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .ap-info-card {
+        padding: 14px;
+    }
+}
+</style>
+
+<div class="admin-profile">
+
+    <div class="ap-toolbar">
+        <a href="{% url 'accounts:admin_user_management' %}" class="ap-back">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to User Management
+        </a>
+
+        <span class="ap-readonly">
+            <i class="fa-solid fa-lock"></i>
+            Read-only identification
+        </span>
+    </div>
+
+    <div class="ap-id-card">
+        <div class="ap-card-inner">
+
+            <div class="ap-brand">
+                <div class="ap-brand-left">
+                    <div class="ap-brand-icon">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <div>
+                        <div class="ap-brand-name">CLINIC CONNECT</div>
+                        <div class="ap-brand-subtitle">School Healthcare Services</div>
+                    </div>
+                </div>
+
+                <div class="ap-card-label">User Identification</div>
+            </div>
+
+            <div class="ap-card-content">
+                <div class="ap-photo-wrap">
+                    <div class="ap-photo">
+                        {% if user_obj.profile_picture %}
+                            <img src="{{ user_obj.profile_picture.url }}" alt="{{ user_obj.get_full_name|default:user_obj.username }}">
+                        {% else %}
+                            {{ user_obj.first_name|default:user_obj.username|first|upper }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="ap-identity">
+                    <span class="ap-role">
+                        <i class="fa-solid fa-user-check"></i>
+                        {{ user_obj.get_role_display }}
+                    </span>
+
+                    <h2 class="ap-full-name">
+                        {{ user_obj.get_full_name|default:user_obj.username }}
+                    </h2>
+
+                    <p class="ap-identity-caption">
+                        Registered Clinic Connect Account · @{{ user_obj.username }}
+                    </p>
+
+                    <div class="ap-identity-details">
+                        <div class="ap-id-detail-box">
+                            <span class="ap-id-detail-label">ID Number</span>
+                            <div class="ap-id-detail-value">
+                                {{ user_obj.id_number|default:"Not provided" }}
+                            </div>
+                        </div>
+
+                        {% if user_obj.role == "student" or user_obj.role == "teacher" %}
+                            <div class="ap-id-detail-box">
+                                <span class="ap-id-detail-label">Department</span>
+                                <div class="ap-id-detail-value">
+                                    {{ user_obj.department|default:"Not assigned" }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if user_obj.role == "student" %}
+                            <div class="ap-id-detail-box">
+                                <span class="ap-id-detail-label">Year / Block</span>
+                                <div class="ap-id-detail-value">
+                                    {{ user_obj.year_block|default:"Not specified" }}
+                                </div>
+                            </div>
+                        {% elif user_obj.role == "staff" %}
+                            <div class="ap-id-detail-box">
+                                <span class="ap-id-detail-label">Staff Position</span>
+                                <div class="ap-id-detail-value">
+                                    {{ user_obj.get_staff_position_display|default:user_obj.staff_position|default:"Not assigned" }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="ap-card-bottom">
+                <span class="ap-card-bottom-label">Account Identification Record</span>
+
+                {% if user_obj.is_active %}
+                    <span class="ap-account-status active">
+                        <i class="fa-solid fa-circle-check"></i>
+                        Active Account
+                    </span>
+                {% else %}
+                    <span class="ap-account-status inactive">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                        Inactive Account
+                    </span>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="ap-information-grid">
+
+        <section class="ap-info-card">
+            <div class="ap-section-heading">
+                <div class="ap-section-icon">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <h3>Personal Information</h3>
+                    <p>Registered personal identity and contact details</p>
+                </div>
+            </div>
+
+            <div class="ap-fields">
+                <div class="ap-field">
+                    <span class="ap-field-label">First Name</span>
+                    <div class="ap-field-value {% if not user_obj.first_name %}is-empty{% endif %}">
+                        {{ user_obj.first_name|default:"Not provided" }}
+                    </div>
+                </div>
+
+                <div class="ap-field">
+                    <span class="ap-field-label">Middle Name</span>
+                    <div class="ap-field-value {% if not user_obj.middle_name %}is-empty{% endif %}">
+                        {{ user_obj.middle_name|default:"Not provided" }}
+                    </div>
+                </div>
+
+                <div class="ap-field">
+                    <span class="ap-field-label">Last Name</span>
+                    <div class="ap-field-value {% if not user_obj.last_name %}is-empty{% endif %}">
+                        {{ user_obj.last_name|default:"Not provided" }}
+                    </div>
+                </div>
+
+                {% if user_obj.role == "student" %}
+                    <div class="ap-field">
+                        <span class="ap-field-label">Sex</span>
+                        <div class="ap-field-value {% if not user_obj.sex %}is-empty{% endif %}">
+                            {{ user_obj.sex|default:"Not provided" }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="ap-field">
+                    <span class="ap-field-label">Email Address</span>
+                    <div class="ap-field-value {% if not user_obj.email %}is-empty{% endif %}">
+                        {{ user_obj.email|default:"Not provided" }}
+                    </div>
+                </div>
+
+                <div class="ap-field">
+                    <span class="ap-field-label">Contact Number</span>
+                    <div class="ap-field-value {% if not user_obj.contact_number %}is-empty{% endif %}">
+                        {{ user_obj.contact_number|default:"Not provided" }}
+                    </div>
+                </div>
+
+                <div class="ap-field">
+                    <span class="ap-field-label">Username</span>
+                    <div class="ap-field-value">{{ user_obj.username }}</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="ap-info-card">
+            <div class="ap-section-heading">
+                <div class="ap-section-icon">
+                    {% if user_obj.role == "student" %}
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    {% elif user_obj.role == "teacher" %}
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                    {% else %}
+                        <i class="fa-solid fa-hospital-user"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <h3>
+                        {% if user_obj.role == "student" %}
+                            School Information
+                        {% elif user_obj.role == "teacher" %}
+                            Faculty Information
+                        {% else %}
+                            Staff Information
+                        {% endif %}
+                    </h3>
+                    <p>
+                        {% if user_obj.role == "student" %}
+                            Student academic and verification details
+                        {% elif user_obj.role == "teacher" %}
+                            Teacher department and identification details
+                        {% else %}
+                            Clinic staff role and identification details
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="ap-fields">
+                <div class="ap-field">
+                    <span class="ap-field-label">ID Number</span>
+                    <div class="ap-field-value {% if not user_obj.id_number %}is-empty{% endif %}">
+                        {{ user_obj.id_number|default:"Not provided" }}
+                    </div>
+                </div>
+
+                {% if user_obj.role == "student" %}
+                    <div class="ap-field">
+                        <span class="ap-field-label">Department</span>
+                        <div class="ap-field-value {% if not user_obj.department %}is-empty{% endif %}">
+                            {{ user_obj.department|default:"Not provided" }}
+                        </div>
+                    </div>
+
+                    <div class="ap-field">
+                        <span class="ap-field-label">Course / Program</span>
+                        <div class="ap-field-value {% if not user_obj.course %}is-empty{% endif %}">
+                            {{ user_obj.course|default:"Not provided" }}
+                        </div>
+                    </div>
+
+                    <div class="ap-field">
+                        <span class="ap-field-label">Year and Block</span>
+                        <div class="ap-field-value {% if not user_obj.year_block %}is-empty{% endif %}">
+                            {{ user_obj.year_block|default:"Not provided" }}
+                        </div>
+                    </div>
+
+                    <div class="ap-field">
+                        <span class="ap-field-label">Verification Status</span>
+                        <div class="ap-field-value">
+                            <span class="ap-verification">
+                                <i class="fa-solid fa-badge-check"></i>
+                                {{ user_obj.get_verification_status_display|default:"Pending" }}
+                            </span>
+                        </div>
+                    </div>
+
+                {% elif user_obj.role == "teacher" %}
+                    <div class="ap-field">
+                        <span class="ap-field-label">Department</span>
+                        <div class="ap-field-value {% if not user_obj.department %}is-empty{% endif %}">
+                            {{ user_obj.department|default:"Not provided" }}
+                        </div>
+                    </div>
+
+                {% elif user_obj.role == "staff" %}
+                    <div class="ap-field">
+                        <span class="ap-field-label">Staff Position</span>
+                        <div class="ap-field-value {% if not user_obj.staff_position %}is-empty{% endif %}">
+                            {{ user_obj.get_staff_position_display|default:user_obj.staff_position|default:"Not assigned" }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="ap-info-card wide">
+            <div class="ap-section-heading">
+                <div class="ap-section-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h3>Account Information</h3>
+                    <p>System-generated account registration and access details</p>
+                </div>
+            </div>
+
+            <div class="ap-fields three-col">
+                <div class="ap-field">
+                    <span class="ap-field-label">Account Status</span>
+                    <div class="ap-field-value">
+                        {% if user_obj.is_active %}
+                            <span class="ap-account-status active">
+                                <i class="fa-solid fa-circle-check"></i>
+                                Active
+                            </span>
+                        {% else %}
+                            <span class="ap-account-status inactive">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                                Inactive
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="ap-field">
+                    <span class="ap-field-label">Date Registered</span>
+                    <div class="ap-field-value">
+                        {{ user_obj.date_joined|date:"F d, Y" }}
+                    </div>
+                </div>
+
+                <div class="ap-field">
+                    <span class="ap-field-label">Last Login</span>
+                    <div class="ap-field-value {% if not user_obj.last_login %}is-empty{% endif %}">
+                        {% if user_obj.last_login %}
+                            {{ user_obj.last_login|date:"F d, Y · h:i A" }}
+                        {% else %}
+                            No login recorded
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="ap-notice">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>
+            This identification profile is provided for authorized Clinic Administrator reference.
+            All displayed information is read-only. Personal details, account settings, and profile
+            information cannot be modified through User Management.
+        </span>
+    </div>
+
+    <div class="ap-footer">
+        <span>Clinic Connect · User Identification</span>
+        <span>Authorized Clinic Administrator Access Only</span>
+    </div>
+
+</div>
+{% endblock %}

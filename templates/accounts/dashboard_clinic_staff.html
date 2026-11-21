@@ -1,0 +1,866 @@
+{% extends 'base.html' %}
+
+{% block title %}Clinic Staff Dashboard | Clinic Connect{% endblock %}
+
+{% block content %}
+<style>
+  .staff-dash-wrap {
+    color: #f8fafc;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding-bottom: 24px;
+  }
+
+  .staff-dash-wrap *,
+  .staff-dash-wrap *::before,
+  .staff-dash-wrap *::after {
+    box-sizing: border-box;
+  }
+
+  .dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(16, 43, 32, 0.85), rgba(15, 23, 42, 0.95));
+    border: 1px solid rgba(51, 65, 85, 0.75);
+  }
+
+  .dash-role-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    color: #4ade80;
+    margin-bottom: 3px;
+  }
+
+  .dash-role-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+  }
+
+  .dash-title {
+    font-size: 21px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.3px;
+  }
+
+  .dash-sub {
+    font-size: 11.5px;
+    color: #94a3b8;
+    margin: 3px 0 0;
+  }
+
+  .date-pill {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid #334155;
+    color: #cbd5e1;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .priority-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(51, 65, 85, 0.7);
+    border-radius: 10px;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+    font-size: 11.5px;
+  }
+
+  .priority-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: #cbd5e1;
+  }
+
+  .priority-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    color: #86efac;
+  }
+
+  .priority-chip.alert {
+    background: rgba(239, 68, 68, 0.14);
+    border-color: rgba(248, 113, 113, 0.3);
+    color: #fca5a5;
+  }
+
+  .priority-links {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .stat-card {
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(51, 65, 85, 0.7);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(74, 222, 128, 0.45);
+  }
+
+  .stat-val {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-lbl {
+    font-size: 10px;
+    color: #94a3b8;
+    font-weight: 700;
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .panel-box {
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(51, 65, 85, 0.7);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+    min-width: 0;
+  }
+
+  .panel-box:last-child {
+    margin-bottom: 0;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .panel-h2 {
+    font-size: 14px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  .btn-view-all {
+    color: #4ade80;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .btn-view-all:hover {
+    color: #86efac;
+    text-decoration: underline;
+  }
+
+  .activity-item {
+    background: rgba(30, 41, 59, 0.42);
+    border: 1px solid rgba(51, 65, 85, 0.55);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 7px;
+    transition: border-color 0.15s ease;
+  }
+
+  .activity-item:hover {
+    border-color: rgba(71, 85, 105, 0.85);
+  }
+
+  .activity-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .activity-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .student-name-txt {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .sub-txt {
+    font-size: 11px;
+    color: #94a3b8;
+    line-height: 1.45;
+  }
+
+  .badge-status {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 9.5px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .badge-sent {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  .badge-received {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+
+  .badge-approved {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+
+  .badge-completed {
+    background: rgba(148, 163, 184, 0.15);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+  }
+
+  .action-btns-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .btn-dash-action {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid transparent;
+    font-family: inherit;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-dash-action:hover {
+    opacity: 0.9;
+  }
+
+  .btn-dash-complete {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: #22c55e;
+    color: #4ade80;
+  }
+
+  .btn-dash-reschedule {
+    background: rgba(168, 85, 247, 0.2);
+    border-color: #a855f7;
+    color: #c084fc;
+  }
+
+  .btn-dash-sicknote {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: #38bdf8;
+    color: #38bdf8;
+  }
+
+  .quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .quick-action-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 11px;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #f8fafc;
+    text-decoration: none;
+    font-size: 11.5px;
+    font-weight: 600;
+    min-width: 0;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .quick-action-link:hover {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: #22c55e;
+    color: #4ade80;
+  }
+
+  .dash-body-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+
+  .calendar-panel {
+    padding: 14px;
+    overflow: hidden;
+  }
+
+  .calendar-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .calendar-month-title {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+    margin: 0 0 6px;
+  }
+
+  .calendar-navigation {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .calendar-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 4px 8px;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    background: rgba(30, 41, 59, 0.8);
+    color: #e2e8f0;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .calendar-nav-btn:hover {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: #22c55e;
+    color: #4ade80;
+  }
+
+  .calendar-weekdays,
+  .calendar-week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .calendar-weekdays {
+    margin-bottom: 4px;
+  }
+
+  .calendar-week {
+    margin-bottom: 4px;
+  }
+
+  .calendar-week:last-child {
+    margin-bottom: 0;
+  }
+
+  .calendar-weekday {
+    color: #94a3b8;
+    text-align: center;
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 3px 2px;
+    text-transform: uppercase;
+  }
+
+  .calendar-day {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    min-height: 44px;
+    padding: 5px 6px;
+    border: 1px solid rgba(51, 65, 85, 0.6);
+    border-radius: 7px;
+    background: rgba(30, 41, 59, 0.3);
+    color: #e2e8f0;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .calendar-day:hover {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.6);
+  }
+
+  .calendar-day.outside-month {
+    opacity: 0.32;
+  }
+
+  .calendar-day.today {
+    border-color: #38bdf8;
+  }
+
+  .calendar-day.selected {
+    background: rgba(34, 197, 94, 0.16);
+    border-color: #22c55e;
+  }
+
+  .calendar-day-number {
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .calendar-today-label {
+    color: #38bdf8;
+    font-size: 7.5px;
+    font-weight: 800;
+    margin-top: 1px;
+  }
+
+  .calendar-event-count {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    font-size: 8.5px;
+    font-weight: 800;
+  }
+
+  .calendar-event-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #4ade80;
+    flex-shrink: 0;
+  }
+
+  .calendar-no-events {
+    display: none;
+  }
+
+  .calendar-details {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(51, 65, 85, 0.6);
+  }
+
+  .calendar-details-title {
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 8px;
+  }
+
+  .calendar-empty {
+    padding: 14px 12px;
+    text-align: center;
+    border: 1px dashed #334155;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-size: 11px;
+  }
+
+  .appointment-type {
+    display: inline-block;
+    margin-top: 3px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(56, 189, 248, 0.12);
+    color: #7dd3fc;
+    font-size: 8.5px;
+    font-weight: 700;
+  }
+
+  @media (max-width: 1100px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dash-body-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 639px) {
+    .stats-grid,
+    .quick-actions-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dash-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>
+
+<div class="staff-dash-wrap">
+  <div class="dash-header">
+    <div>
+      {% if request.user.role == 'TEACHER' %}
+        <span class="dash-role-tag"><span class="dash-role-dot"></span>Teacher Portal</span>
+        <h1 class="dash-title">Welcome, {{ request.user.get_full_name|default:request.user.username }}</h1>
+        <p class="dash-sub">Submit student referrals and check clinic referral status updates.</p>
+      {% elif request.user.role == 'STUDENT' %}
+        <span class="dash-role-tag"><span class="dash-role-dot"></span>Student Portal</span>
+        <h1 class="dash-title">Welcome, {{ request.user.get_full_name|default:request.user.username }}</h1>
+        <p class="dash-sub">Track your clinic appointments, health records, and sick notes.</p>
+      {% else %}
+        <span class="dash-role-tag"><span class="dash-role-dot"></span>Clinic Staff · {{ request.user.get_staff_position_display|default:request.user.staff_position|default:"Staff" }}</span>
+        <h1 class="dash-title">Good day, {{ request.user.get_full_name|default:request.user.username }}</h1>
+        <p class="dash-sub">Monitor student checkups, emergency referrals, and medical documentation.</p>
+      {% endif %}
+    </div>
+    <div class="date-pill">{% now "F d, Y" %}</div>
+  </div>
+
+  <div class="priority-strip">
+    <div class="priority-left">
+      {% if pending_referrals %}
+        <span class="priority-chip alert">🚨 {{ pending_referrals }} En Route Emergency</span>
+      {% else %}
+        <span class="priority-chip">✓ No En Route Emergencies</span>
+      {% endif %}
+      <span>{{ pending_appointments|default:0 }} appointment request(s) pending review</span>
+    </div>
+
+    <div class="priority-links">
+      <a href="{% url 'accounts:staff_referrals' %}" class="btn-view-all">Referrals</a>
+      <a href="{% url 'accounts:staff_appointments' %}" class="btn-view-all">Appointments</a>
+      <a href="{% url 'accounts:staff_health_records' %}" class="btn-view-all">Health Records</a>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div>
+        <div class="stat-val">{{ total_appointments|default:0 }}</div>
+        <div class="stat-lbl">Total Appointments</div>
+      </div>
+      <div class="stat-icon" style="background: rgba(34, 197, 94, 0.15); color: #4ade80;">📅</div>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <div class="stat-val" style="color: #facc15;">{{ pending_appointments|default:0 }}</div>
+        <div class="stat-lbl">Pending Review</div>
+      </div>
+      <div class="stat-icon" style="background: rgba(234, 179, 8, 0.15); color: #facc15;">⏳</div>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <div class="stat-val">{{ total_referrals|default:0 }}</div>
+        <div class="stat-lbl">Teacher Referrals</div>
+      </div>
+      <div class="stat-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">📋</div>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <div class="stat-val" style="color: #f87171;">{{ pending_referrals|default:0 }}</div>
+        <div class="stat-lbl">En Route Emergencies</div>
+      </div>
+      <div class="stat-icon" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">🚨</div>
+    </div>
+  </div>
+
+  <div class="dash-body-grid">
+    <div class="panel-box calendar-panel">
+      <div class="calendar-heading">
+        <div>
+          <h2 class="panel-h2">📅 Appointment Calendar</h2>
+          <p class="dash-sub" style="font-size: 10.5px;">Select a date to view appointments.</p>
+        </div>
+
+        <div class="calendar-navigation">
+          <a class="calendar-nav-btn" href="?month={{ calendar_previous_month }}&date={{ calendar_selected_date_value }}" aria-label="Previous month">‹</a>
+          <a class="calendar-nav-btn" href="?month={% now 'Y-m' %}" aria-label="Go to current month">Today</a>
+          <a class="calendar-nav-btn" href="?month={{ calendar_next_month }}&date={{ calendar_selected_date_value }}" aria-label="Next month">›</a>
+        </div>
+      </div>
+
+      <h3 class="calendar-month-title">{{ calendar_month_label }}</h3>
+
+      <div class="calendar-weekdays">
+        <div class="calendar-weekday">Sun</div>
+        <div class="calendar-weekday">Mon</div>
+        <div class="calendar-weekday">Tue</div>
+        <div class="calendar-weekday">Wed</div>
+        <div class="calendar-weekday">Thu</div>
+        <div class="calendar-weekday">Fri</div>
+        <div class="calendar-weekday">Sat</div>
+      </div>
+
+      {% for week in calendar_weeks %}
+        <div class="calendar-week">
+          {% for day in week %}
+            <a
+              class="calendar-day{% if not day.in_month %} outside-month{% endif %}{% if day.is_today %} today{% endif %}{% if day.is_selected %} selected{% endif %}"
+              href="?month={{ calendar_month|date:'Y-m' }}&date={{ day.date_value }}"
+              aria-label="{{ day.date|date:'F j, Y' }}{% if day.appointment_count %}, {{ day.appointment_count }} appointments{% endif %}"
+              {% if day.is_selected %}aria-current="date"{% endif %}
+            >
+              <span class="calendar-day-number">{{ day.day_number }}</span>
+
+              {% if day.is_today %}
+                <span class="calendar-today-label">TODAY</span>
+              {% endif %}
+
+              {% if day.has_appointments %}
+                <span class="calendar-event-count">
+                  <span class="calendar-event-dot"></span>
+                  {{ day.appointment_count }}
+                </span>
+              {% else %}
+                <span class="calendar-no-events">0</span>
+              {% endif %}
+            </a>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <div class="calendar-details">
+        <h3 class="calendar-details-title">Appointments for {{ calendar_selected_date|date:"F d, Y" }}</h3>
+
+        {% if calendar_selected_appointments %}
+          {% for appt in calendar_selected_appointments %}
+            <div class="activity-item">
+              <div class="activity-item-top">
+                <div>
+                  <div class="student-name-txt">{{ appt.student.get_full_name|default:appt.student.username }}</div>
+                  <div class="sub-txt">{{ appt.concern|default:"No concern provided" }}</div>
+                  <span class="appointment-type">
+                    {% if appt.calendar_is_request %}Requested time{% else %}Scheduled appointment{% endif %}
+                  </span>
+                </div>
+
+                <div>
+                  {% if appt.status == 'Approved' %}
+                    <span class="badge-status badge-approved">Approved</span>
+                  {% elif appt.status == 'Completed' %}
+                    <span class="badge-status badge-completed">Completed</span>
+                  {% elif appt.status == 'Rescheduled' %}
+                    <span class="badge-status badge-received">Rescheduled</span>
+                  {% elif appt.status == 'Pending' %}
+                    <span class="badge-status" style="background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3);">Pending</span>
+                  {% else %}
+                    <span class="badge-status badge-sent">{{ appt.status }}</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="sub-txt">⏰ {{ appt.calendar_time|time:"h:i A"|default:"Time not set" }}</div>
+
+              {% if appt.status == 'Approved' %}
+                {% if request.user.staff_position == 'admin' or request.user.staff_position == 'nurse' %}
+                  <div class="action-btns-row">
+                    <form method="post" action="{% url 'accounts:update_appointment_status' pk=appt.pk status='Completed' %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn-dash-action btn-dash-complete">Mark Completed</button>
+                    </form>
+                    <a href="{% url 'accounts:reschedule_appointment' appointment_id=appt.pk %}" class="btn-dash-action btn-dash-reschedule">Reschedule</a>
+                    <a href="{% url 'accounts:issue_sick_note' appointment_id=appt.pk %}" class="btn-dash-action btn-dash-sicknote">Issue Sick Note</a>
+                  </div>
+                {% endif %}
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="calendar-empty">There are no appointments for this date.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div>
+      <div class="panel-box">
+        <div class="panel-header">
+          <h2 class="panel-h2">Quick Actions</h2>
+        </div>
+
+        <div class="quick-actions-grid">
+          <a href="{% url 'accounts:staff_referrals' %}" class="quick-action-link">
+            <span>🚨</span> Emergency Referrals
+          </a>
+
+          <a href="{% url 'accounts:staff_appointments' %}" class="quick-action-link">
+            <span>📅</span> Student Appointments
+          </a>
+
+          {% if request.user.staff_position == 'admin' or request.user.staff_position == 'nurse' or request.user.staff_position == 'records' %}
+            <a href="{% url 'accounts:staff_health_records' %}" class="quick-action-link">
+              <span>📋</span> Health Records
+            </a>
+          {% endif %}
+
+          {% if request.user.staff_position == 'admin' %}
+            <a href="{% url 'accounts:staff_settings' %}" class="quick-action-link">
+              <span>⚙️</span> System Administration
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="panel-box">
+        <div class="panel-header">
+          <h2 class="panel-h2">🚨 Recent Emergencies</h2>
+          <a href="{% url 'accounts:staff_referrals' %}" class="btn-view-all">View All →</a>
+        </div>
+
+        {% for ref in recent_referrals %}
+          <div class="activity-item">
+            <div class="activity-item-top">
+              <div>
+                <div class="student-name-txt">{{ ref.student_name|default:"Unidentified" }}</div>
+                <div class="sub-txt" style="color: #38bdf8; font-weight: 600;">
+                  📍 {{ ref.room|default:ref.building|default:ref.department|default:"Campus Main" }}
+                </div>
+              </div>
+
+              <div>
+                {% if ref.status == 'sent' or ref.status == 'Approved' %}
+                  <span class="badge-status badge-sent">En Route</span>
+                {% elif ref.status == 'received' or ref.status == 'Received' %}
+                  <span class="badge-status badge-received">Received</span>
+                {% else %}
+                  <span class="badge-status badge-completed">{{ ref.status }}</span>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="sub-txt">
+              Teacher: <strong>{{ ref.teacher.get_full_name|default:ref.teacher.username }}</strong>
+              {% if ref.symptoms or ref.concern %} · {{ ref.symptoms|default:ref.concern }}{% endif %}
+            </div>
+          </div>
+        {% empty %}
+          <div class="calendar-empty">No active emergency referrals.</div>
+        {% endfor %}
+      </div>
+
+      <div class="panel-box">
+        <div class="panel-header">
+          <h2 class="panel-h2">📅 Recent Requests</h2>
+          <a href="{% url 'accounts:staff_appointments' %}" class="btn-view-all">View All →</a>
+        </div>
+
+        {% for appt in recent_appointments %}
+          <div class="activity-item">
+            <div class="activity-item-top">
+              <div>
+                <div class="student-name-txt">{{ appt.student.get_full_name|default:appt.student.username }}</div>
+                <div class="sub-txt">{{ appt.concern|default:"No concern provided" }}</div>
+              </div>
+
+              <div>
+                {% if appt.status == 'Approved' %}
+                  <span class="badge-status badge-approved">Approved</span>
+                {% elif appt.status == 'Completed' %}
+                  <span class="badge-status badge-completed">Completed</span>
+                {% elif appt.status == 'Rescheduled' %}
+                  <span class="badge-status badge-received">Rescheduled</span>
+                {% elif appt.status == 'Pending' %}
+                  <span class="badge-status" style="background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3);">Pending</span>
+                {% else %}
+                  <span class="badge-status badge-sent">{{ appt.status }}</span>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="sub-txt">
+              📅 {{ appt.scheduled_date|default:appt.preferred_date|date:"M d, Y" }} · ⏰ {{ appt.scheduled_time|default:appt.preferred_time|time:"h:i A"|default:"Not set" }}
+            </div>
+
+            {% if appt.status == 'Approved' %}
+              {% if request.user.staff_position == 'admin' or request.user.staff_position == 'nurse' %}
+                <div class="action-btns-row">
+                  <form method="post" action="{% url 'accounts:update_appointment_status' pk=appt.pk status='Completed' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-dash-action btn-dash-complete">Complete</button>
+                  </form>
+                  <a href="{% url 'accounts:reschedule_appointment' appointment_id=appt.pk %}" class="btn-dash-action btn-dash-reschedule">Reschedule</a>
+                  <a href="{% url 'accounts:issue_sick_note' appointment_id=appt.pk %}" class="btn-dash-action btn-dash-sicknote">Sick Note</a>
+                </div>
+              {% endif %}
+            {% endif %}
+          </div>
+        {% empty %}
+          <div class="calendar-empty">No recent requests.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,539 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ department.name }} Details | Clinic Connect{% endblock %}
+
+{% block content %}
+<style>
+    .detail-page {
+        --bg: #0b1120;
+        --panel: #111827;
+        --border: #1f2937;
+        --text: #e5e7eb;
+        --muted: #94a3b8;
+        max-width: 1260px;
+        margin: 0 auto;
+        padding: 10px 0 36px;
+        color: var(--text);
+    }
+
+    .detail-page *,
+    .detail-page *::before,
+    .detail-page *::after {
+        box-sizing: border-box;
+    }
+
+    .detail-header,
+    .building-header,
+    .floor-header,
+    .room-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .detail-header {
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+    }
+
+    .detail-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .detail-icon {
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+        border-radius: 11px;
+        background: rgba(16, 185, 129, .12);
+        border: 1px solid rgba(16, 185, 129, .28);
+        color: #4ade80;
+        font-size: 17px;
+    }
+
+    .detail-header h1 {
+        margin: 0 0 4px;
+        color: #f8fafc;
+        font-size: 24px;
+        font-weight: 750;
+        letter-spacing: -.4px;
+    }
+
+    .detail-meta-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+    .detail-header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11.5px;
+    }
+
+    .dept-code-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 5px;
+        background: #172554;
+        border: 1px solid #1e3a8a;
+        color: #93c5fd;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .dept-status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 2px 9px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .dept-status-pill.active {
+        background: #052e16;
+        border: 1px solid #166534;
+        color: #86efac;
+    }
+
+    .dept-status-pill.inactive {
+        background: #2a1215;
+        border: 1px solid #7f1d1d;
+        color: #fca5a5;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .back-link,
+    .add-facility-btn,
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: .16s ease;
+    }
+
+    .back-link {
+        background: var(--panel);
+        color: #86efac;
+        border: 1px solid #263449;
+    }
+
+    .back-link:hover {
+        background: #10251b;
+        border-color: #22c55e;
+        color: #bbf7d0;
+    }
+
+    .add-facility-btn {
+        background: #16a34a;
+        border: 1px solid #16a34a;
+        color: #ffffff;
+    }
+
+    .add-facility-btn:hover {
+        background: #15803d;
+        border-color: #15803d;
+        color: #ffffff;
+    }
+
+    .detail-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        padding: 18px;
+        margin-bottom: 16px;
+        box-shadow: 0 10px 26px rgba(0, 0, 0, .18);
+    }
+
+    .card-top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding-bottom: 13px;
+        margin-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .detail-card h2 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 3px;
+        font-size: 15px;
+        font-weight: 750;
+        color: #f8fafc;
+    }
+
+    .detail-card h2 i {
+        color: #4ade80;
+        font-size: 14px;
+    }
+
+    .detail-subtitle {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11.5px;
+    }
+
+    .summary-pills {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+    .summary-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 10px;
+        border-radius: 7px;
+        background: #0c1424;
+        border: 1px solid #263449;
+        color: #cbd5e1;
+        font-size: 10.5px;
+        font-weight: 650;
+    }
+
+    .building-card {
+        background: #0d1626;
+        border: 1px solid #23324a;
+        border-radius: 11px;
+        padding: 15px 16px;
+        margin-top: 13px;
+    }
+
+    .building-header {
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+    }
+
+    .building-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .building-badge-icon {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        flex-shrink: 0;
+        border-radius: 8px;
+        background: rgba(56, 189, 248, .12);
+        border: 1px solid rgba(56, 189, 248, .28);
+        color: #38bdf8;
+        font-size: 13px;
+    }
+
+    .building-header h3 {
+        margin: 0 0 2px;
+        color: #f1f5f9;
+        font-size: 14px;
+        font-weight: 750;
+    }
+
+    .building-header p {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .action-button {
+        color: #93c5fd;
+        background: #172554;
+        border: 1px solid #1e3a8a;
+        padding: 7px 11px;
+    }
+
+    .action-button:hover {
+        background: #1e3a8a;
+        border-color: #1d4ed8;
+        color: #dbeafe;
+    }
+
+    .floor-card {
+        background: #111d30;
+        border: 1px solid #23324a;
+        border-radius: 9px;
+        padding: 12px 13px;
+        margin-top: 10px;
+    }
+
+    .floor-header {
+        justify-content: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .floor-header h4 {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        color: #93c5fd;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .room-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    .room-row {
+        justify-content: space-between;
+        min-width: 0;
+        padding: 11px 12px;
+        background: #162136;
+        border: 1px solid #29384f;
+        border-radius: 8px;
+        transition: border-color .15s, background .15s;
+    }
+
+    .room-row:hover {
+        border-color: #3b4e68;
+        background: #19263e;
+    }
+
+    .room-main {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .room-icon {
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        flex-shrink: 0;
+        border-radius: 7px;
+        background: rgba(16, 185, 129, .12);
+        border: 1px solid rgba(16, 185, 129, .26);
+        color: #4ade80;
+        font-size: 12px;
+    }
+
+    .room-info {
+        min-width: 0;
+    }
+
+    .room-name {
+        color: #f1f5f9;
+        font-size: 12px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+        text-transform: capitalize;
+    }
+
+    .room-number {
+        color: #94a3b8;
+        font-size: 10px;
+        margin-top: 2px;
+    }
+
+    .empty-state {
+        margin-top: 10px;
+        padding: 20px;
+        text-align: center;
+        color: #94a3b8;
+        background: #0d1626;
+        border: 1px dashed #334155;
+        border-radius: 9px;
+        font-size: 12px;
+    }
+
+    @media (max-width: 720px) {
+        .room-list {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .detail-page {
+            padding: 8px 0 24px;
+        }
+
+        .detail-card {
+            padding: 14px;
+        }
+    }
+</style>
+
+<div class="detail-page">
+
+    <header class="detail-header">
+        <div class="detail-heading">
+            <div class="detail-icon" aria-hidden="true">
+                <i class="fa-solid fa-building-columns"></i>
+            </div>
+            <div>
+                <h1>{{ department.name }}</h1>
+                <div class="detail-meta-row">
+                    <p>Department Details</p>
+                    {% if department.code %}
+                        <span class="dept-code-pill">{{ department.code }}</span>
+                    {% endif %}
+                    {% if department.is_active|default:True %}
+                        <span class="dept-status-pill active">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Active
+                        </span>
+                    {% else %}
+                        <span class="dept-status-pill inactive">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                            Inactive
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <a href="{% url 'accounts:add_department_object' 'building' %}?next={{ request.get_full_path|urlencode }}"
+               class="add-facility-btn">
+                <i class="fa-solid fa-plus"></i>
+                Building
+            </a>
+
+            <a href="{% url 'accounts:add_department_object' 'room' %}?next={{ request.get_full_path|urlencode }}"
+               class="add-facility-btn">
+                <i class="fa-solid fa-plus"></i>
+                Room
+            </a>
+
+            <a href="{% url 'accounts:staff_departments' %}"
+               class="back-link">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Departments
+            </a>
+        </div>
+    </header>
+
+    <section class="detail-card">
+        <div class="card-top-bar">
+            <div>
+                <h2>
+                    <i class="fa-solid fa-sitemap" aria-hidden="true"></i>
+                    Department Facilities
+                </h2>
+                <p class="detail-subtitle">
+                    View the buildings, floors, and registered rooms under this department.
+                </p>
+            </div>
+
+            <div class="summary-pills">
+                <span class="summary-pill">
+                    <i class="fa-solid fa-building"></i>
+                    {{ buildings|length }} Building{{ buildings|length|pluralize }}
+                </span>
+            </div>
+        </div>
+
+        {% for building in buildings %}
+            <div class="building-card">
+
+                <div class="building-header">
+                    <div class="building-title-wrap">
+                        <span class="building-badge-icon" aria-hidden="true">
+                            <i class="fa-solid fa-building"></i>
+                        </span>
+                        <div>
+                            <h3>{{ building.name }}</h3>
+                            <p>{{ building.rooms.count }} Registered Room{{ building.rooms.count|pluralize }}</p>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'accounts:edit_department_object' 'building' building.pk %}?next={{ request.get_full_path|urlencode }}"
+                       class="action-button">
+                        <i class="fa-solid fa-pen"></i>
+                        Edit Building
+                    </a>
+                </div>
+
+                {% regroup building.rooms.all by floor as floor_groups %}
+
+                {% for floor_group in floor_groups %}
+                    <div class="floor-card">
+
+                        <div class="floor-header">
+                            <h4>
+                                <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                                Floor {{ floor_group.grouper }}
+                            </h4>
+                        </div>
+
+                        <div class="room-list">
+                            {% for room in floor_group.list %}
+                                <div class="room-row">
+                                    <div class="room-main">
+                                        <span class="room-icon" aria-hidden="true">
+                                            <i class="fa-solid fa-door-open"></i>
+                                        </span>
+
+                                        <div class="room-info">
+                                            <div class="room-name">
+                                                {{ room.room_name|default:"Unnamed Room" }}
+                                            </div>
+
+                                            <div class="room-number">
+                                                Room Number: {{ room.room_number }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a href="{% url 'accounts:edit_department_object' 'room' room.pk %}?next={{ request.get_full_path|urlencode }}"
+                                       class="action-button">
+                                        <i class="fa-solid fa-pen"></i>
+                                        Edit
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                {% empty %}
+                    <div class="empty-state">
+                        No rooms have been registered in this building.
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                No buildings have been registered for this department yet.
+            </div>
+        {% endfor %}
+
+    </section>
+
+</div>
+{% endblock %}

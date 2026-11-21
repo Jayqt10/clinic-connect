@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+
+{% block title %}Announcements - Clinic Connect{% endblock %}
+
+{% block page_title %}Clinic Announcements & Schedules{% endblock %}
+
+{% block content %}
+<style>
+    .announcements-grid {
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .panel {
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #1f2937;
+    }
+
+    .panel-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #f8fafc;
+    }
+
+    .panel-subtitle {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 3px;
+    }
+
+    .form-group {
+        margin-bottom: 14px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: #cbd5e1;
+        margin-bottom: 6px;
+    }
+
+    .form-control,
+    .form-select,
+    .form-textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #374151;
+        background: #0b1120;
+        color: #f8fafc;
+        font-size: 13px;
+        font-family: Arial, sans-serif;
+    }
+
+    .form-control:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+        outline: none;
+        border-color: #22c55e;
+    }
+
+    .form-textarea {
+        min-height: 95px;
+        resize: vertical;
+    }
+
+    .form-row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .form-row-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+    }
+
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: none;
+        background: #22c55e;
+        color: #052e16;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background: #4ade80;
+    }
+
+    .announcement-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .announcement-item {
+        background: #0b1120;
+        border: 1px solid #1f2937;
+        border-radius: 10px;
+        padding: 14px;
+    }
+
+    .announcement-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .announcement-heading {
+        font-size: 14px;
+        font-weight: 700;
+        color: #f8fafc;
+    }
+
+    .badges-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .badge-audience {
+        background: rgba(59, 130, 246, 0.16);
+        color: #93c5fd;
+        border: 1px solid rgba(59, 130, 246, 0.35);
+    }
+
+    .badge-active {
+        background: rgba(34, 197, 94, 0.16);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.35);
+    }
+
+    .badge-hidden {
+        background: rgba(148, 163, 184, 0.15);
+        color: #cbd5e1;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .announcement-message {
+        font-size: 13px;
+        color: #cbd5e1;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        white-space: pre-line;
+    }
+
+    .announcement-meta {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-bottom: 10px;
+    }
+
+    .announcement-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .btn-sm {
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #374151;
+        background: #1f2937;
+        color: #e5e7eb;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-sm:hover {
+        background: #374151;
+    }
+
+    .btn-danger {
+        border-color: rgba(239, 68, 68, 0.45);
+        background: rgba(239, 68, 68, 0.14);
+        color: #fca5a5;
+    }
+
+    .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.25);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 28px 16px;
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    @media (max-width: 960px) {
+        .announcements-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-row-2,
+        .form-row-3 {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="announcements-grid">
+
+    <section class="panel">
+        <div class="panel-header">
+            <div>
+                <div class="panel-title">Publish Announcement</div>
+                <div class="panel-subtitle">Share clinic schedules, advisories, and department notices</div>
+            </div>
+        </div>
+
+        <form method="post" action="{% url 'accounts:create_clinic_announcement' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label" for="id_title">Title</label>
+                <input type="text"
+                       id="id_title"
+                       name="title"
+                       class="form-control"
+                       placeholder="e.g., Medical Checkup Schedule"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="id_message">Message</label>
+                <textarea id="id_message"
+                          name="message"
+                          class="form-textarea"
+                          placeholder="Write the announcement details..."
+                          required></textarea>
+            </div>
+
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label class="form-label" for="id_audience">Audience</label>
+                    <select id="id_audience" name="audience" class="form-select" onchange="toggleDepartmentField()">
+                        <option value="all">All Users</option>
+                        <option value="student">Students</option>
+                        <option value="teacher">Teachers</option>
+                        <option value="department">Specific Department</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="department-field-group" style="display: none;">
+                    <label class="form-label" for="id_department">Department</label>
+                    <select id="id_department" name="department" class="form-select">
+                        <option value="">Select department</option>
+                        {% for dept in active_departments %}
+                            <option value="{{ dept.id }}">{{ dept.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row-3">
+                <div class="form-group">
+                    <label class="form-label" for="id_event_date">Event Date</label>
+                    <input type="date" id="id_event_date" name="event_date" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="id_start_time">Start Time</label>
+                    <input type="time" id="id_start_time" name="start_time" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="id_end_time">End Time</label>
+                    <input type="time" id="id_end_time" name="end_time" class="form-control">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                <i class="fa-solid fa-bullhorn"></i>
+                Publish Announcement
+            </button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header">
+            <div>
+                <div class="panel-title">All Announcements</div>
+                <div class="panel-subtitle">Manage visibility or remove posted announcements</div>
+            </div>
+        </div>
+
+        {% if all_announcements %}
+            <div class="announcement-list">
+                {% for item in all_announcements %}
+                    <div class="announcement-item">
+                        <div class="announcement-top">
+                            <div>
+                                <div class="announcement-heading">{{ item.title }}</div>
+                                <div class="badges-row">
+                                    <span class="badge badge-audience">
+                                        {{ item.get_audience_display|default:item.audience|title }}
+                                        {% if item.audience == 'department' and item.department %}
+                                            - {{ item.department.name }}
+                                        {% endif %}
+                                    </span>
+
+                                    {% if item.is_active %}
+                                        <span class="badge badge-active">Active</span>
+                                    {% else %}
+                                        <span class="badge badge-hidden">Hidden</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="announcement-message">{{ item.message }}</div>
+
+                        <div class="announcement-meta">
+                            {% if item.event_date %}
+                                Date: {{ item.event_date|date:"M d, Y" }}
+                            {% endif %}
+                            {% if item.start_time or item.end_time %}
+                                · Time: {{ item.start_time|time:"g:i A"|default:"--" }} - {{ item.end_time|time:"g:i A"|default:"--" }}
+                            {% endif %}
+                            {% if item.created_by %}
+                                · By: {{ item.created_by.get_full_name|default:item.created_by.username }}
+                            {% endif %}
+                        </div>
+
+                        <div class="announcement-actions">
+                            <form method="post" action="{% url 'accounts:toggle_clinic_announcement' item.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-sm">
+                                    {% if item.is_active %}Hide{% else %}Activate{% endif %}
+                                </button>
+                            </form>
+
+                            <form method="post" action="{% url 'accounts:delete_clinic_announcement' item.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                No clinic announcements have been created yet.
+            </div>
+        {% endif %}
+    </section>
+
+</div>
+
+<script>
+function toggleDepartmentField() {
+    var audienceSelect = document.getElementById('id_audience');
+    var deptGroup = document.getElementById('department-field-group');
+    if (!audienceSelect || !deptGroup) return;
+    deptGroup.style.display = audienceSelect.value === 'department' ? 'block' : 'none';
+}
+
+document.addEventListener('DOMContentLoaded', toggleDepartmentField);
+</script>
+{% endblock %}

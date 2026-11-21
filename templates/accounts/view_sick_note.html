@@ -1,0 +1,385 @@
+{% extends 'base.html' %}
+
+{% block title %}Sick Note{% endblock %}
+
+{% block content %}
+
+<style>
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .page-label {
+        color: #48d43d;
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
+
+    .page-header h1 {
+        margin: 0 0 8px;
+        color: #ffffff;
+        font-size: 30px;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: #8b9a9c;
+        font-size: 14px;
+    }
+
+    .note-card {
+        max-width: 850px;
+        background: #071011;
+        border: 1px solid #172426;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .20);
+    }
+
+    .note-header {
+        padding: 25px 28px;
+        border-bottom: 1px solid #172426;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .note-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: #102019;
+        color: #48d43d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .note-header h2 {
+        margin: 0 0 5px;
+        color: #ffffff;
+        font-size: 19px;
+    }
+
+    .note-header p {
+        margin: 0;
+        color: #718184;
+        font-size: 12px;
+    }
+
+    .note-body {
+        padding: 28px;
+    }
+
+    .student-section {
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        color: #48d43d;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+        margin-bottom: 14px;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .detail {
+        background: #030809;
+        border: 1px solid #172426;
+        border-radius: 9px;
+        padding: 14px 16px;
+    }
+
+    .detail-label {
+        display: block;
+        color: #718184;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        margin-bottom: 6px;
+    }
+
+    .detail-value {
+        color: #e5eeee;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    .concern-box {
+        background: #030809;
+        border: 1px solid #172426;
+        border-radius: 9px;
+        padding: 16px;
+        margin-bottom: 14px;
+    }
+
+    .concern-box:last-child {
+        margin-bottom: 0;
+    }
+
+    .concern-text {
+        color: #dce5e6;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .rest-badge {
+        display: inline-block;
+        padding: 6px 11px;
+        border-radius: 20px;
+        background: #102b17;
+        color: #48d43d;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .note-footer {
+        padding: 20px 28px;
+        border-top: 1px solid #172426;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 11px 17px;
+        border-radius: 8px;
+        border: 1px solid #263638;
+        background: #111a1b;
+        color: #dce5e6;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .back-button:hover {
+        background: #172223;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 17px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .download-button {
+        background: #48d43d;
+        color: #061006;
+    }
+
+    .download-button:hover {
+        background: #5be84f;
+    }
+
+    .email-button {
+        background: #111a1b;
+        border: 1px solid #263638;
+        color: #dce5e6;
+    }
+
+    .email-button:hover {
+        background: #172223;
+    }
+
+    @media (max-width: 700px) {
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .note-header,
+        .note-body,
+        .note-footer {
+            padding: 20px;
+        }
+
+        .note-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .back-button,
+        .action-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="page-header">
+
+    <div class="page-label">Student</div>
+
+    <h1>Sick Note</h1>
+
+    <p>View the details of your issued sick note.</p>
+
+</div>
+
+<div class="note-card">
+
+    <div class="note-header">
+
+        <div class="note-icon">✓</div>
+
+        <div>
+            <h2>Medical Sick Note</h2>
+            <p>Clinic Connect • Official Record</p>
+        </div>
+
+    </div>
+
+    <div class="note-body">
+
+        <div class="student-section">
+
+            <div class="section-title">
+                Appointment Information
+            </div>
+
+            <div class="details-grid">
+
+                <div class="detail">
+                    <span class="detail-label">Student</span>
+                    <span class="detail-value">
+                        {{ sick_note.appointment.student.get_full_name|default:sick_note.appointment.student.username }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <span class="detail-label">Appointment Date</span>
+                    <span class="detail-value">
+                        {{ sick_note.appointment.scheduled_date|default:sick_note.appointment.preferred_date|date:"M d, Y" }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <span class="detail-label">Appointment Time</span>
+                    <span class="detail-value">
+                        {{ sick_note.appointment.scheduled_time|default:sick_note.appointment.preferred_time|time:"g:i A" }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <span class="detail-label">Health Concern</span>
+                    <span class="detail-value">
+                        {{ sick_note.appointment.concern }}
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="student-section">
+
+            <div class="section-title">
+                Sick Note Details
+            </div>
+
+            <div class="details-grid">
+
+                <div class="detail">
+                    <span class="detail-label">Diagnosis</span>
+                    <span class="detail-value">
+                        {{ sick_note.diagnosis }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <span class="detail-label">Recommended Rest</span>
+                    <span class="rest-badge">
+                        {{ sick_note.days_recommended }} day{{ sick_note.days_recommended|pluralize }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <span class="detail-label">Issued By</span>
+                    <span class="detail-value">
+                        {{ sick_note.issued_by.get_full_name|default:sick_note.issued_by.username }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <span class="detail-label">Date Issued</span>
+                    <span class="detail-value">
+                        {{ sick_note.issued_at|date:"M d, Y g:i A" }}
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        {% if sick_note.notes %}
+
+        <div class="concern-box">
+
+            <div class="section-title">
+                Additional Notes
+            </div>
+
+            <div class="concern-text">
+                {{ sick_note.notes }}
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <div class="note-footer">
+
+        <a href="{% url 'accounts:student_sick_notes' %}" class="back-button">
+            ← Back to Sick Notes
+        </a>
+
+        <div class="action-buttons">
+
+            <a href="{% url 'accounts:download_sick_note' sick_note.id %}"
+               class="action-button download-button">
+                ↓ Download PPTX
+            </a>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

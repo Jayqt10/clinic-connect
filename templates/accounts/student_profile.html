@@ -1,0 +1,498 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile | Clinic Connect{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+
+<style>
+.student-profile {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    color: #e5e7eb;
+}
+
+.sp-heading {
+    margin-bottom: 20px;
+}
+
+.sp-heading h1 {
+    margin: 0 0 5px;
+    color: #f8fafc;
+    font-size: 25px;
+    font-weight: 750;
+}
+
+.sp-heading p {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.sp-layout {
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.sp-left,
+.sp-right {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 0;
+}
+
+.sp-card {
+    padding: 19px;
+    border: 1px solid #1f2937;
+    border-radius: 14px;
+    background: #111827;
+}
+
+.sp-overview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 18px;
+    border-color: #245039;
+    background: linear-gradient(145deg, #123323, #111827 75%);
+    text-align: center;
+}
+
+.sp-avatar {
+    width: 76px;
+    height: 76px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    margin-bottom: 13px;
+    border-radius: 19px;
+    background: #22c55e;
+    color: #052e16;
+    font-size: 32px;
+    font-weight: 800;
+}
+
+.sp-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sp-name {
+    margin: 0 0 5px;
+    color: #f8fafc;
+    font-size: 19px;
+    font-weight: 750;
+}
+
+.sp-email {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.sp-role {
+    display: inline-block;
+    margin-top: 13px;
+    padding: 7px 14px;
+    border: 1px solid #166534;
+    border-radius: 20px;
+    background: rgba(34, 197, 94, .10);
+    color: #4ade80;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .7px;
+}
+
+.sp-card-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 15px;
+    padding-bottom: 13px;
+    border-bottom: 1px solid #1f2937;
+}
+
+.sp-heading-icon {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #123323;
+    color: #4ade80;
+    font-size: 17px;
+}
+
+.sp-card-heading h2 {
+    margin: 0 0 3px;
+    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.sp-card-heading p {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.sp-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
+}
+
+.sp-info-item {
+    min-width: 0;
+    min-height: 74px;
+    padding: 12px;
+    border: 1px solid #263247;
+    border-radius: 10px;
+    background: #0b1120;
+}
+
+.sp-info-label {
+    display: block;
+    margin-bottom: 7px;
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+}
+
+.sp-info-value {
+    display: block;
+    overflow-wrap: anywhere;
+    color: #f8fafc;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.sp-info-item.highlight {
+    border-color: #245039;
+    background: rgba(18, 51, 35, .45);
+}
+
+.sp-account {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.sp-account h2 {
+    margin: 0 0 5px;
+    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.sp-account p {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.sp-actions {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-shrink: 0;
+}
+
+.sp-button {
+    min-height: 40px;
+    padding: 0 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 750;
+    text-decoration: none;
+    transition: .18s ease;
+}
+
+.sp-edit {
+    background: #22c55e;
+    border-color: #22c55e;
+    color: #052e16;
+}
+
+.sp-edit:hover {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #fff;
+}
+
+.sp-password {
+    background: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+.sp-password:hover {
+    background: #293548;
+    color: #fff;
+}
+
+@media (max-width: 900px) {
+    .sp-layout {
+        grid-template-columns: 280px minmax(0, 1fr);
+    }
+
+    .sp-account {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .sp-actions {
+        width: 100%;
+    }
+
+    .sp-button {
+        flex: 1;
+    }
+}
+
+@media (max-width: 700px) {
+    .sp-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sp-left {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .sp-overview {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .sp-heading h1 {
+        font-size: 22px;
+    }
+
+    .sp-left {
+        grid-template-columns: 1fr;
+    }
+
+    .sp-card {
+        padding: 15px;
+    }
+
+    .sp-info-grid {
+        gap: 8px;
+    }
+
+    .sp-info-item {
+        padding: 10px;
+    }
+
+    .sp-actions {
+        flex-direction: column;
+    }
+
+    .sp-button {
+        width: 100%;
+    }
+}
+</style>
+
+<div class="student-profile">
+
+    <header class="sp-heading">
+        <h1>My Profile</h1>
+        <p>Manage your account information and personal details.</p>
+    </header>
+
+    <div class="sp-layout">
+
+        <div class="sp-left">
+
+            <section class="sp-card sp-overview">
+
+                <div class="sp-avatar">
+                    {% if user.profile_picture %}
+                        <img
+                            src="{{ user.profile_picture.url }}"
+                            alt="Profile picture"
+                        >
+                    {% else %}
+                        {{ user.first_name|default:user.username|first|upper }}
+                    {% endif %}
+                </div>
+
+                <h2 class="sp-name">
+                    {{ user.get_full_name|default:user.username }}
+                </h2>
+
+                <div class="sp-email">
+                    {{ user.email|default:"No email address provided" }}
+                </div>
+
+                <span class="sp-role">STUDENT</span>
+
+            </section>
+
+            <section class="sp-card">
+
+                <div class="sp-card-heading">
+                    <div class="sp-heading-icon">▤</div>
+                    <div>
+                        <h2>Student Information</h2>
+                        <p>Your academic details</p>
+                    </div>
+                </div>
+
+                <div class="sp-info-grid">
+
+                    <div class="sp-info-item">
+                        <span class="sp-info-label">ID Number</span>
+                        <span class="sp-info-value">
+                            {{ user.id_number|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="sp-info-item">
+                        <span class="sp-info-label">Course</span>
+                        <span class="sp-info-value">
+                            {{ user.course|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="sp-info-item highlight">
+                        <span class="sp-info-label">Year / Block</span>
+                        <span class="sp-info-value">
+                            {{ user.year_block|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="sp-info-item">
+                        <span class="sp-info-label">Department</span>
+                        <span class="sp-info-value">
+                            {{ user.department|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+        <div class="sp-right">
+
+            <section class="sp-card">
+
+                <div class="sp-card-heading">
+                    <div class="sp-heading-icon">♙</div>
+                    <div>
+                        <h2>Personal Information</h2>
+                        <p>Personal account details</p>
+                    </div>
+                </div>
+
+                <div class="sp-info-grid">
+
+                    <div class="sp-info-item">
+                        <span class="sp-info-label">First Name</span>
+                        <span class="sp-info-value">
+                            {{ user.first_name|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="sp-info-item">
+                        <span class="sp-info-label">Middle Name</span>
+                        <span class="sp-info-value">
+                            {{ user.middle_name|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="sp-info-item">
+                        <span class="sp-info-label">Last Name</span>
+                        <span class="sp-info-value">
+                            {{ user.last_name|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="sp-info-item">
+                        <span class="sp-info-label">Gender</span>
+                        <span class="sp-info-value">
+                            {{ user.get_sex_display|default:user.sex|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="sp-info-item">
+                        <span class="sp-info-label">Email Address</span>
+                        <span class="sp-info-value">
+                            {{ user.email|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="sp-info-item">
+                        <span class="sp-info-label">Username</span>
+                        <span class="sp-info-value">
+                            {{ user.username }}
+                        </span>
+                    </div>
+
+                    <div class="sp-info-item">
+                        <span class="sp-info-label">Contact Number</span>
+                        <span class="sp-info-value">
+                            {{ user.contact_number|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="sp-card sp-account">
+
+                <div>
+                    <h2>Account Settings</h2>
+                    <p>Update your personal information or secure your account.</p>
+                </div>
+
+                <div class="sp-actions">
+
+                    <a
+                        href="{% url 'accounts:edit_profile' %}"
+                        class="sp-button sp-edit"
+                    >
+                        ✎ Edit Profile
+                    </a>
+
+                    <a
+                        href="{% url 'accounts:password_change' %}"
+                        class="sp-button sp-password"
+                    >
+                        ▣ Change Password
+                    </a>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

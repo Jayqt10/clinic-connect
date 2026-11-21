@@ -1,0 +1,604 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile | Clinic Connect{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+
+<style>
+.profile-page {
+    --card: #111827;
+    --surface: #0b1120;
+    --border: #263247;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --accent: #22c55e;
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 0 0 20px;
+    color: var(--text);
+    font-size: 13px;
+}
+
+.profile-page * {
+    box-sizing: border-box;
+}
+
+.profile-heading {
+    margin-bottom: 17px;
+}
+
+.profile-heading h1 {
+    margin: 0 0 5px;
+    color: #f8fafc;
+    font-size: 22px;
+    font-weight: 750;
+    letter-spacing: -.4px;
+}
+
+.profile-heading p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.profile-main {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 15px;
+    align-items: start;
+}
+
+.profile-sidebar,
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    min-width: 0;
+}
+
+.profile-card {
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--card);
+    box-shadow: 0 7px 20px rgba(0, 0, 0, .10);
+}
+
+.profile-overview {
+    padding: 21px 15px;
+    text-align: center;
+    background: linear-gradient(145deg, #153326, #111827 85%);
+    border-color: #28543d;
+}
+
+.profile-avatar {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 3px solid rgba(74, 222, 128, .25);
+    border-radius: 50%;
+    background: #22c55e;
+    color: #052e16;
+    font-size: 30px;
+    font-weight: 800;
+    box-shadow: 0 5px 17px rgba(34, 197, 94, .13);
+    flex-shrink: 0;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.profile-overview h2 {
+    margin: 0 0 5px;
+    color: #f8fafc;
+    font-size: 17px;
+    font-weight: 750;
+    overflow-wrap: anywhere;
+}
+
+.profile-email {
+    margin: 0 0 11px;
+    color: #a5b4c7;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+.profile-role {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 12px;
+    border: 1px solid rgba(34, 197, 94, .3);
+    border-radius: 20px;
+    background: rgba(34, 197, 94, .1);
+    color: #4ade80;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+}
+
+.profile-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 13px;
+    padding-bottom: 11px;
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #245039;
+    border-radius: 9px;
+    background: #123323;
+    color: #4ade80;
+    font-size: 15px;
+}
+
+.profile-section-heading h3 {
+    margin: 0;
+    color: #f1f5f9;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.profile-section-heading p {
+    margin: 3px 0 0;
+    color: #8191a8;
+    font-size: 10px;
+}
+
+.profile-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.profile-fields.three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.profile-field {
+    min-width: 0;
+    min-height: 65px;
+    padding: 11px;
+    border: 1px solid #243047;
+    border-radius: 8px;
+    background: var(--surface);
+}
+
+.profile-field.highlighted {
+    border-color: rgba(34, 197, 94, .3);
+    background: rgba(34, 197, 94, .055);
+}
+
+.profile-label {
+    display: block;
+    margin-bottom: 7px;
+    color: #8191a8;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: .55px;
+    text-transform: uppercase;
+}
+
+.profile-value {
+    display: block;
+    color: #e5e7eb;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.profile-settings {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.profile-settings-info {
+    min-width: 0;
+}
+
+.profile-settings-info h3 {
+    margin: 0 0 5px;
+    color: #f1f5f9;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.profile-settings-info p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+.profile-buttons {
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+}
+
+.profile-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 37px;
+    padding: 8px 13px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 750;
+    white-space: nowrap;
+    transition: .18s ease;
+}
+
+.profile-button-primary {
+    border-color: #22c55e;
+    background: #22c55e;
+    color: #052e16;
+}
+
+.profile-button-primary:hover {
+    border-color: #4ade80;
+    background: #4ade80;
+}
+
+.profile-button-secondary {
+    border-color: #374151;
+    background: #1f2937;
+    color: #e5e7eb;
+}
+
+.profile-button-secondary:hover {
+    border-color: #475569;
+    background: #293548;
+}
+
+@media (max-width: 850px) {
+    .profile-main {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-overview {
+        display: flex;
+        align-items: center;
+        text-align: left;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .profile-avatar {
+        width: 65px;
+        height: 65px;
+        margin: 0;
+        font-size: 25px;
+    }
+
+    .profile-email {
+        margin-bottom: 7px;
+    }
+}
+
+@media (max-width: 600px) {
+    .profile-fields.three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .profile-settings {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .profile-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 420px) {
+    .profile-page {
+        padding-bottom: 15px;
+    }
+
+    .profile-heading h1 {
+        font-size: 20px;
+    }
+
+    .profile-card {
+        padding: 12px;
+    }
+
+    .profile-fields,
+    .profile-fields.three {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-overview {
+        gap: 11px;
+    }
+
+    .profile-avatar {
+        width: 58px;
+        height: 58px;
+        font-size: 23px;
+    }
+}
+</style>
+
+<div class="profile-page">
+
+    <div class="profile-heading">
+        <h1>My Profile</h1>
+        <p>Manage your account information and personal details.</p>
+    </div>
+
+    <div class="profile-main">
+
+        <aside class="profile-sidebar">
+
+            <section class="profile-card profile-overview">
+
+                <div class="profile-avatar">
+                    {% if user.profile_picture %}
+                        <img
+                            src="{{ user.profile_picture.url }}"
+                            alt="{{ user.get_full_name|default:user.username }} profile picture"
+                        >
+                    {% else %}
+                        {{ user.first_name|default:user.username|first|upper }}
+                    {% endif %}
+                </div>
+
+                <div class="profile-overview-content">
+                    <h2>{{ user.get_full_name|default:user.username }}</h2>
+
+                    <p class="profile-email">
+                        {{ user.email|default:"No email address provided" }}
+                    </p>
+
+                    <span class="profile-role">
+                        {{ user.get_role_display|default:user.role }}
+                    </span>
+                </div>
+
+            </section>
+
+            {% if user.role == 'student' %}
+
+                <section class="profile-card">
+
+                    <div class="profile-section-heading">
+                        <div class="profile-icon">▤</div>
+                        <div>
+                            <h3>Student Information</h3>
+                            <p>Academic details</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-fields">
+
+                        <div class="profile-field">
+                            <span class="profile-label">ID Number</span>
+                            <span class="profile-value">
+                                {{ user.id_number|default:"Not provided" }}
+                            </span>
+                        </div>
+
+                        <div class="profile-field">
+                            <span class="profile-label">Course</span>
+                            <span class="profile-value">
+                                {{ user.course|default:"Not provided" }}
+                            </span>
+                        </div>
+
+                        <div class="profile-field highlighted">
+                            <span class="profile-label">Year / Block</span>
+                            <span class="profile-value">
+                                {{ user.year_block|default:"Not provided" }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </section>
+
+            {% elif user.role == 'teacher' %}
+
+                <section class="profile-card">
+
+                    <div class="profile-section-heading">
+                        <div class="profile-icon">▤</div>
+                        <div>
+                            <h3>Teacher Information</h3>
+                            <p>Professional and department details</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-fields">
+
+                        <div class="profile-field">
+                            <span class="profile-label">Employee ID</span>
+                            <span class="profile-value">
+                                {{ user.id_number|default:"Not provided" }}
+                            </span>
+                        </div>
+
+                        <div class="profile-field highlighted">
+                            <span class="profile-label">Department</span>
+                            <span class="profile-value">
+                                {{ user.department|default:"Not provided" }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </section>
+
+            {% elif user.role == 'staff' %}
+
+                <section class="profile-card">
+
+                    <div class="profile-section-heading">
+                        <div class="profile-icon">▤</div>
+                        <div>
+                            <h3>Clinic Staff Information</h3>
+                            <p>Professional details</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-fields">
+
+                        <div class="profile-field">
+                            <span class="profile-label">Employee ID</span>
+                            <span class="profile-value">
+                                {{ user.id_number|default:"Not provided" }}
+                            </span>
+                        </div>
+
+                        <div class="profile-field highlighted">
+                            <span class="profile-label">Staff Position</span>
+                            <span class="profile-value">
+                                {{ user.get_staff_position_display|default:user.staff_position|default:"Not provided" }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </section>
+
+            {% endif %}
+
+        </aside>
+
+        <div class="profile-content">
+
+            <section class="profile-card">
+
+                <div class="profile-section-heading">
+                    <div class="profile-icon">♙</div>
+                    <div>
+                        <h3>Personal Information</h3>
+                        <p>Your personal account details</p>
+                    </div>
+                </div>
+
+                <div class="profile-fields three">
+
+                    <div class="profile-field">
+                        <span class="profile-label">First Name</span>
+                        <span class="profile-value">
+                            {{ user.first_name|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="profile-field">
+                        <span class="profile-label">Middle Name</span>
+                        <span class="profile-value">
+                            {{ user.middle_name|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="profile-field">
+                        <span class="profile-label">Last Name</span>
+                        <span class="profile-value">
+                            {{ user.last_name|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="profile-field">
+                        <span class="profile-label">Gender</span>
+                        <span class="profile-value">
+                            {{ user.get_sex_display|default:user.sex|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="profile-field">
+                        <span class="profile-label">Contact Number</span>
+                        <span class="profile-value">
+                            {{ user.contact_number|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="profile-field">
+                        <span class="profile-label">Email Address</span>
+                        <span class="profile-value">
+                            {{ user.email|default:"Not provided" }}
+                        </span>
+                    </div>
+
+                    <div class="profile-field">
+                        <span class="profile-label">Username</span>
+                        <span class="profile-value">
+                            {{ user.username }}
+                        </span>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="profile-card profile-settings">
+
+                <div class="profile-settings-info">
+                    <h3>Account Settings</h3>
+                    <p>
+                        Update your personal information or change your password
+                        to keep your account secure.
+                    </p>
+                </div>
+
+                <div class="profile-buttons">
+
+                    <a
+                        href="{% url 'accounts:edit_profile' %}"
+                        class="profile-button profile-button-primary"
+                    >
+                        ✎ Edit Profile
+                    </a>
+
+                    <a
+                        href="{% url 'accounts:password_change' %}"
+                        class="profile-button profile-button-secondary"
+                    >
+                        ⌑ Change Password
+                    </a>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

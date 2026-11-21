@@ -1,0 +1,958 @@
+
+{% extends 'base.html' %}
+
+{% block title %}User Management | Clinic Connect{% endblock %}
+{% block page_title %}User Management{% endblock %}
+
+{% block content %}
+
+<style>
+.user-management {
+    --panel: #111827;
+    --border: #263247;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --accent: #22c55e;
+    color: var(--text);
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+.um-header {
+    margin-bottom: 20px;
+}
+
+.um-header h2 {
+    margin: 0 0 5px;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.um-header p {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0;
+}
+
+.um-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 13px;
+    margin-bottom: 20px;
+}
+
+.um-stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 16px 18px;
+}
+
+.um-stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.um-stat-label {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.um-stat-icon {
+    color: var(--accent);
+    font-size: 16px;
+}
+
+.um-stat-value {
+    font-size: 25px;
+    font-weight: 750;
+    margin-top: 10px;
+}
+
+.um-toolbar {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.um-toolbar-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.um-filters {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 170px 170px auto;
+    gap: 9px;
+}
+
+.um-input,
+.um-select {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 0 12px;
+    border-radius: 7px;
+    border: 1px solid #334155;
+    background: #0b1120;
+    color: var(--text);
+    outline: none;
+    font-size: 13px;
+}
+
+.um-input:focus,
+.um-select:focus {
+    border-color: var(--accent);
+}
+
+.um-input::placeholder {
+    color: #64748b;
+}
+
+.um-button {
+    height: 42px;
+    border: 0;
+    border-radius: 7px;
+    padding: 0 17px;
+    background: #16a34a;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.um-button:hover {
+    background: #15803d;
+}
+
+.um-toolbar-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.um-hint {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.um-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #86efac;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.um-clear:hover {
+    text-decoration: underline;
+}
+
+.um-results {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 10px;
+}
+
+.um-results h3 {
+    font-size: 15px;
+    margin: 0;
+}
+
+.um-results span {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.um-list {
+    display: grid;
+    gap: 10px;
+}
+
+.um-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: border-color .2s, transform .2s;
+}
+
+.um-user:hover {
+    border-color: #475569;
+    transform: translateY(-1px);
+}
+
+.um-avatar {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #263449;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #86efac;
+    font-size: 20px;
+    font-weight: 750;
+}
+
+.um-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.um-user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.um-user-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 7px;
+}
+
+.um-user-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 15px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.um-user-meta span {
+    overflow-wrap: anywhere;
+}
+
+.um-user-meta i {
+    margin-right: 5px;
+    color: #64748b;
+}
+
+.um-tags {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.um-tag {
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 650;
+    background: #1e293b;
+    color: #cbd5e1;
+}
+
+.um-tag.student {
+    background: #172554;
+    color: #93c5fd;
+}
+
+.um-tag.teacher {
+    background: #312e81;
+    color: #c4b5fd;
+}
+
+.um-tag.staff {
+    background: #164e63;
+    color: #a5f3fc;
+}
+
+.um-tag.active {
+    background: #052e1a;
+    color: #86efac;
+}
+
+.um-tag.inactive {
+    background: #3f1d1d;
+    color: #fca5a5;
+}
+
+.um-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.um-view,
+.um-status-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 12px;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.um-view {
+    border: 1px solid #334155;
+    color: #86efac;
+    background: transparent;
+}
+
+.um-view:hover {
+    background: #172b24;
+    border-color: #22c55e;
+}
+
+.um-status-form {
+    margin: 0;
+}
+
+.um-status-button {
+    border: 1px solid transparent;
+}
+
+.um-deactivate {
+    background: #3f1d1d;
+    border-color: #7f1d1d;
+    color: #fca5a5;
+}
+
+.um-deactivate:hover {
+    background: #7f1d1d;
+    color: #fff;
+}
+
+.um-activate {
+    background: #052e1a;
+    border-color: #166534;
+    color: #86efac;
+}
+
+.um-activate:hover {
+    background: #166534;
+    color: #fff;
+}
+
+.um-admin-note {
+    color: #94a3b8;
+    font-size: 10px;
+    padding: 7px 9px;
+    border: 1px solid #334155;
+    border-radius: 7px;
+}
+
+.um-empty {
+    background: var(--panel);
+    border: 1px dashed #334155;
+    border-radius: 11px;
+    padding: 45px 20px;
+    text-align: center;
+    color: var(--muted);
+}
+
+.um-empty i {
+    font-size: 28px;
+    margin-bottom: 12px;
+    color: #64748b;
+}
+
+.um-empty h3 {
+    color: var(--text);
+    font-size: 15px;
+    margin: 0 0 7px;
+}
+
+.um-empty p {
+    font-size: 12px;
+}
+
+.um-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, .78);
+    backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 9999;
+}
+
+.um-modal-overlay.show {
+    display: flex;
+}
+
+.um-modal {
+    width: 100%;
+    max-width: 410px;
+    background: #111827;
+    border: 1px solid #334155;
+    border-radius: 15px;
+    padding: 27px;
+    text-align: center;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, .5);
+    animation: umModalIn .2s ease;
+}
+
+@keyframes umModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.um-modal-icon {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 17px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #3f1d1d;
+    color: #fca5a5;
+    font-size: 23px;
+}
+
+.um-modal-icon.activate {
+    background: #052e1a;
+    color: #86efac;
+}
+
+.um-modal h3 {
+    color: #f8fafc;
+    font-size: 19px;
+    margin: 0 0 10px;
+}
+
+.um-modal p {
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.um-modal-user {
+    margin: 17px 0 22px;
+    padding: 12px;
+    border: 1px solid #263247;
+    border-radius: 8px;
+    background: #0b1120;
+    color: #e5e7eb;
+    font-size: 13px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.um-modal-actions {
+    display: flex;
+    gap: 9px;
+}
+
+.um-modal-actions button {
+    flex: 1;
+    height: 42px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.um-modal-cancel {
+    background: #1f2937;
+    border: 1px solid #334155;
+    color: #cbd5e1;
+}
+
+.um-modal-cancel:hover {
+    background: #334155;
+}
+
+.um-modal-confirm {
+    background: #b91c1c;
+    border: 1px solid #dc2626;
+    color: white;
+}
+
+.um-modal-confirm:hover {
+    background: #991b1b;
+}
+
+.um-modal-confirm.activate {
+    background: #15803d;
+    border-color: #16a34a;
+}
+
+.um-modal-confirm.activate:hover {
+    background: #166534;
+}
+
+@media (max-width: 1100px) {
+    .um-user {
+        flex-wrap: wrap;
+    }
+
+    .um-actions {
+        width: 100%;
+        justify-content: flex-start;
+        padding-left: 66px;
+    }
+}
+
+@media (max-width: 950px) {
+    .um-filters {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .um-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    .um-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .um-user {
+        flex-wrap: wrap;
+    }
+
+    .um-user-info {
+        width: calc(100% - 70px);
+        flex: none;
+    }
+
+    .um-actions {
+        padding-left: 0;
+    }
+
+    .um-view,
+    .um-status-button {
+        padding: 9px 10px;
+    }
+
+    .um-modal {
+        padding: 23px 18px;
+    }
+}
+</style>
+
+<div class="user-management">
+
+    <div class="um-header">
+        <h2>Registered Users</h2>
+        <p>View and identify registered students, teachers, and clinic staff.</p>
+    </div>
+
+    <div class="um-stats">
+
+        <div class="um-stat">
+            <div class="um-stat-top">
+                <span class="um-stat-label">Total Users</span>
+                <i class="fa-solid fa-users um-stat-icon"></i>
+            </div>
+            <div class="um-stat-value">{{ total_users }}</div>
+        </div>
+
+        <div class="um-stat">
+            <div class="um-stat-top">
+                <span class="um-stat-label">Students</span>
+                <i class="fa-solid fa-graduation-cap um-stat-icon"></i>
+            </div>
+            <div class="um-stat-value">{{ total_students }}</div>
+        </div>
+
+        <div class="um-stat">
+            <div class="um-stat-top">
+                <span class="um-stat-label">Teachers</span>
+                <i class="fa-solid fa-chalkboard-user um-stat-icon"></i>
+            </div>
+            <div class="um-stat-value">{{ total_teachers }}</div>
+        </div>
+
+        <div class="um-stat">
+            <div class="um-stat-top">
+                <span class="um-stat-label">Clinic Staff</span>
+                <i class="fa-solid fa-user-nurse um-stat-icon"></i>
+            </div>
+            <div class="um-stat-value">{{ total_clinic_staff }}</div>
+        </div>
+
+    </div>
+
+    <div class="um-toolbar">
+
+        <div class="um-toolbar-title">
+            <i class="fa-solid fa-filter" style="color:#22c55e;margin-right:6px;"></i>
+            Search and Filter Accounts
+        </div>
+
+        <form method="GET"
+              action="{% url 'accounts:admin_user_management' %}"
+              class="um-filters">
+
+            <input
+                type="search"
+                name="q"
+                class="um-input"
+                placeholder="Search name, ID, email or department..."
+                value="{{ search_query }}"
+                autocomplete="off"
+            >
+
+            <select name="role" class="um-select">
+                <option value="">All Roles</option>
+                <option value="student" {% if selected_role == 'student' %}selected{% endif %}>
+                    Students
+                </option>
+                <option value="teacher" {% if selected_role == 'teacher' %}selected{% endif %}>
+                    Teachers
+                </option>
+                <option value="staff" {% if selected_role == 'staff' %}selected{% endif %}>
+                    Clinic Staff
+                </option>
+            </select>
+
+            <select name="status" class="um-select">
+                <option value="">All Account Statuses</option>
+                <option value="active" {% if selected_status == 'active' %}selected{% endif %}>
+                    Active
+                </option>
+                <option value="inactive" {% if selected_status == 'inactive' %}selected{% endif %}>
+                    Inactive
+                </option>
+            </select>
+
+            <button type="submit" class="um-button">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+            </button>
+
+        </form>
+
+        <div class="um-toolbar-bottom">
+
+            <span class="um-hint">
+                Search by full name, username, email, ID number, or school information.
+            </span>
+
+            {% if search_query or selected_role or selected_status %}
+                <a href="{% url 'accounts:admin_user_management' %}" class="um-clear">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Clear Filters
+                </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <div class="um-results">
+        <h3>Account Directory</h3>
+        <span>
+            {{ users|length }} result{{ users|length|pluralize }}
+        </span>
+    </div>
+
+    <div class="um-list">
+
+        {% for user in users %}
+
+            <div class="um-user">
+
+                <div class="um-avatar">
+
+                    {% if user.profile_picture %}
+                        <img
+                            src="{{ user.profile_picture.url }}"
+                            alt="{{ user.get_full_name }}"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        >
+                        <span style="display:none;width:100%;height:100%;align-items:center;justify-content:center;">
+                            {{ user.first_name|default:user.username|first|upper }}
+                        </span>
+                    {% else %}
+                        {{ user.first_name|default:user.username|first|upper }}
+                    {% endif %}
+
+                </div>
+
+                <div class="um-user-info">
+
+                    <div class="um-user-name">
+                        {{ user.get_full_name|default:user.username }}
+                    </div>
+
+                    <div class="um-user-meta">
+
+                        {% if user.id_number %}
+                            <span>
+                                <i class="fa-solid fa-id-card"></i>
+                                {{ user.id_number }}
+                            </span>
+                        {% endif %}
+
+                        {% if user.email %}
+                            <span>
+                                <i class="fa-solid fa-envelope"></i>
+                                {{ user.email }}
+                            </span>
+                        {% endif %}
+
+                        {% if user.contact_number %}
+                            <span>
+                                <i class="fa-solid fa-phone"></i>
+                                {{ user.contact_number }}
+                            </span>
+                        {% endif %}
+
+                        {% if user.department %}
+                            <span>
+                                <i class="fa-solid fa-building"></i>
+                                {{ user.department }}
+                            </span>
+                        {% endif %}
+
+                        {% if user.course %}
+                            <span>
+                                <i class="fa-solid fa-book"></i>
+                                {{ user.course }}
+                            </span>
+                        {% endif %}
+
+                        {% if user.role == 'staff' and user.staff_position %}
+                            <span>
+                                <i class="fa-solid fa-briefcase"></i>
+                                {{ user.get_staff_position_display|default:user.staff_position }}
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="um-tags">
+
+                        <span class="um-tag {{ user.role }}">
+                            {{ user.get_role_display }}
+                        </span>
+
+                        {% if user.is_active %}
+                            <span class="um-tag active">Active Account</span>
+                        {% else %}
+                            <span class="um-tag inactive">Inactive Account</span>
+                        {% endif %}
+
+                        {% if user.role == 'student' %}
+                            <span class="um-tag">
+                                {{ user.get_verification_status_display }}
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="um-actions">
+
+                    <a
+                        href="{% url 'accounts:admin_user_detail' user.id %}"
+                        class="um-view"
+                    >
+                        <i class="fa-regular fa-id-card"></i>
+                        View Profile
+                    </a>
+
+                    {% if user.role == 'staff' and user.staff_position == 'admin' %}
+
+                        <span class="um-admin-note">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            Protected Administrator
+                        </span>
+
+                    {% else %}
+
+                        <form
+                            method="POST"
+                            action="{% url 'accounts:toggle_user_status' user.id %}"
+                            class="um-status-form"
+                            data-user-name="{{ user.get_full_name|default:user.username }}"
+                            data-action="{% if user.is_active %}deactivate{% else %}activate{% endif %}"
+                        >
+                            {% csrf_token %}
+
+                            {% if user.is_active %}
+                                <input type="hidden" name="action" value="deactivate">
+                                <button
+                                    type="button"
+                                    class="um-status-button um-deactivate"
+                                    onclick="openStatusModal(this)"
+                                >
+                                    <i class="fa-solid fa-user-slash"></i>
+                                    Deactivate
+                                </button>
+                            {% else %}
+                                <input type="hidden" name="action" value="activate">
+                                <button
+                                    type="button"
+                                    class="um-status-button um-activate"
+                                    onclick="openStatusModal(this)"
+                                >
+                                    <i class="fa-solid fa-user-check"></i>
+                                    Activate
+                                </button>
+                            {% endif %}
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="um-empty">
+                <i class="fa-solid fa-users"></i>
+                <h3>No accounts found</h3>
+                <p>There are no accounts matching your search or selected filters.</p>
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<div class="um-modal-overlay" id="umStatusModal">
+    <div class="um-modal">
+
+        <div class="um-modal-icon" id="umModalIcon">
+            <i class="fa-solid fa-user-slash"></i>
+        </div>
+
+        <h3 id="umModalTitle">Deactivate Account?</h3>
+
+        <p id="umModalMessage">
+            Are you sure you want to deactivate this account?
+        </p>
+
+        <div class="um-modal-user" id="umModalUser"></div>
+
+        <div class="um-modal-actions">
+
+            <button
+                type="button"
+                class="um-modal-cancel"
+                onclick="closeStatusModal()"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                class="um-modal-confirm"
+                id="umModalConfirm"
+            >
+                Deactivate Account
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+let selectedStatusForm = null;
+
+function openStatusModal(button) {
+    selectedStatusForm = button.closest("form");
+
+    const action = selectedStatusForm.dataset.action;
+    const userName = selectedStatusForm.dataset.userName;
+
+    const modal = document.getElementById("umStatusModal");
+    const icon = document.getElementById("umModalIcon");
+    const title = document.getElementById("umModalTitle");
+    const message = document.getElementById("umModalMessage");
+    const user = document.getElementById("umModalUser");
+    const confirmButton = document.getElementById("umModalConfirm");
+
+    user.textContent = userName;
+
+    if (action === "deactivate") {
+        icon.className = "um-modal-icon";
+        icon.innerHTML = '<i class="fa-solid fa-user-slash"></i>';
+
+        title.textContent = "Deactivate Account?";
+        message.textContent =
+            "This user will no longer be able to log in to Clinic Connect. Their account and existing records will remain preserved.";
+
+        confirmButton.textContent = "Deactivate Account";
+        confirmButton.className = "um-modal-confirm";
+    } else {
+        icon.className = "um-modal-icon activate";
+        icon.innerHTML = '<i class="fa-solid fa-user-check"></i>';
+
+        title.textContent = "Reactivate Account?";
+        message.textContent =
+            "This user will be able to log in to Clinic Connect again.";
+
+        confirmButton.textContent = "Activate Account";
+        confirmButton.className = "um-modal-confirm activate";
+    }
+
+    modal.classList.add("show");
+}
+
+function closeStatusModal() {
+    document.getElementById("umStatusModal").classList.remove("show");
+    selectedStatusForm = null;
+}
+
+document.getElementById("umModalConfirm").addEventListener("click", function () {
+    if (selectedStatusForm) {
+        selectedStatusForm.submit();
+    }
+});
+
+document.getElementById("umStatusModal").addEventListener("click", function (event) {
+    if (event.target === this) {
+        closeStatusModal();
+    }
+});
+
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+        closeStatusModal();
+    }
+});
+</script>
+
+{% endblock %}

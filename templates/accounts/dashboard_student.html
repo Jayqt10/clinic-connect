@@ -1,0 +1,765 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | Clinic Connect{% endblock %}
+
+{% block content %}
+<style>
+  .student-dashboard-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    color: #e5e7eb;
+  }
+
+  .dash-welcome-card {
+    background: linear-gradient(135deg, #172438, #111827);
+    border: 1px solid #263449;
+    border-radius: 13px;
+    padding: 17px 21px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+  }
+
+  .dash-title {
+    font-size: 21px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 3px;
+  }
+
+  .dash-subtitle {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 0;
+  }
+
+  .btn-request-checkup {
+    background: #16a34a;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: .2s;
+  }
+
+  .btn-request-checkup:hover {
+    background: #15803d;
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .dash-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 15px;
+  }
+
+  .metric-box {
+    background: #0f172a;
+    border: 1px solid #263449;
+    border-radius: 12px;
+    padding: 13px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+    transition: .2s;
+  }
+
+  .metric-box:hover {
+    border-color: #287b55;
+    transform: translateY(-2px);
+  }
+
+  .metric-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+  }
+
+  .metric-value {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #fff;
+    margin-top: 5px;
+  }
+
+  .metric-desc {
+    font-size: 10px;
+    color: #64748b;
+    margin-top: 3px;
+  }
+
+  .metric-icon {
+    width: 37px;
+    height: 37px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+
+  .dash-main-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, .85fr) minmax(0, 1.5fr);
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .dash-section-card {
+    background: #0f172a;
+    border: 1px solid #263449;
+    border-radius: 13px;
+    padding: 17px;
+    min-width: 0;
+  }
+
+  .section-header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 13px;
+  }
+
+  .section-heading {
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+  }
+
+  .section-subtext {
+    font-size: 11px;
+    color: #94a3b8;
+    margin: 3px 0 0;
+  }
+
+  .view-all-link {
+    color: #22c55e;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .view-all-link:hover {
+    color: #4ade80;
+  }
+
+  .calendar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 13px;
+  }
+
+  .calendar-month {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .calendar-controls {
+    display: flex;
+    gap: 5px;
+  }
+
+  .calendar-nav {
+    width: 25px;
+    height: 25px;
+    border: 1px solid #334155;
+    background: #172438;
+    color: #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .calendar-nav:hover {
+    background: #166534;
+    color: white;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+    text-align: center;
+  }
+
+  .calendar-weekday {
+    font-size: 9px;
+    font-weight: 800;
+    color: #64748b;
+    padding: 5px 0;
+  }
+
+  .calendar-day {
+    min-height: 31px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: transparent;
+    color: #cbd5e1;
+    font-size: 11px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .calendar-day:hover {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .calendar-day.today {
+    background: rgba(34, 197, 94, .15);
+    border-color: #16a34a;
+    color: #4ade80;
+    font-weight: 800;
+  }
+
+  .calendar-day.selected {
+    background: #166534;
+    color: #fff;
+    border-color: #22c55e;
+  }
+
+  .calendar-day.has-appointment::after {
+    content: "";
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #38bdf8;
+    border-radius: 50%;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .calendar-day.other-month {
+    color: #475569;
+  }
+
+  .calendar-selection {
+    margin-top: 12px;
+    padding: 9px 10px;
+    background: #172438;
+    border: 1px solid #263449;
+    border-radius: 8px;
+    font-size: 11px;
+    color: #94a3b8;
+  }
+
+  .calendar-selection strong {
+    color: #e2e8f0;
+  }
+
+  .calendar-legend {
+    display: flex;
+    gap: 13px;
+    margin-top: 10px;
+    font-size: 10px;
+    color: #94a3b8;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .legend-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .appointment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .appointment-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 12px;
+    border: 1px solid #263449;
+    background: #111c30;
+    border-radius: 9px;
+  }
+
+  .appointment-info {
+    min-width: 0;
+  }
+
+  .appointment-concern {
+    font-size: 12px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 4px;
+    overflow-wrap: anywhere;
+  }
+
+  .appointment-date {
+    font-size: 10px;
+    color: #94a3b8;
+  }
+
+  .appointment-status {
+    font-size: 9px;
+    font-weight: 800;
+    padding: 5px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+    background: rgba(234, 179, 8, .12);
+    color: #facc15;
+    border: 1px solid rgba(234, 179, 8, .2);
+  }
+
+  .status-approved,
+  .status-completed {
+    background: rgba(34, 197, 94, .12);
+    color: #4ade80;
+    border-color: rgba(34, 197, 94, .2);
+  }
+
+  .status-rejected {
+    background: rgba(239, 68, 68, .12);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, .2);
+  }
+
+  .status-rescheduled {
+    background: rgba(56, 189, 248, .12);
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, .2);
+  }
+
+  .empty-state-box {
+    text-align: center;
+    padding: 25px 12px;
+    background: rgba(30, 41, 59, .3);
+    border: 1px dashed #334155;
+    border-radius: 9px;
+  }
+
+  .empty-icon {
+    font-size: 23px;
+    margin-bottom: 5px;
+  }
+
+  .empty-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .empty-desc {
+    font-size: 10px;
+    color: #94a3b8;
+    margin-top: 3px;
+  }
+
+  @media (max-width: 900px) {
+    .dash-main-grid {
+      grid-template-columns: 1fr 1.3fr;
+    }
+
+    .metric-box {
+      padding: 12px;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .dash-welcome-card {
+      align-items: flex-start;
+      flex-direction: column;
+      padding: 15px;
+    }
+
+    .dash-title {
+      font-size: 19px;
+    }
+
+    .dash-metrics-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .dash-main-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .dash-section-card {
+      padding: 14px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .metric-icon {
+      width: 31px;
+      height: 31px;
+      font-size: 14px;
+    }
+
+    .metric-value {
+      font-size: 23px;
+    }
+
+    .metric-desc {
+      font-size: 9px;
+    }
+  }
+</style>
+
+<div class="student-dashboard-wrapper">
+
+  <div class="dash-welcome-card">
+    <div>
+      <h1 class="dash-title">Welcome back, {{ user.first_name|default:user.username }} 👋</h1>
+      <p class="dash-subtitle">Your personal overview of clinic services and health activities.</p>
+    </div>
+
+    <a href="{% url 'accounts:student_appointments' %}" class="btn-request-checkup">
+      + Request Checkup
+    </a>
+  </div>
+
+  <div class="dash-metrics-grid">
+
+    <div class="metric-box">
+      <div>
+        <div class="metric-title">Appointments</div>
+        <div class="metric-value">{{ total_appointments|default:0 }}</div>
+        <div class="metric-desc">Total clinic visits</div>
+      </div>
+      <div class="metric-icon" style="background:rgba(34,197,94,.12);color:#22c55e;">🩺</div>
+    </div>
+
+    <div class="metric-box">
+      <div>
+        <div class="metric-title">Pending</div>
+        <div class="metric-value">{{ pending_appointments|default:0 }}</div>
+        <div class="metric-desc">Awaiting clinic action</div>
+      </div>
+      <div class="metric-icon" style="background:rgba(234,179,8,.12);color:#facc15;">◷</div>
+    </div>
+
+    <div class="metric-box">
+      <div>
+        <div class="metric-title">Referrals</div>
+        <div class="metric-value">{{ total_referrals|default:0 }}</div>
+        <div class="metric-desc">Teacher referrals</div>
+      </div>
+      <div class="metric-icon" style="background:rgba(56,189,248,.12);color:#38bdf8;">▤</div>
+    </div>
+
+    <div class="metric-box">
+      <div>
+        <div class="metric-title">Sick Notes</div>
+        <div class="metric-value">{{ total_sick_notes|default:0 }}</div>
+        <div class="metric-desc">Issued notes</div>
+      </div>
+      <div class="metric-icon" style="background:rgba(192,132,252,.12);color:#c084fc;">▧</div>
+    </div>
+
+  </div>
+
+  <div class="dash-main-grid">
+
+    <section class="dash-section-card">
+      <div class="section-header-flex">
+        <div>
+          <h2 class="section-heading">Clinic Calendar</h2>
+          <p class="section-subtext">Your monthly schedule</p>
+        </div>
+      </div>
+
+      <div class="calendar-top">
+        <div class="calendar-month" id="calendarMonth"></div>
+        <div class="calendar-controls">
+          <button type="button" class="calendar-nav" id="prevMonth" aria-label="Previous month">‹</button>
+          <button type="button" class="calendar-nav" id="nextMonth" aria-label="Next month">›</button>
+        </div>
+      </div>
+
+      <div class="calendar-grid" id="calendarGrid">
+        <div class="calendar-weekday">SUN</div>
+        <div class="calendar-weekday">MON</div>
+        <div class="calendar-weekday">TUE</div>
+        <div class="calendar-weekday">WED</div>
+        <div class="calendar-weekday">THU</div>
+        <div class="calendar-weekday">FRI</div>
+        <div class="calendar-weekday">SAT</div>
+      </div>
+
+      <div class="calendar-selection" id="calendarSelection">
+        Select a date to view your schedule.
+      </div>
+
+      <div class="calendar-legend">
+        <div class="legend-item">
+          <span class="legend-dot" style="background:#22c55e;"></span>
+          Today
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background:#38bdf8;"></span>
+          Appointment / Schedule
+        </div>
+      </div>
+
+      <div id="calendarAppointmentData" hidden>
+        {% for appointment in recent_appointments %}
+          <span
+            data-date="{{ appointment.scheduled_date|default:appointment.preferred_date|date:'Y-m-d' }}"
+            data-concern="{{ appointment.concern|default:'Clinic Appointment'|escape }}"
+          ></span>
+        {% endfor %}
+        {% for item in clinic_announcements %}
+          {% if item.event_date %}
+            <span
+              data-date="{{ item.event_date|date:'Y-m-d' }}"
+              data-concern="{{ item.title|escape }}"
+            ></span>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="dash-section-card">
+      <div class="section-header-flex">
+        <div>
+          <h2 class="section-heading">Recent Appointments</h2>
+          <p class="section-subtext">Your latest clinic requests and updates</p>
+        </div>
+        <a href="{% url 'accounts:student_appointments' %}" class="view-all-link">View all →</a>
+      </div>
+
+      {% if recent_appointments %}
+        <div class="appointment-list">
+          {% for appointment in recent_appointments|slice:":4" %}
+            <div class="appointment-item">
+              <div class="appointment-info">
+                <div class="appointment-concern">
+                  {{ appointment.concern|default:"Clinic Appointment" }}
+                </div>
+                <div class="appointment-date">
+                  {% if appointment.scheduled_date %}
+                    {{ appointment.scheduled_date|date:"M d, Y" }}
+                  {% else %}
+                    {{ appointment.preferred_date|date:"M d, Y" }}
+                  {% endif %}
+
+                  {% if appointment.scheduled_time %}
+                    · {{ appointment.scheduled_time|time:"g:i A" }}
+                  {% elif appointment.preferred_time %}
+                    · {{ appointment.preferred_time|time:"g:i A" }}
+                  {% endif %}
+                </div>
+              </div>
+
+              <span class="appointment-status
+                {% if appointment.status == 'Approved' %}status-approved
+                {% elif appointment.status == 'Completed' %}status-completed
+                {% elif appointment.status == 'Rejected' %}status-rejected
+                {% elif appointment.status == 'Rescheduled' %}status-rescheduled
+                {% endif %}">
+                {{ appointment.status }}
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state-box">
+          <div class="empty-icon">🩺</div>
+          <div class="empty-title">No appointments yet</div>
+          <div class="empty-desc">Your clinic appointment activity will appear here.</div>
+        </div>
+      {% endif %}
+    </section>
+
+  </div>
+
+  <section class="dash-section-card" style="margin-top: 15px;">
+    <div class="section-header-flex">
+      <div>
+        <h2 class="section-heading">Clinic Announcements &amp; Schedules</h2>
+        <p class="section-subtext">Notices and scheduled clinic dates</p>
+      </div>
+    </div>
+
+    {% if clinic_announcements %}
+      <div class="appointment-list">
+        {% for item in clinic_announcements %}
+          <div class="appointment-item">
+            <div class="appointment-info">
+              <div class="appointment-concern">{{ item.title }}</div>
+              <div class="appointment-date">
+                {{ item.message }}
+                {% if item.event_date %}
+                  · {{ item.event_date|date:"M d, Y" }}
+                  {% if item.start_time %} · {{ item.start_time|time:"g:i A" }}{% endif %}
+                  {% if item.end_time %}–{{ item.end_time|time:"g:i A" }}{% endif %}
+                {% endif %}
+              </div>
+            </div>
+            <span class="appointment-status status-approved">
+              {% if item.event_date %}Scheduled{% else %}Notice{% endif %}
+            </span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state-box">
+        <div class="empty-title">No clinic announcements right now</div>
+        <div class="empty-desc">Clinic notices and scheduled dates will appear here.</div>
+      </div>
+    {% endif %}
+  </section>
+</div>
+
+<script>
+(function () {
+  const grid = document.getElementById("calendarGrid");
+  const monthLabel = document.getElementById("calendarMonth");
+  const selection = document.getElementById("calendarSelection");
+  const previousButton = document.getElementById("prevMonth");
+  const nextButton = document.getElementById("nextMonth");
+
+  if (!grid || !monthLabel || !selection) return;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let displayedMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  let selectedDate = new Date(today);
+
+  const appointmentDates = {};
+
+  document.querySelectorAll("#calendarAppointmentData [data-date]").forEach(item => {
+    const date = item.dataset.date;
+    if (!date) return;
+
+    if (!appointmentDates[date]) {
+      appointmentDates[date] = [];
+    }
+
+    appointmentDates[date].push(item.dataset.concern || "Clinic Appointment");
+  });
+
+  function formatDate(date) {
+    return date.getFullYear() + "-" +
+      String(date.getMonth() + 1).padStart(2, "0") + "-" +
+      String(date.getDate()).padStart(2, "0");
+  }
+
+  function renderCalendar() {
+    monthLabel.textContent = displayedMonth.toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric"
+    });
+
+    grid.querySelectorAll(".calendar-day").forEach(day => day.remove());
+
+    const year = displayedMonth.getFullYear();
+    const month = displayedMonth.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const previousMonthDays = new Date(year, month, 0).getDate();
+
+    for (let i = 0; i < 42; i++) {
+      let dayNumber;
+      let cellDate;
+      let isOtherMonth = false;
+
+      if (i < firstDay) {
+        dayNumber = previousMonthDays - firstDay + i + 1;
+        cellDate = new Date(year, month - 1, dayNumber);
+        isOtherMonth = true;
+      } else if (i >= firstDay + daysInMonth) {
+        dayNumber = i - firstDay - daysInMonth + 1;
+        cellDate = new Date(year, month + 1, dayNumber);
+        isOtherMonth = true;
+      } else {
+        dayNumber = i - firstDay + 1;
+        cellDate = new Date(year, month, dayNumber);
+      }
+
+      const dateKey = formatDate(cellDate);
+      const button = document.createElement("button");
+
+      button.type = "button";
+      button.className = "calendar-day";
+      button.textContent = dayNumber;
+      button.setAttribute("aria-label", cellDate.toDateString());
+
+      if (isOtherMonth) button.classList.add("other-month");
+      if (dateKey === formatDate(today)) button.classList.add("today");
+      if (dateKey === formatDate(selectedDate)) button.classList.add("selected");
+      if (appointmentDates[dateKey]) {
+        button.classList.add("has-appointment");
+        button.title = appointmentDates[dateKey].join(", ");
+      }
+
+      button.addEventListener("click", function () {
+        selectedDate = new Date(cellDate);
+        if (isOtherMonth) {
+          displayedMonth = new Date(cellDate.getFullYear(), cellDate.getMonth(), 1);
+        }
+        renderCalendar();
+        updateSelection();
+      });
+
+      grid.appendChild(button);
+    }
+  }
+
+  function updateSelection() {
+    const dateKey = formatDate(selectedDate);
+    const formatted = selectedDate.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    });
+
+    const appointments = appointmentDates[dateKey] || [];
+
+    if (appointments.length) {
+      selection.innerHTML = "<strong>" + formatted + "</strong> · " +
+        appointments.length + " event" +
+        (appointments.length > 1 ? "s" : "");
+    } else {
+      selection.innerHTML = "<strong>" + formatted + "</strong> · No event listed";
+    }
+  }
+
+  previousButton.addEventListener("click", function () {
+    displayedMonth.setMonth(displayedMonth.getMonth() - 1);
+    renderCalendar();
+  });
+
+  nextButton.addEventListener("click", function () {
+    displayedMonth.setMonth(displayedMonth.getMonth() + 1);
+    renderCalendar();
+  });
+
+  renderCalendar();
+  updateSelection();
+})();
+</script>
+{% endblock %}

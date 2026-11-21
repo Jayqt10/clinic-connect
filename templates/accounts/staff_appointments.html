@@ -1,0 +1,1338 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Appointments | Clinic Staff{% endblock %}
+
+{% block content %}
+<style>
+  .staff-appt-wrap {
+    color: #e5e7eb;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+
+  .staff-appt-header {
+    margin-bottom: 20px;
+  }
+
+  .staff-appt-title {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -.6px;
+  }
+
+  .staff-appt-sub {
+    margin: 5px 0 0;
+    color: #94a3b8;
+    font-size: 12px;
+  }
+
+  .stats-section {
+    margin-bottom: 22px;
+  }
+
+  .stats-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 11px;
+  }
+
+  .stats-section-title {
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+  }
+
+  .stats-section-caption {
+    color: #64748b;
+    font-size: 10px;
+  }
+
+  .stats-row-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 11px;
+  }
+
+  .stat-mini-card {
+    min-width: 0;
+    padding: 14px 15px;
+    background: #111827;
+    border: 1px solid #263449;
+    border-radius: 11px;
+    transition: .2s;
+  }
+
+  .stat-mini-card:hover {
+    border-color: #475569;
+    transform: translateY(-2px);
+  }
+
+  .stat-mini-card.pending-card {
+    background: linear-gradient(145deg, #172b3b, #111827);
+    border-color: #31566b;
+  }
+
+  .stat-mini-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .stat-mini-lbl {
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .stat-mini-icon {
+    display: grid;
+    place-items: center;
+    width: 27px;
+    height: 27px;
+    border-radius: 8px;
+    background: rgba(148, 163, 184, .09);
+    font-size: 14px;
+  }
+
+  .stat-mini-num {
+    margin-top: 12px;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-mini-description {
+    margin-top: 7px;
+    color: #64748b;
+    font-size: 10px;
+  }
+
+  .panel-card-box {
+    padding: 19px;
+    background: #111827;
+    border: 1px solid #263449;
+    border-radius: 13px;
+  }
+
+  .panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 17px;
+  }
+
+  .panel-title {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 15px;
+    font-weight: 750;
+  }
+
+  .panel-description {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 11px;
+  }
+
+  .filter-bar-flex {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    margin-bottom: 16px;
+  }
+
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .pill-btn {
+    padding: 7px 11px;
+    background: #1b2940;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    color: #a8b5c7;
+    font-size: 10px;
+    font-weight: 650;
+    text-decoration: none;
+    transition: .2s;
+  }
+
+  .pill-btn:hover {
+    background: #263750;
+    color: #f8fafc;
+  }
+
+  .pill-btn.active {
+    background: rgba(34, 197, 94, .12);
+    border-color: #22c55e;
+    color: #4ade80;
+  }
+
+  .search-form {
+    display: flex;
+    gap: 7px;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .search-input-field {
+    width: 100%;
+    min-width: 0;
+    padding: 9px 11px;
+    background: #0b1120;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    color: #f8fafc;
+    font-size: 11px;
+    outline: none;
+  }
+
+  .search-input-field:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, .1);
+  }
+
+  .search-input-field::placeholder {
+    color: #64748b;
+  }
+
+  .search-button {
+    padding: 8px 13px;
+    background: #166534;
+    border: 1px solid #22c55e;
+    border-radius: 7px;
+    color: #dcfce7;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .search-button:hover {
+    background: #15803d;
+  }
+
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 56px;
+    border: 1px solid #263449;
+    border-radius: 9px;
+  }
+
+  .appt-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+
+  .appt-table th {
+    padding: 12px 13px;
+    background: #172338;
+    border-bottom: 1px solid #334155;
+    color: #94a3b8;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: .55px;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .appt-table td {
+    padding: 13px;
+    border-bottom: 1px solid rgba(51, 65, 85, .55);
+    color: #dbe4ef;
+    vertical-align: middle;
+  }
+
+  .appt-table tbody tr {
+    transition: background .2s;
+  }
+
+  .appt-table tbody tr:hover {
+    background: rgba(30, 41, 59, .4);
+  }
+
+  .appt-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .student-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 195px;
+  }
+
+  .student-avatar {
+    display: flex;
+    flex: 0 0 39px;
+    align-items: center;
+    justify-content: center;
+    width: 39px;
+    height: 39px;
+    overflow: hidden;
+    border: 1px solid #31566b;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #166534, #064e3b);
+    color: #dcfce7;
+    font-size: 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .student-avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .student-details {
+    min-width: 0;
+  }
+
+  .student-name {
+    color: #f8fafc;
+    font-size: 11px;
+    font-weight: 750;
+    line-height: 1.4;
+  }
+
+  .student-meta {
+    margin-top: 3px;
+    color: #8493a8;
+    font-size: 9px;
+    line-height: 1.5;
+  }
+
+  .schedule-date {
+    color: #f1f5f9;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .schedule-time {
+    margin-top: 4px;
+    color: #94a3b8;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .concern-text {
+    max-width: 190px;
+    color: #cbd5e1;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: 750;
+    white-space: nowrap;
+  }
+
+  .status-badge::before {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    content: "";
+  }
+
+  .status-pending {
+    background: rgba(234, 179, 8, .12);
+    border: 1px solid rgba(234, 179, 8, .25);
+    color: #facc15;
+  }
+
+  .status-approved {
+    background: rgba(34, 197, 94, .12);
+    border: 1px solid rgba(34, 197, 94, .25);
+    color: #4ade80;
+  }
+
+  .status-rescheduled {
+    background: rgba(168, 85, 247, .12);
+    border: 1px solid rgba(168, 85, 247, .25);
+    color: #c084fc;
+  }
+
+  .status-rejected {
+    background: rgba(239, 68, 68, .12);
+    border: 1px solid rgba(239, 68, 68, .25);
+    color: #f87171;
+  }
+
+  .status-completed {
+    background: rgba(56, 189, 248, .12);
+    border: 1px solid rgba(56, 189, 248, .25);
+    color: #38bdf8;
+  }
+
+  .action-group {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .action-menu {
+    position: relative;
+    display: inline-block;
+  }
+
+  .action-menu summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    background: #1b2940;
+    color: #e2e8f0;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .action-menu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .action-menu summary:hover,
+  .action-menu[open] summary {
+    border-color: #22c55e;
+    background: #1c3440;
+    color: #ffffff;
+  }
+
+  .action-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 100;
+    width: 190px;
+    padding: 5px;
+    background: #172338;
+    border: 1px solid #334155;
+    border-radius: 9px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .4);
+  }
+
+  .action-dropdown form {
+    margin: 0;
+  }
+
+  .action-dropdown a,
+  .action-dropdown button {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 9px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #cbd5e1;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .action-dropdown a:hover,
+  .action-dropdown button:hover {
+    background: #263750;
+    color: #ffffff;
+  }
+
+  .action-dropdown .menu-approve,
+  .action-dropdown .menu-complete {
+    color: #4ade80;
+  }
+
+  .action-dropdown .menu-reschedule {
+    color: #c084fc;
+  }
+
+  .action-dropdown .menu-reject {
+    color: #f87171;
+  }
+
+  .action-dropdown .menu-record {
+    color: #38bdf8;
+  }
+
+  .action-dropdown .menu-recorded {
+    color: #94a3b8;
+    justify-content: space-between;
+  }
+
+  .recorded-tag {
+    padding: 2px 6px;
+    border-radius: 5px;
+    background: rgba(34, 197, 94, 0.14);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    color: #86efac;
+    font-size: 9px;
+    font-weight: 700;
+  }
+
+  .action-dropdown-divider {
+    height: 1px;
+    margin: 4px 5px;
+    background: #334155;
+  }
+
+  .menu-icon {
+    width: 16px;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .empty-state {
+    padding: 45px 20px;
+    border: 1px dashed #334155;
+    border-radius: 9px;
+    text-align: center;
+  }
+
+  .empty-icon {
+    margin-bottom: 10px;
+    color: #64748b;
+    font-size: 28px;
+  }
+
+  .empty-title {
+    margin: 0 0 6px;
+    color: #e2e8f0;
+    font-size: 13px;
+    font-weight: 750;
+  }
+
+  .empty-description {
+    margin: 0 0 12px;
+    color: #64748b;
+    font-size: 10px;
+  }
+
+  .hr-modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.78);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .hr-modal-card {
+    width: 100%;
+    max-width: 680px;
+    max-height: 92vh;
+    overflow-y: auto;
+    background: #111827;
+    border: 1px solid #2b3b52;
+    border-radius: 14px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55);
+    color: #f8fafc;
+  }
+
+  .hr-modal-card *,
+  .hr-modal-card *::before,
+  .hr-modal-card *::after {
+    box-sizing: border-box;
+  }
+
+  .hr-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 22px;
+    background: #0f172a;
+    border-bottom: 1px solid #1f2937;
+  }
+
+  .hr-modal-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hr-modal-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: rgba(34, 197, 94, 0.14);
+    border: 1px solid rgba(74, 222, 128, 0.28);
+    color: #4ade80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .hr-modal-title {
+    margin: 0 0 2px;
+    font-size: 17px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  .hr-modal-sub {
+    margin: 0;
+    font-size: 11.5px;
+    color: #94a3b8;
+  }
+
+  .hr-modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #0b1120;
+    border: 1px solid #2b3b52;
+    color: #cbd5e1;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hr-modal-close:hover {
+    background: #1f2937;
+    color: #ffffff;
+  }
+
+  .hr-modal-body {
+    padding: 20px 22px;
+  }
+
+  .hr-student-strip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 12px 14px;
+    background: #0d1524;
+    border: 1px solid #1f2937;
+    border-radius: 10px;
+    margin-bottom: 16px;
+  }
+
+  .hr-strip-item span {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.45px;
+    color: #64748b;
+    margin-bottom: 3px;
+  }
+
+  .hr-strip-item strong {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #f8fafc;
+    overflow-wrap: anywhere;
+  }
+
+  .hr-two-col {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .hr-field {
+    margin-bottom: 12px;
+  }
+
+  .hr-field label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 5px;
+  }
+
+  .hr-field textarea,
+  .hr-field input,
+  .hr-field select {
+    width: 100%;
+    padding: 9px 12px;
+    background: #0b1120;
+    border: 1px solid #2b3b52;
+    border-radius: 8px;
+    color: #f8fafc;
+    font-family: inherit;
+    font-size: 12.5px;
+    transition: border-color 0.15s ease;
+  }
+
+  .hr-field textarea {
+    min-height: 78px;
+    resize: vertical;
+    line-height: 1.45;
+  }
+
+  .hr-field textarea:focus,
+  .hr-field input:focus,
+  .hr-field select:focus {
+    outline: none;
+    border-color: #22c55e;
+  }
+
+  .hr-dispense-panel {
+    background: #0d1524;
+    border: 1px solid #1f2937;
+    border-radius: 10px;
+    padding: 13px 14px;
+    margin-bottom: 12px;
+  }
+
+  .hr-dispense-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 2px;
+  }
+
+  .hr-dispense-sub {
+    font-size: 11px;
+    color: #94a3b8;
+    margin: 0 0 10px;
+  }
+
+  .hr-dispense-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 96px;
+    gap: 10px;
+  }
+
+  .hr-modal-foot {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    background: #0f172a;
+    border-top: 1px solid #1f2937;
+  }
+
+  .hr-btn-cancel {
+    padding: 9px 15px;
+    border-radius: 8px;
+    background: #111827;
+    border: 1px solid #2b3b52;
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .hr-btn-cancel:hover {
+    background: #1f2937;
+    color: #ffffff;
+  }
+
+  .hr-btn-save {
+    padding: 9px 17px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border: 1px solid #4ade80;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .hr-btn-save:hover {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+  }
+
+  @media (min-width: 900px) {
+    .filter-bar-flex {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .stats-row-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 600px) {
+    .staff-appt-title {
+      font-size: 22px;
+    }
+
+    .stats-row-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .stat-mini-card {
+      padding: 12px;
+    }
+
+    .stat-mini-num {
+      font-size: 23px;
+    }
+
+    .stats-section-caption {
+      display: none;
+    }
+
+    .panel-card-box {
+      padding: 13px;
+    }
+
+    .search-form {
+      max-width: none;
+    }
+
+    .pill-btn {
+      padding: 7px 9px;
+      font-size: 9px;
+    }
+
+    .action-dropdown {
+      width: 170px;
+    }
+
+    .hr-student-strip,
+    .hr-two-col,
+    .hr-dispense-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="staff-appt-wrap">
+
+  <div class="staff-appt-header">
+    <h1 class="staff-appt-title">Student Appointments</h1>
+    <p class="staff-appt-sub">
+      Review checkup requests, manage schedules, and process student appointments.
+    </p>
+  </div>
+
+  <div class="stats-section">
+    <div class="stats-section-heading">
+      <h2 class="stats-section-title">Appointment Overview</h2>
+      <span class="stats-section-caption">Request status summary</span>
+    </div>
+
+    <div class="stats-row-grid">
+      <div class="stat-mini-card pending-card">
+        <div class="stat-mini-top">
+          <span class="stat-mini-lbl">Pending Review</span>
+          <span class="stat-mini-icon" style="color:#38bdf8;">◷</span>
+        </div>
+        <div class="stat-mini-num" style="color:#f8fafc;">
+          {{ pending_appointments|default:0 }}
+        </div>
+        <div class="stat-mini-description">Awaiting staff action</div>
+      </div>
+
+      <div class="stat-mini-card">
+        <div class="stat-mini-top">
+          <span class="stat-mini-lbl">Approved</span>
+          <span class="stat-mini-icon" style="color:#4ade80;">✓</span>
+        </div>
+        <div class="stat-mini-num" style="color:#4ade80;">
+          {{ approved_appointments|default:0 }}
+        </div>
+        <div class="stat-mini-description">Approved requests</div>
+      </div>
+
+      <div class="stat-mini-card">
+        <div class="stat-mini-top">
+          <span class="stat-mini-lbl">Rescheduled</span>
+          <span class="stat-mini-icon" style="color:#c084fc;">↻</span>
+        </div>
+        <div class="stat-mini-num" style="color:#c084fc;">
+          {{ rescheduled_appointments|default:0 }}
+        </div>
+        <div class="stat-mini-description">Changed schedules</div>
+      </div>
+
+      <div class="stat-mini-card">
+        <div class="stat-mini-top">
+          <span class="stat-mini-lbl">Completed</span>
+          <span class="stat-mini-icon" style="color:#38bdf8;">✓</span>
+        </div>
+        <div class="stat-mini-num" style="color:#38bdf8;">
+          {{ completed_appointments|default:0 }}
+        </div>
+        <div class="stat-mini-description">Finished appointments</div>
+      </div>
+
+      <div class="stat-mini-card">
+        <div class="stat-mini-top">
+          <span class="stat-mini-lbl">Rejected</span>
+          <span class="stat-mini-icon" style="color:#f87171;">×</span>
+        </div>
+        <div class="stat-mini-num" style="color:#f87171;">
+          {{ rejected_appointments|default:0 }}
+        </div>
+        <div class="stat-mini-description">Declined requests</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-card-box">
+
+    <div class="panel-heading">
+      <div>
+        <h2 class="panel-title">Appointment Requests</h2>
+        <p class="panel-description">
+          Review and manage student checkup applications.
+        </p>
+      </div>
+    </div>
+
+    <div class="filter-bar-flex">
+
+      <div class="pill-group">
+        <a href="?{% if search_query %}q={{ search_query|urlencode }}{% endif %}"
+           class="pill-btn {% if not status_filter %}active{% endif %}">
+          All Requests
+        </a>
+
+        <a href="?status=Pending{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+           class="pill-btn {% if status_filter == 'Pending' %}active{% endif %}">
+          Pending
+        </a>
+
+        <a href="?status=Approved{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+           class="pill-btn {% if status_filter == 'Approved' %}active{% endif %}">
+          Approved
+        </a>
+
+        <a href="?status=Rescheduled{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+           class="pill-btn {% if status_filter == 'Rescheduled' %}active{% endif %}">
+          Rescheduled
+        </a>
+
+        <a href="?status=Completed{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+           class="pill-btn {% if status_filter == 'Completed' %}active{% endif %}">
+          Completed
+        </a>
+
+        <a href="?status=Rejected{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+           class="pill-btn {% if status_filter == 'Rejected' %}active{% endif %}">
+          Rejected
+        </a>
+      </div>
+
+      <form method="get" class="search-form">
+        {% if status_filter %}
+          <input type="hidden" name="status" value="{{ status_filter }}">
+        {% endif %}
+
+        <input
+          type="text"
+          name="q"
+          value="{{ search_query|default:'' }}"
+          class="search-input-field"
+          placeholder="Search student or concern..."
+        >
+
+        <button type="submit" class="search-button">Search</button>
+      </form>
+
+    </div>
+
+    {% if appointments %}
+      <div class="table-responsive">
+        <table class="appt-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Requested Schedule</th>
+              <th>Health Concern</th>
+              <th>Status</th>
+              <th style="text-align:right;">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for appt in appointments %}
+              <tr>
+                <td>
+                  <div class="student-cell">
+                    <div class="student-avatar">
+                      {% if appt.student.profile_picture %}
+                        <img
+                          src="{{ appt.student.profile_picture.url }}"
+                          alt="{{ appt.student.get_full_name|default:appt.student.username }} profile picture"
+                        >
+                      {% else %}
+                        {{ appt.student.first_name|default:appt.student.username|first|upper }}
+                      {% endif %}
+                    </div>
+
+                    <div class="student-details">
+                      <div class="student-name">
+                        {{ appt.student.get_full_name|default:appt.student.username }}
+                      </div>
+
+                      <div class="student-meta">
+                        ID: {{ appt.student.id_number|default:"N/A" }}<br>
+                        {{ appt.student.course|default:"" }}
+                        {% if appt.student.year_block %}
+                          · {{ appt.student.year_block }}
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="schedule-date">
+                    {{ appt.scheduled_date|default:appt.preferred_date|date:"M d, Y" }}
+                  </div>
+                  <div class="schedule-time">
+                    {{ appt.scheduled_time|default:appt.preferred_time|time:"h:i A" }}
+                  </div>
+                </td>
+
+                <td>
+                  <div class="concern-text">
+                    {{ appt.concern|default:"No concern provided" }}
+                  </div>
+                </td>
+
+                <td>
+                  {% if appt.status == 'Pending' %}
+                    <span class="status-badge status-pending">Pending</span>
+                  {% elif appt.status == 'Approved' %}
+                    <span class="status-badge status-approved">Approved</span>
+                  {% elif appt.status == 'Rescheduled' %}
+                    <span class="status-badge status-rescheduled">Rescheduled</span>
+                  {% elif appt.status == 'Completed' %}
+                    <span class="status-badge status-completed">Completed</span>
+                  {% elif appt.status == 'Rejected' %}
+                    <span class="status-badge status-rejected">Rejected</span>
+                  {% else %}
+                    <span class="status-badge">{{ appt.status }}</span>
+                  {% endif %}
+                </td>
+
+                <td>
+                  <div class="action-group">
+                    <details class="action-menu">
+                      <summary title="Appointment actions" aria-label="Appointment actions">
+                        ⋮
+                      </summary>
+
+                      <div class="action-dropdown">
+
+                        {% if appt.status == 'Pending' %}
+                          <form method="post"
+                                action="{% url 'accounts:update_appointment_status' pk=appt.pk status='Approved' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="menu-approve">
+                              <span class="menu-icon">✓</span>
+                              Approve
+                            </button>
+                          </form>
+
+                          <a href="{% url 'accounts:reschedule_appointment' appointment_id=appt.pk %}"
+                             class="menu-reschedule">
+                            <span class="menu-icon">◷</span>
+                            Reschedule
+                          </a>
+
+                          <div class="action-dropdown-divider"></div>
+
+                          <form method="post"
+                                action="{% url 'accounts:update_appointment_status' pk=appt.pk status='Rejected' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="menu-reject">
+                              <span class="menu-icon">×</span>
+                              Reject
+                            </button>
+                          </form>
+
+                        {% elif appt.status == 'Approved' or appt.status == 'Rescheduled' %}
+                          <form method="post"
+                                action="{% url 'accounts:update_appointment_status' pk=appt.pk status='Completed' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="menu-complete">
+                              <span class="menu-icon">✓</span>
+                              Mark Completed
+                            </button>
+                          </form>
+
+                          <a href="{% url 'accounts:reschedule_appointment' appointment_id=appt.pk %}"
+                             class="menu-reschedule">
+                            <span class="menu-icon">◷</span>
+                            Reschedule
+                          </a>
+
+                        {% elif appt.status == 'Completed' %}
+                          {% if appt.health_record %}
+                            <a href="{% url 'accounts:staff_health_records' %}"
+                               class="menu-recorded">
+                              <span style="display:inline-flex;align-items:center;gap:9px;">
+                                <span class="menu-icon">▣</span>
+                                Health Record
+                              </span>
+                              <span class="recorded-tag">Recorded</span>
+                            </a>
+                          {% else %}
+                            <button
+                              type="button"
+                              class="menu-record open-hr-modal-btn"
+                              data-action-url="{% url 'accounts:create_health_record' appointment_id=appt.pk %}"
+                              data-student-name="{{ appt.student.get_full_name|default:appt.student.username }}"
+                              data-student-id="{{ appt.student.id_number|default:'N/A' }}"
+                              data-concern="{{ appt.concern|default:'No concern provided' }}"
+                              data-schedule="{{ appt.scheduled_date|default:appt.preferred_date|date:'M d, Y' }} · {{ appt.scheduled_time|default:appt.preferred_time|time:'h:i A' }}"
+                            >
+                              <span class="menu-icon">▣</span>
+                              Health Record
+                            </button>
+                          {% endif %}
+
+                          <a href="{% url 'accounts:issue_sick_note' appointment_id=appt.pk %}"
+                             class="menu-approve">
+                            <span class="menu-icon">+</span>
+                            Sick Note
+                          </a>
+
+                        {% else %}
+                          <span style="display:block;padding:9px;color:#64748b;font-size:10px;">
+                            No available actions
+                          </span>
+                        {% endif %}
+
+                      </div>
+                    </details>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">▤</div>
+        <h3 class="empty-title">No Appointment Requests Found</h3>
+        <p class="empty-description">
+          No student appointments match your current search or status filter.
+        </p>
+        {% if status_filter or search_query %}
+          <a href="?" class="pill-btn active">Reset Filters</a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<div id="hrModalBackdrop" class="hr-modal-backdrop">
+  <div class="hr-modal-card">
+    <div class="hr-modal-head">
+      <div class="hr-modal-title-group">
+        <div class="hr-modal-badge" aria-hidden="true">🩺</div>
+        <div>
+          <h2 class="hr-modal-title">Create Health Record</h2>
+          <p class="hr-modal-sub">Document clinical symptoms, treatment, and dispensed medicine.</p>
+        </div>
+      </div>
+
+      <button type="button" id="closeHrModalBtn" class="hr-modal-close" aria-label="Close modal">✕</button>
+    </div>
+
+    <form id="hrModalForm" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="next_page" value="appointments">
+
+      <div class="hr-modal-body">
+        <div class="hr-student-strip">
+          <div class="hr-strip-item">
+            <span>Student</span>
+            <strong id="hrModalStudentName"></strong>
+          </div>
+
+          <div class="hr-strip-item">
+            <span>Student ID</span>
+            <strong id="hrModalStudentId"></strong>
+          </div>
+
+          <div class="hr-strip-item">
+            <span>Schedule</span>
+            <strong id="hrModalSchedule"></strong>
+          </div>
+
+          <div class="hr-strip-item">
+            <span>Health Concern</span>
+            <strong id="hrModalConcern"></strong>
+          </div>
+        </div>
+
+        <div class="hr-two-col">
+          <div class="hr-field" style="margin-bottom: 0;">
+            <label for="id_modal_symptoms">Symptoms</label>
+            <textarea id="id_modal_symptoms" name="symptoms" placeholder="Record observed symptoms..."></textarea>
+          </div>
+
+          <div class="hr-field" style="margin-bottom: 0;">
+            <label for="id_modal_treatment">Treatment</label>
+            <textarea id="id_modal_treatment" name="treatment" placeholder="Enter administered treatment..."></textarea>
+          </div>
+        </div>
+
+        <div class="hr-dispense-panel">
+          <div class="hr-dispense-title">Dispense Clinic Medicine (Optional)</div>
+          <p class="hr-dispense-sub">Automatically deducts stock from clinic inventory and appends it to Treatment.</p>
+
+          <div class="hr-dispense-row">
+            <div class="hr-field" style="margin-bottom: 0;">
+              <label for="id_modal_medicine">Medicine</label>
+              <select id="id_modal_medicine" name="dispense_medicine">
+                <option value="">-- None dispensed --</option>
+                {% for med in available_medicines %}
+                  <option value="{{ med.pk }}">{{ med.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="hr-field" style="margin-bottom: 0;">
+              <label for="id_modal_qty">Qty</label>
+              <input id="id_modal_qty" type="number" name="dispense_quantity" min="1" value="1">
+            </div>
+          </div>
+        </div>
+
+        <div class="hr-field" style="margin-bottom: 0;">
+          <label for="id_modal_notes">Additional Notes</label>
+          <textarea id="id_modal_notes" name="notes" placeholder="Enter additional clinical notes..."></textarea>
+        </div>
+      </div>
+
+      <div class="hr-modal-foot">
+        <button type="button" id="cancelHrModalBtn" class="hr-btn-cancel">Cancel</button>
+        <button type="submit" class="hr-btn-save">Save Health Record</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function closeAllActionMenus() {
+    document.querySelectorAll(".action-menu[open]").forEach(function(menu) {
+      menu.removeAttribute("open");
+    });
+  }
+
+  const hrBackdrop = document.getElementById("hrModalBackdrop");
+  const hrForm = document.getElementById("hrModalForm");
+  const hrStudentName = document.getElementById("hrModalStudentName");
+  const hrStudentId = document.getElementById("hrModalStudentId");
+  const hrSchedule = document.getElementById("hrModalSchedule");
+  const hrConcern = document.getElementById("hrModalConcern");
+  const hrSymptoms = document.getElementById("id_modal_symptoms");
+  const hrTreatment = document.getElementById("id_modal_treatment");
+  const hrNotes = document.getElementById("id_modal_notes");
+  const hrMedicine = document.getElementById("id_modal_medicine");
+  const hrQty = document.getElementById("id_modal_qty");
+
+  function closeHrModal() {
+    if (hrBackdrop) {
+      hrBackdrop.style.display = "none";
+    }
+  }
+
+  document.querySelectorAll(".open-hr-modal-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      closeAllActionMenus();
+      hrForm.action = btn.dataset.actionUrl;
+      hrStudentName.textContent = btn.dataset.studentName || "";
+      hrStudentId.textContent = btn.dataset.studentId || "N/A";
+      hrSchedule.textContent = btn.dataset.schedule || "";
+      hrConcern.textContent = btn.dataset.concern || "";
+      hrSymptoms.value = "";
+      hrTreatment.value = "";
+      hrNotes.value = "";
+      hrMedicine.value = "";
+      hrQty.value = "1";
+      hrBackdrop.style.display = "flex";
+    });
+  });
+
+  document.getElementById("closeHrModalBtn").addEventListener("click", closeHrModal);
+  document.getElementById("cancelHrModalBtn").addEventListener("click", closeHrModal);
+
+  hrBackdrop.addEventListener("click", function(event) {
+    if (event.target === hrBackdrop) {
+      closeHrModal();
+    }
+  });
+
+  document.addEventListener("click", function(event) {
+    document.querySelectorAll(".action-menu[open]").forEach(function(menu) {
+      if (!menu.contains(event.target)) {
+        menu.removeAttribute("open");
+      }
+    });
+  });
+
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") {
+      closeAllActionMenus();
+      closeHrModal();
+    }
+  });
+
+  document.querySelectorAll(".action-menu").forEach(function(menu) {
+    menu.addEventListener("toggle", function() {
+      if (menu.open) {
+        document.querySelectorAll(".action-menu[open]").forEach(function(otherMenu) {
+          if (otherMenu !== menu) {
+            otherMenu.removeAttribute("open");
+          }
+        });
+      }
+    });
+  });
+</script>
+{% endblock %}

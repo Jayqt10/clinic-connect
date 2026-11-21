@@ -1,0 +1,348 @@
+
+from django.contrib.auth import views as auth_views
+from django.urls import path, reverse_lazy
+
+from . import views
+
+app_name = "accounts"
+
+
+urlpatterns = [
+path(
+    "",
+    views.login_view,
+    name="login",
+),
+path(
+    "login/",
+    views.login_view,
+    name="login",
+),
+path(
+    "logout/",
+    views.logout_view,
+    name="logout",
+),
+path(
+    "signup/",
+    views.signup_view,
+    name="signup",
+),
+path(
+    "dashboard/",
+    views.dashboard_view,
+    name="dashboard",
+),
+path(
+    "profile/",
+    views.profile_view,
+    name="profile",
+),
+path(
+    "profile/edit/",
+    views.edit_profile,
+    name="edit_profile",
+),
+path(
+    "student/home/",
+    views.student_home,
+    name="student_home",
+),
+path(
+    "student/appointments/",
+    views.student_appointments,
+    name="student_appointments",
+),
+path(
+    "student/appointments/<int:appointment_id>/reschedule-reason/",
+    views.student_view_reschedule_reason,
+    name="student_view_reschedule_reason",
+),
+path(
+    "student/sick-notes/",
+    views.student_sick_notes,
+    name="student_sick_notes",
+),
+path(
+    "student/profile/",
+    views.student_profile,
+    name="student_profile",
+),
+path(
+    "student/health-records/",
+    views.student_health_records,
+    name="student_health_records",
+),
+path(
+    "teacher/students/<int:student_id>/edit/",
+    views.edit_student,
+    name="edit_student",
+),
+path(
+    "teacher/department/",
+    views.teacher_department,
+    name="teacher_department",
+),
+path(
+    "teacher/department/<int:pk>/",
+    views.teacher_department_detail,
+    name="teacher_department_detail",
+),
+path(
+    "teacher/referrals/",
+    views.teacher_referrals,
+    name="teacher_referrals",
+),
+path(
+    "staff/create-account/",
+    views.create_authorized_account,
+    name="create_authorized_account",
+),
+path(
+    "staff/emergency/alerts/",
+    views.staff_emergency_alerts,
+    name="staff_emergency_alerts",
+),
+path(
+    "staff/emergency/<int:pk>/receive/",
+    views.staff_emergency_receive,
+    name="staff_emergency_receive",
+),
+path(
+    "staff/appointments/",
+    views.staff_appointments,
+    name="staff_appointments",
+),
+path(
+    "staff/appointments/alerts/",
+    views.staff_appointment_alerts,
+    name="staff_appointment_alerts",
+),
+path(
+    "staff/referrals/",
+    views.staff_referrals,
+    name="staff_referrals",
+),
+path(
+    "staff/health-records/",
+    views.staff_health_records,
+    name="staff_health_records",
+),
+path(
+    "staff/health-records/<int:record_id>/edit/",
+    views.edit_health_record,
+    name="edit_health_record",
+),
+path(
+    "staff/health-records/create/<int:appointment_id>/",
+    views.create_health_record,
+    name="create_health_record",
+),
+path(
+    "staff/health-records/<int:record_id>/",
+    views.view_health_record,
+    name="view_health_record",
+),
+path(
+    "staff/toggle-status/",
+    views.toggle_clinic_status,
+    name="toggle_clinic_status",
+),
+path(
+    "staff/departments/",
+    views.staff_departments,
+    name="staff_departments",
+),
+
+path(
+    "staff/departments/<int:department_id>/",
+    views.staff_department_detail,
+    name="staff_department_detail",
+),
+
+path(
+    "staff/departments/rooms/<int:room_id>/",
+    views.staff_room_detail,
+    name="staff_room_detail",
+),
+path(
+    "staff/departments/<int:department_id>/edit/",
+    views.staff_department_edit,
+    name="staff_department_edit",
+),
+path(
+    "staff/departments/<int:department_id>/toggle-status/",
+    views.staff_department_toggle_status,
+    name="staff_department_toggle_status",
+),
+path(
+    "staff/departments/manage/<str:kind>/add/",
+    views.manage_department_object,
+    name="add_department_object",
+),
+path(
+    "staff/departments/manage/<str:kind>/<int:pk>/edit/",
+    views.manage_department_object,
+    name="edit_department_object",
+),
+path(
+    "staff/departments/manage/<str:kind>/<int:pk>/delete/",
+    views.delete_department_object,
+    name="delete_department_object",
+),
+path(
+    "staff/student-verification/",
+    views.staff_student_verification,
+    name="staff_student_verification",
+),
+path(
+    "staff/student-verification/<int:pk>/evidence/",
+    views.staff_verification_evidence,
+    name="staff_verification_evidence",
+),
+path(
+    "staff/student-verification/<int:student_id>/verify/",
+    views.staff_verify_student,
+    name="staff_verify_student",
+),
+path(
+    "staff/settings/",
+    views.staff_settings,
+    name="staff_settings",
+),
+
+path(
+    "staff/user-management/",
+    views.admin_user_management,
+    name="admin_user_management",
+),
+path(
+    "staff/user-management/<int:user_id>/",
+    views.admin_user_detail,
+    name="admin_user_detail",
+),
+path(
+    "staff/user-management/<int:user_id>/toggle-status/",
+    views.toggle_user_status,
+    name="toggle_user_status",
+),
+path(
+    "password-change/",
+    views.ClinicPasswordChangeView.as_view(),
+    name="password_change",
+),
+path(
+    "password-change/done/",
+    auth_views.PasswordChangeDoneView.as_view(
+        template_name="accounts/password_change_done.html"
+    ),
+    name="password_change_done",
+),
+path(
+    "password-reset/",
+    auth_views.PasswordResetView.as_view(
+        template_name="accounts/password_reset.html",
+        email_template_name="accounts/password_reset_email.html",
+        subject_template_name="accounts/password_reset_subject.txt",
+        success_url=reverse_lazy("accounts:password_reset_done"),
+    ),
+    name="password_reset",
+),
+path(
+    "password-reset/done/",
+    auth_views.PasswordResetDoneView.as_view(
+        template_name="accounts/password_reset_done.html"
+    ),
+    name="password_reset_done",
+),
+path(
+    "password-reset/<uidb64>/<token>/",
+    auth_views.PasswordResetConfirmView.as_view(
+        template_name="accounts/password_reset_confirm.html",
+        success_url=reverse_lazy("accounts:password_reset_complete"),
+    ),
+    name="password_reset_confirm",
+),
+path(
+    "password-reset/complete/",
+    auth_views.PasswordResetCompleteView.as_view(
+        template_name="accounts/password_reset_complete.html"
+    ),
+    name="password_reset_complete",
+),
+path(
+    "request-checkup/",
+    views.request_checkup,
+    name="request_checkup",
+),
+path(
+    "refer-student/",
+    views.refer_student,
+    name="refer_student",
+),
+path(
+    "remove-student/<int:student_id>/",
+    views.remove_student,
+    name="remove_student",
+),
+path(
+    "update-status/<int:pk>/<str:status>/",
+    views.update_appointment_status,
+    name="update_appointment_status",
+),
+path(
+    "update-referral-status/<int:pk>/<str:status>/",
+    views.update_referral_status,
+    name="update_referral_status",
+),
+path(
+    "reschedule-appointment/<int:appointment_id>/",
+    views.reschedule_appointment,
+    name="reschedule_appointment",
+),
+path(
+    "issue-sick-note/<int:appointment_id>/",
+    views.issue_sick_note,
+    name="issue_sick_note",
+),
+path(
+    "sick-note/<int:sick_note_id>/",
+    views.view_sick_note,
+    name="view_sick_note",
+),
+path(
+    "sick-note/<int:sick_note_id>/download/",
+    views.download_sick_note,
+    name="download_sick_note",
+),
+path(
+    "sick-note/<int:sick_note_id>/email/",
+    views.email_sick_note,
+    name="email_sick_note",
+),
+path(
+    "staff/medicines/", 
+    views.staff_medicines, 
+    name="staff_medicines"
+),
+path(
+    "staff/announcements/",
+    views.staff_announcements,
+    name="staff_announcements",
+),
+path(
+    "staff/announcements/create/",
+    views.create_clinic_announcement,
+    name="create_clinic_announcement",
+),
+    path(
+    "staff/announcements/<int:announcement_id>/toggle/",
+    views.toggle_clinic_announcement,
+    name="toggle_clinic_announcement",
+),
+path(
+    "staff/announcements/<int:announcement_id>/delete/",
+    views.delete_clinic_announcement,
+    name="delete_clinic_announcement",
+),
+]

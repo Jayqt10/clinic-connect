@@ -1,0 +1,503 @@
+{% extends 'base.html' %}
+
+{% block title %}Reschedule Appointment{% endblock %}
+
+{% block content %}
+<style>
+    .reschedule-page {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 28px 30px;
+    }
+
+    .page-header {
+        margin-bottom: 22px;
+    }
+
+    .page-header h1 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+    }
+
+    .page-header p {
+        margin: 7px 0 0;
+        color: #9ca3af;
+        font-size: 14px;
+    }
+
+    .reschedule-card {
+        background: #151b24;
+        border: 1px solid #293342;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+    }
+
+    .card-header {
+        padding: 18px 22px;
+        background: #181f29;
+        border-bottom: 1px solid #293342;
+    }
+
+    .card-header h2 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .card-body {
+        padding: 22px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .info-box {
+        background: #1b222d;
+        border: 1px solid #2c3746;
+        border-radius: 9px;
+        padding: 14px 16px;
+        min-width: 0;
+    }
+
+    .info-box.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .info-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #8f9aaa;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+    }
+
+    .info-value {
+        display: block;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .concern-value {
+        color: #e5e7eb;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+    }
+
+    .schedule-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 12px;
+    }
+
+    .schedule-box {
+        background: #111821;
+        border: 1px solid #2c3746;
+        border-radius: 9px;
+        padding: 14px 16px;
+    }
+
+    .schedule-box .info-value {
+        color: #60a5fa;
+    }
+
+    .form-section {
+        margin-top: 24px;
+        padding-top: 22px;
+        border-top: 1px solid #293342;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .section-title h3 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .section-title svg {
+        width: 18px;
+        height: 18px;
+        color: #60a5fa;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .form-group label,
+    .reason-group label {
+        display: block;
+        margin-bottom: 7px;
+        color: #d7dce3;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .input-wrapper svg {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 17px;
+        height: 17px;
+        color: #60a5fa;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .input-wrapper input {
+        width: 100%;
+        height: 44px;
+        box-sizing: border-box;
+        padding: 0 40px;
+        background: #10161f;
+        border: 1px solid #354153;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .input-wrapper input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, .12);
+    }
+
+    .input-wrapper input::-webkit-calendar-picker-indicator {
+        opacity: 1;
+        cursor: pointer;
+        filter: invert(1);
+        width: 16px;
+        height: 16px;
+    }
+
+    .reason-group {
+        margin-top: 16px;
+    }
+
+    .reason-group textarea {
+        width: 100%;
+        min-height: 100px;
+        box-sizing: border-box;
+        padding: 12px 13px;
+        background: #10161f;
+        border: 1px solid #354153;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 13px;
+        font-family: inherit;
+        resize: vertical;
+        outline: none;
+    }
+
+    .reason-group textarea:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, .12);
+    }
+
+    .reason-group textarea::placeholder {
+        color: #6b7280;
+    }
+
+    .error {
+        margin-top: 5px;
+        color: #f87171;
+        font-size: 11px;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 18px;
+        border-top: 1px solid #293342;
+    }
+
+    .btn {
+        height: 40px;
+        min-width: 120px;
+        padding: 0 16px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        cursor: pointer;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+
+    .btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .btn-cancel {
+        background: #252d38;
+        color: #d1d5db;
+        border: 1px solid #374151;
+    }
+
+    .btn-cancel:hover {
+        background: #303a48;
+    }
+
+    .btn-confirm {
+        background: #2563eb;
+        color: #ffffff;
+        border: 1px solid #2563eb;
+    }
+
+    .btn-confirm:hover {
+        background: #1d4ed8;
+    }
+
+    @media (max-width: 650px) {
+        .reschedule-page {
+            padding: 20px 15px;
+        }
+
+        .info-grid,
+        .schedule-grid,
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .info-box.full-width {
+            grid-column: auto;
+        }
+
+        .card-body {
+            padding: 17px;
+        }
+
+        .actions {
+            flex-direction: column-reverse;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="reschedule-page">
+
+    <div class="page-header">
+        <h1>Reschedule Appointment</h1>
+        <p>Select a new date and time for the student's appointment.</p>
+    </div>
+
+    <div class="reschedule-card">
+
+        <div class="card-header">
+            <h2>Current Appointment</h2>
+        </div>
+
+        <div class="card-body">
+
+            <div class="info-grid">
+
+                <div class="info-box">
+                    <span class="info-label">Student</span>
+
+                    <span class="info-value">
+                        {{ appointment.student.get_full_name|default:appointment.student.username }}
+                    </span>
+                </div>
+
+                <div class="info-box">
+                    <span class="info-label">Current Status</span>
+
+                    <span class="info-value">
+                        {{ appointment.status }}
+                    </span>
+                </div>
+
+                <div class="info-box full-width">
+                    <span class="info-label">Concern</span>
+
+                    <span class="info-value concern-value">
+                        {{ appointment.concern }}
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="schedule-grid">
+
+                <div class="schedule-box">
+                    <span class="info-label">Preferred Date</span>
+
+                    <span class="info-value">
+                        {{ appointment.preferred_date|date:"M d, Y" }}
+                    </span>
+                </div>
+
+                <div class="schedule-box">
+                    <span class="info-label">Preferred Time</span>
+
+                    <span class="info-value">
+                        {{ appointment.preferred_time|time:"g:i A" }}
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+
+                    <h3>New Schedule</h3>
+
+                </div>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="{{ form.scheduled_date.id_for_label }}">
+                                New Date
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+
+                                {{ form.scheduled_date }}
+
+                            </div>
+
+                            {% for error in form.scheduled_date.errors %}
+                                <div class="error">{{ error }}</div>
+                            {% endfor %}
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="{{ form.scheduled_time.id_for_label }}">
+                                New Time
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="9"></circle>
+                                    <polyline points="12 7 12 12 15 14"></polyline>
+                                </svg>
+
+                                {{ form.scheduled_time }}
+
+                            </div>
+
+                            {% for error in form.scheduled_time.errors %}
+                                <div class="error">{{ error }}</div>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                    <div class="reason-group">
+
+                        <label for="{{ form.reason.id_for_label }}">
+                            Reason for Rescheduling
+                        </label>
+
+                        {{ form.reason }}
+
+                        {% for error in form.reason.errors %}
+                            <div class="error">{{ error }}</div>
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="actions">
+
+                        <a
+                            href="{% url 'accounts:staff_appointments' %}"
+                            class="btn btn-cancel"
+                        >
+
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+
+                            Cancel
+
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="btn btn-confirm"
+                        >
+
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+
+                            Confirm Reschedule
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,1471 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1120">
+    <title>Create Account | Clinic Connect</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            color-scheme: dark;
+            --page: #0b1120;
+            --panel: #111827;
+            --field: #0f172a;
+            --border: #263449;
+            --text: #e5e7eb;
+            --muted: #94a3b8;
+            --green: #22c55e;
+            --green-hover: #16a34a;
+            --danger: #f87171;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--page);
+            color: var(--text);
+        }
+
+        .auth-layout {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: .88fr 1.12fr;
+        }
+
+        .brand-panel {
+            min-height: 100vh;
+            padding: 32px clamp(28px, 4vw, 65px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(34, 197, 94, .07), transparent 35%),
+                #111827;
+            border-right: 1px solid #263449;
+        }
+
+        .brand-icon-large {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 13px;
+            border-radius: 11px;
+            color: #4ade80;
+            background: rgba(34, 197, 94, .12);
+            border: 1px solid rgba(34, 197, 94, .25);
+            font-size: 20px;
+        }
+
+        .brand-panel h1 {
+            color: #fff;
+            font-size: clamp(25px, 2.5vw, 32px);
+            font-weight: 850;
+            letter-spacing: -1px;
+            margin-bottom: 7px;
+        }
+
+        .brand-description {
+            max-width: 490px;
+            color: #94a3b8;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 19px;
+        }
+
+        .brand-section-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 12px;
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .brand-section-title i {
+            color: var(--green);
+        }
+
+        .brand-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .brand-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+        }
+
+        .brand-step-icon {
+            width: 37px;
+            height: 37px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            background: #172235;
+            color: #4ade80;
+            font-size: 14px;
+        }
+
+        .brand-step h3 {
+            color: #f8fafc;
+            font-size: 11px;
+            margin: 2px 0 3px;
+        }
+
+        .brand-step p {
+            color: #8291a6;
+            font-size: 9px;
+            line-height: 1.5;
+            max-width: 390px;
+        }
+
+        .brand-footer {
+            margin-top: 17px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-size: 9px;
+        }
+
+        .brand-footer i {
+            color: var(--green);
+        }
+
+        .signup-side {
+            min-width: 0;
+            min-height: 100vh;
+            padding: 14px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .signup-card {
+            width: 100%;
+            max-width: 620px;
+            margin: auto;
+            padding: 17px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, .25);
+        }
+
+        .signup-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 11px;
+        }
+
+        .signup-brand-icon {
+            width: 35px;
+            height: 35px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 9px;
+            color: var(--green);
+            background: rgba(34, 197, 94, .11);
+            border: 1px solid rgba(34, 197, 94, .22);
+            font-size: 16px;
+        }
+
+        .signup-header h2 {
+            color: #fff;
+            font-size: 17px;
+            font-weight: 750;
+            letter-spacing: -.3px;
+        }
+
+        .signup-header p {
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .verification-banner {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(34, 197, 94, .2);
+            border-radius: 8px;
+            background: rgba(34, 197, 94, .055);
+            color: #bbf7d0;
+            font-size: 9px;
+            line-height: 1.4;
+        }
+
+        .verification-banner i {
+            flex-shrink: 0;
+            color: var(--green);
+            font-size: 14px;
+        }
+
+        .verification-banner strong {
+            color: #dcfce7;
+        }
+
+        .progress-area {
+            margin-bottom: 12px;
+        }
+
+        .progress-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 7px;
+        }
+
+        .progress-top span:first-child {
+            color: #e2e8f0;
+            font-size: 10px;
+            font-weight: 750;
+        }
+
+        .step-count {
+            color: var(--green);
+            font-size: 9px;
+            font-weight: 750;
+        }
+
+        .progress-track {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+
+        .progress-step {
+            min-width: 0;
+        }
+
+        .progress-line {
+            height: 3px;
+            margin-bottom: 5px;
+            border-radius: 20px;
+            background: #263449;
+            transition: background .2s;
+        }
+
+        .progress-step.active .progress-line,
+        .progress-step.completed .progress-line {
+            background: var(--green);
+        }
+
+        .progress-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #8291a6;
+            font-size: 8px;
+            font-weight: 650;
+            white-space: nowrap;
+        }
+
+        .progress-step.active .progress-label,
+        .progress-step.completed .progress-label {
+            color: #dcfce7;
+        }
+
+        .progress-number {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border: 1px solid #475569;
+            border-radius: 50%;
+            font-size: 7px;
+        }
+
+        .progress-step.active .progress-number,
+        .progress-step.completed .progress-number {
+            color: #052e16;
+            background: var(--green);
+            border-color: var(--green);
+        }
+
+        .form-section {
+            min-width: 0;
+            padding: 13px;
+            border: 1px solid rgba(148, 163, 184, .13);
+            border-radius: 9px;
+            background: rgba(15, 23, 42, .35);
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 11px;
+            padding-bottom: 9px;
+            border-bottom: 1px solid rgba(148, 163, 184, .12);
+        }
+
+        .section-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            color: var(--green);
+            background: rgba(34, 197, 94, .10);
+            border: 1px solid rgba(34, 197, 94, .18);
+            font-size: 12px;
+        }
+
+        .section-heading h3 {
+            color: #f1f5f9;
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+        .section-heading p {
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 9px 11px;
+        }
+
+        .form-group {
+            min-width: 0;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            color: #cbd5e1;
+            font-size: 9px;
+            font-weight: 650;
+        }
+
+        .required {
+            color: var(--green);
+        }
+
+        .signup-card input:not([type="hidden"]),
+        .signup-card select {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            min-height: 34px;
+            padding: 6px 9px;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            outline: none;
+            background: var(--field);
+            color: #f8fafc;
+            font-size: 10px;
+            transition: border-color .18s, box-shadow .18s;
+        }
+
+        .signup-card input::placeholder {
+            color: #78879c;
+        }
+
+        .signup-card input:focus,
+        .signup-card select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, .09);
+        }
+
+        .signup-card select {
+            cursor: pointer;
+        }
+
+        .signup-card option {
+            background: var(--field);
+            color: #fff;
+        }
+
+        .signup-card input[type="file"] {
+            min-height: 35px;
+            padding: 5px;
+            font-size: 9px;
+            cursor: pointer;
+        }
+
+        .signup-card input[type="file"]::file-selector-button {
+            margin-right: 6px;
+            padding: 5px 7px;
+            border: 0;
+            border-radius: 5px;
+            background: #263449;
+            color: #e5e7eb;
+            font-size: 9px;
+            font-weight: 650;
+            cursor: pointer;
+        }
+
+        .field-hint,
+        .help-text {
+            margin-top: 4px;
+            color: #94a3b8;
+            font-size: 8px;
+            line-height: 1.4;
+        }
+
+        .error-txt,
+        .non-field-errors {
+            margin-top: 4px;
+            color: var(--danger);
+            font-size: 9px;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+        }
+
+        .non-field-errors {
+            margin: 0 0 10px;
+            padding: 8px 10px;
+            border: 1px solid rgba(248, 113, 113, .3);
+            border-radius: 7px;
+            background: rgba(248, 113, 113, .07);
+        }
+
+        .non-field-errors ul {
+            padding-left: 16px;
+        }
+
+        .upload-box {
+            padding: 9px;
+            border: 1px dashed #52647c;
+            border-radius: 8px;
+            background: rgba(15, 23, 42, .55);
+        }
+
+        .upload-heading {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 7px;
+            color: #e2e8f0;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .upload-heading i {
+            color: var(--green);
+            font-size: 13px;
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 35px !important;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 4px;
+            transform: translateY(-50%);
+            width: 26px;
+            height: 26px;
+            display: grid;
+            place-items: center;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .password-toggle:hover {
+            color: var(--green);
+            background: rgba(148, 163, 184, .09);
+        }
+
+        .password-toggle:focus-visible {
+            outline: 2px solid var(--green);
+        }
+
+        .password-feedback {
+            margin-top: 4px;
+            font-size: 8px;
+            line-height: 1.4;
+        }
+
+        .password-feedback.neutral {
+            color: #94a3b8;
+        }
+
+        .password-feedback.success {
+            color: #4ade80;
+        }
+
+        .password-feedback.error {
+            color: var(--danger);
+        }
+
+        .step-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 11px;
+        }
+
+        .btn-back,
+        .btn-next,
+        .btn-submit-signup {
+            min-height: 35px;
+            padding: 7px 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border-radius: 7px;
+            font-size: 9px;
+            font-weight: 750;
+            cursor: pointer;
+            transition: background .18s, transform .18s;
+        }
+
+        .btn-back {
+            min-width: 85px;
+            border: 1px solid #334155;
+            background: #172235;
+            color: #cbd5e1;
+        }
+
+        .btn-back:hover {
+            background: #1e293b;
+        }
+
+        .btn-next,
+        .btn-submit-signup {
+            min-width: 120px;
+            border: 0;
+            background: var(--green);
+            color: #052e16;
+        }
+
+        .btn-next:hover,
+        .btn-submit-signup:hover {
+            background: var(--green-hover);
+            color: #fff;
+        }
+
+        .btn-back:active,
+        .btn-next:active,
+        .btn-submit-signup:active {
+            transform: scale(.98);
+        }
+
+        .btn-submit-signup {
+            width: 100%;
+        }
+
+        .btn-submit-signup:disabled {
+            opacity: .7;
+            cursor: wait;
+        }
+
+        .btn-back[hidden],
+        .btn-next[hidden],
+        .btn-submit-signup[hidden],
+        .step-panel[hidden] {
+            display: none !important;
+        }
+
+        .login-link {
+            margin-top: 10px;
+            padding-top: 9px;
+            border-top: 1px solid #263449;
+            text-align: center;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .login-link a {
+            color: var(--green);
+            font-weight: 750;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1100px) {
+            .auth-layout {
+                grid-template-columns: .8fr 1.2fr;
+            }
+
+            .brand-panel {
+                padding: 28px 23px;
+            }
+
+            .signup-side {
+                padding: 12px;
+            }
+
+            .signup-card {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .auth-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .brand-panel {
+                display: none;
+            }
+
+            .signup-side {
+                min-height: 100vh;
+                padding: 12px;
+                align-items: flex-start;
+            }
+
+            .signup-card {
+                max-width: 620px;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .signup-side {
+                padding: 9px;
+            }
+
+            .signup-card {
+                padding: 13px;
+                border-radius: 10px;
+            }
+
+            .signup-header h2 {
+                font-size: 16px;
+            }
+
+            .form-section {
+                padding: 11px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 9px;
+            }
+
+            .form-group.full-width {
+                grid-column: auto;
+            }
+
+            .progress-label {
+                font-size: 8px;
+                gap: 3px;
+            }
+
+            .progress-number {
+                width: 15px;
+                height: 15px;
+            }
+
+            .btn-back,
+            .btn-next {
+                flex: 1;
+                min-width: 0;
+            }
+        }
+
+        @media (max-height: 760px) and (min-width: 761px) {
+            .brand-panel {
+                padding-top: 18px;
+                padding-bottom: 18px;
+            }
+
+            .signup-side {
+                padding-top: 8px;
+                padding-bottom: 8px;
+            }
+
+            .signup-card {
+                padding: 13px;
+            }
+
+            .signup-header {
+                margin-bottom: 8px;
+            }
+
+            .verification-banner {
+                margin-bottom: 9px;
+            }
+
+            .progress-area {
+                margin-bottom: 9px;
+            }
+
+            .form-section {
+                padding: 11px;
+            }
+
+            .section-heading {
+                margin-bottom: 8px;
+                padding-bottom: 7px;
+            }
+
+            .form-grid {
+                gap: 7px 10px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="auth-layout">
+
+    <section class="brand-panel">
+
+        <div class="brand-icon-large">
+            <i class="fa-solid fa-plus"></i>
+        </div>
+
+        <h1>Clinic Connect</h1>
+
+        <p class="brand-description">
+            A school healthcare services system that connects students,
+            teachers, and clinic staff for convenient health requests,
+            referrals, and appointment management.
+        </p>
+
+        <div class="brand-section-title">
+            <i class="fa-solid fa-list-ul"></i>
+            HOW CLINIC CONNECT WORKS
+        </div>
+
+        <div class="brand-steps">
+
+            <div class="brand-step">
+                <div class="brand-step-icon">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+                <div>
+                    <h3>Student requests a checkup</h3>
+                    <p>
+                        Submit a clinic appointment request and provide
+                        your health concern and preferred schedule.
+                    </p>
+                </div>
+            </div>
+
+            <div class="brand-step">
+                <div class="brand-step-icon">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <div>
+                    <h3>Teacher refers a student</h3>
+                    <p>
+                        Teachers can send referrals to the clinic when
+                        a student needs medical attention.
+                    </p>
+                </div>
+            </div>
+
+            <div class="brand-step">
+                <div class="brand-step-icon">
+                    <i class="fa-regular fa-hospital"></i>
+                </div>
+                <div>
+                    <h3>Clinic staff manages requests</h3>
+                    <p>
+                        Clinic staff review requests, manage appointments,
+                        and maintain student health records.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="brand-footer">
+            <i class="fa-solid fa-shield-halved"></i>
+            NEMSU Cantilan Campus · Clinic Connect
+        </div>
+
+    </section>
+
+    <section class="signup-side">
+
+        <main class="signup-card">
+
+            <header class="signup-header">
+                <div class="signup-brand-icon">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+
+                <div>
+                    <h2>Create your account</h2>
+                    <p>Register as a student to access campus clinic services.</p>
+                </div>
+            </header>
+
+            <div class="verification-banner">
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                <div>
+                    <strong>Student verification is required.</strong>
+                    Your account will remain pending until Clinic Staff reviews and verifies your uploaded student ID.
+                </div>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" id="signup-form" novalidate>
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="non-field-errors" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="progress-area">
+                    <div class="progress-top">
+                        <span id="current-step-title">Personal Details</span>
+                        <span class="step-count" id="step-count">Step 1 of 3</span>
+                    </div>
+
+                    <div class="progress-track">
+
+                        <div class="progress-step active" data-progress="0">
+                            <div class="progress-line"></div>
+                            <div class="progress-label">
+                                <span class="progress-number">1</span>
+                                <span>Personal</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-step" data-progress="1">
+                            <div class="progress-line"></div>
+                            <div class="progress-label">
+                                <span class="progress-number">2</span>
+                                <span>Academic</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-step" data-progress="2">
+                            <div class="progress-line"></div>
+                            <div class="progress-label">
+                                <span class="progress-number">3</span>
+                                <span>Credentials</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <section class="form-section step-panel" data-step="0">
+
+                    <div class="section-heading">
+                        <div class="section-icon">
+                            <i class="fa-solid fa-user" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h3>Personal Details</h3>
+                            <p>Provide your basic personal information.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="{{ form.first_name.id_for_label }}">
+                                First Name <span class="required">*</span>
+                            </label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="error-txt">{{ form.first_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.last_name.id_for_label }}">
+                                Last Name <span class="required">*</span>
+                            </label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="error-txt">{{ form.last_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.middle_name.id_for_label }}">
+                                Middle Name <span style="color:#94a3b8;font-weight:400;">(Optional)</span>
+                            </label>
+                            {{ form.middle_name }}
+                            {% if form.middle_name.errors %}
+                                <div class="error-txt">{{ form.middle_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.sex.id_for_label }}">
+                                Sex <span class="required">*</span>
+                            </label>
+                            {{ form.sex }}
+                            {% if form.sex.errors %}
+                                <div class="error-txt">{{ form.sex.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.id_number.id_for_label }}">
+                                Student ID Number <span class="required">*</span>
+                            </label>
+                            {{ form.id_number }}
+                            {% if form.id_number.errors %}
+                                <div class="error-txt">{{ form.id_number.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.email.id_for_label }}">
+                                Email Address <span class="required">*</span>
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="error-txt">{{ form.email.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </section>
+
+                <section class="form-section step-panel" data-step="1" hidden>
+
+                    <div class="section-heading">
+                        <div class="section-icon">
+                            <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h3>Academic Information</h3>
+                            <p>Provide your current school enrollment details.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="{{ form.department.id_for_label }}">
+                                Department <span class="required">*</span>
+                            </label>
+                            {{ form.department }}
+                            {% if form.department.errors %}
+                                <div class="error-txt">{{ form.department.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.course.id_for_label }}">
+                                Course <span class="required">*</span>
+                            </label>
+                            {{ form.course }}
+                            {% if form.course.errors %}
+                                <div class="error-txt">{{ form.course.errors.0 }}</div>
+                            {% endif %}
+                            <p class="field-hint">
+                                Enter your course or program (e.g., BSIT, BSCS, BSBA).
+                            </p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.year_block.id_for_label }}">
+                                Year Level <span class="required">*</span>
+                            </label>
+                            {{ form.year_block }}
+                            {% if form.year_block.errors %}
+                                <div class="error-txt">{{ form.year_block.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.block.id_for_label }}">
+                                Block <span class="required">*</span>
+                            </label>
+                            {{ form.block }}
+                            {% if form.block.errors %}
+                                <div class="error-txt">{{ form.block.errors.0 }}</div>
+                            {% endif %}
+                            <p class="field-hint">Example: A, B, or G.</p>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <div class="upload-box">
+
+                                <div class="upload-heading">
+                                    <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+                                    <span>Upload Student ID <span class="required">*</span></span>
+                                </div>
+
+                                {{ form.verification_evidence }}
+
+                                {% if form.verification_evidence.errors %}
+                                    <div class="error-txt" role="alert">
+                                        {{ form.verification_evidence.errors.0 }}
+                                    </div>
+                                {% endif %}
+
+                                <p class="help-text">
+                                    {{ form.verification_evidence.help_text }}
+                                </p>
+
+                                <p class="help-text">
+                                    Upload a clear photo or scanned copy. Clinic Staff will review it before verifying your account.
+                                </p>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section class="form-section step-panel" data-step="2" hidden>
+
+                    <div class="section-heading">
+                        <div class="section-icon">
+                            <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h3>Account Credentials</h3>
+                            <p>Create your username and password to access Clinic Connect.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group full-width">
+                            <label for="{{ form.username.id_for_label }}">
+                                Username <span class="required">*</span>
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="error-txt">{{ form.username.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.password1.id_for_label }}">
+                                Password <span class="required">*</span>
+                            </label>
+
+                            <div class="password-wrap">
+                                {{ form.password1 }}
+
+                                <button type="button"
+                                        class="password-toggle"
+                                        data-target="{{ form.password1.id_for_label }}"
+                                        aria-label="Show password"
+                                        aria-pressed="false"
+                                        title="Show password">
+                                    <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+
+                            <p class="field-hint">
+                                At least 8 characters. Avoid common or entirely numeric passwords.
+                            </p>
+
+                            {% if form.password1.errors %}
+                                <div class="error-txt">{{ form.password1.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.password2.id_for_label }}">
+                                Confirm Password <span class="required">*</span>
+                            </label>
+
+                            <div class="password-wrap">
+                                {{ form.password2 }}
+
+                                <button type="button"
+                                        class="password-toggle"
+                                        data-target="{{ form.password2.id_for_label }}"
+                                        aria-label="Show confirm password"
+                                        aria-pressed="false"
+                                        title="Show confirm password">
+                                    <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+
+                            <p class="password-feedback neutral"
+                               id="password-match-message"
+                               aria-live="polite">
+                                Enter your password again to confirm it.
+                            </p>
+
+                            {% if form.password2.errors %}
+                                <div class="error-txt">{{ form.password2.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </section>
+
+                <div class="step-navigation">
+
+                    <button type="button" class="btn-back" id="back-button" hidden>
+                        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                        Back
+                    </button>
+
+                    <span id="navigation-spacer"></span>
+
+                    <button type="button" class="btn-next" id="next-button">
+                        Continue
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                    </button>
+
+                    <button type="submit" class="btn-submit-signup" id="submit-button" hidden>
+                        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                        Submit Registration
+                    </button>
+
+                </div>
+
+            </form>
+
+            <div class="login-link">
+                Already have an account?
+                <a href="{% url 'accounts:login' %}">Log in</a>
+            </div>
+
+        </main>
+
+    </section>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("signup-form");
+    const panels = Array.from(document.querySelectorAll(".step-panel"));
+    const progressSteps = Array.from(document.querySelectorAll(".progress-step"));
+
+    const backButton = document.getElementById("back-button");
+    const nextButton = document.getElementById("next-button");
+    const submitButton = document.getElementById("submit-button");
+
+    const stepCount = document.getElementById("step-count");
+    const currentStepTitle = document.getElementById("current-step-title");
+    const navigationSpacer = document.getElementById("navigation-spacer");
+
+    const stepTitles = [
+        "Personal Details",
+        "Academic Information",
+        "Account Credentials"
+    ];
+
+    let currentStep = 0;
+
+    function updateStep() {
+
+        panels.forEach(function (panel, index) {
+            panel.hidden = index !== currentStep;
+        });
+
+        progressSteps.forEach(function (step, index) {
+
+            step.classList.toggle("active", index === currentStep);
+            step.classList.toggle("completed", index < currentStep);
+
+            const number = step.querySelector(".progress-number");
+
+            number.textContent = index < currentStep
+                ? "✓"
+                : String(index + 1);
+        });
+
+        stepCount.textContent = "Step " + (currentStep + 1) + " of 3";
+        currentStepTitle.textContent = stepTitles[currentStep];
+
+        backButton.hidden = currentStep === 0;
+        nextButton.hidden = currentStep === 2;
+        submitButton.hidden = currentStep !== 2;
+        navigationSpacer.hidden = currentStep !== 0;
+    }
+
+    function validateFileInput(input) {
+
+        if (!input || input.type !== "file") {
+            return true;
+        }
+
+        if (!input.files.length) {
+            input.setCustomValidity(
+                input.required ? "Please upload your student ID." : ""
+            );
+            return !input.required;
+        }
+
+        const file = input.files[0];
+        const maxSize = 5 * 1024 * 1024;
+
+        const allowedExtensions = [
+            "jpg",
+            "jpeg",
+            "png",
+            "webp",
+            "pdf"
+        ];
+
+        const extension = file.name.split(".").pop().toLowerCase();
+
+        if (!allowedExtensions.includes(extension)) {
+            input.setCustomValidity(
+                "Upload a JPG, PNG, WEBP, or PDF file."
+            );
+            return false;
+        }
+
+        if (file.size > maxSize) {
+            input.setCustomValidity(
+                "The student ID file must not exceed 5 MB."
+            );
+            return false;
+        }
+
+        input.setCustomValidity("");
+        return true;
+    }
+
+    function validateCurrentStep() {
+
+        const currentPanel = panels[currentStep];
+
+        const fields = Array.from(
+            currentPanel.querySelectorAll("input, select, textarea")
+        );
+
+        for (const field of fields) {
+
+            if (field.type === "file" && !validateFileInput(field)) {
+                field.reportValidity();
+                field.focus();
+                return false;
+            }
+
+            if (!field.checkValidity()) {
+                field.reportValidity();
+                field.focus();
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function showStepWithErrors() {
+
+        for (let index = 0; index < panels.length; index++) {
+
+            if (panels[index].querySelector(".error-txt")) {
+                currentStep = index;
+                updateStep();
+                return;
+            }
+        }
+
+        currentStep = 0;
+        updateStep();
+    }
+
+    nextButton.addEventListener("click", function () {
+
+        if (!validateCurrentStep()) {
+            return;
+        }
+
+        if (currentStep < panels.length - 1) {
+            currentStep++;
+            updateStep();
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+    });
+
+    backButton.addEventListener("click", function () {
+
+        if (currentStep > 0) {
+            currentStep--;
+            updateStep();
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+    });
+
+    form.addEventListener("submit", function (event) {
+
+        for (let index = 0; index < panels.length; index++) {
+
+            currentStep = index;
+            updateStep();
+
+            if (!validateCurrentStep()) {
+                event.preventDefault();
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+
+                return;
+            }
+        }
+
+        submitButton.disabled = true;
+
+        submitButton.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+    });
+
+    const password1 = document.getElementById(
+        "{{ form.password1.id_for_label }}"
+    );
+
+    const password2 = document.getElementById(
+        "{{ form.password2.id_for_label }}"
+    );
+
+    const matchMessage = document.getElementById(
+        "password-match-message"
+    );
+
+    function checkPasswordMatch() {
+
+        if (!password1 || !password2 || !matchMessage) {
+            return;
+        }
+
+        if (!password1.value && !password2.value) {
+            matchMessage.textContent =
+                "Enter your password again to confirm it.";
+
+            matchMessage.className = "password-feedback neutral";
+            return;
+        }
+
+        if (!password2.value) {
+            matchMessage.textContent =
+                "Please confirm your password.";
+
+            matchMessage.className = "password-feedback neutral";
+            return;
+        }
+
+        if (password1.value === password2.value) {
+            matchMessage.textContent = "Passwords match.";
+            matchMessage.className = "password-feedback success";
+        } else {
+            matchMessage.textContent = "Passwords do not match.";
+            matchMessage.className = "password-feedback error";
+        }
+    }
+
+    if (password1 && password2) {
+        password1.addEventListener("input", checkPasswordMatch);
+        password2.addEventListener("input", checkPasswordMatch);
+    }
+
+    document.querySelectorAll(".password-toggle").forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            const input = document.getElementById(button.dataset.target);
+
+            if (!input) {
+                return;
+            }
+
+            const isPassword = input.type === "password";
+
+            input.type = isPassword ? "text" : "password";
+
+            const label = input.id === "{{ form.password1.id_for_label }}"
+                ? "password"
+                : "confirm password";
+
+            button.setAttribute(
+                "aria-label",
+                (isPassword ? "Hide " : "Show ") + label
+            );
+
+            button.setAttribute(
+                "title",
+                (isPassword ? "Hide " : "Show ") + label
+            );
+
+            button.setAttribute(
+                "aria-pressed",
+                String(isPassword)
+            );
+
+            button.innerHTML = isPassword
+                ? '<i class="fa-regular fa-eye-slash" aria-hidden="true"></i>'
+                : '<i class="fa-regular fa-eye" aria-hidden="true"></i>';
+        });
+    });
+
+    form.querySelectorAll('input[type="file"]').forEach(function (input) {
+
+        input.addEventListener("change", function () {
+            validateFileInput(input);
+        });
+    });
+
+    showStepWithErrors();
+
+});
+</script>
+
+</body>
+</html>

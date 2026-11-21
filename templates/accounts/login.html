@@ -1,0 +1,991 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1120">
+    <title>Log In | Clinic Connect</title>
+
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #0b1120;
+            --panel: #111827;
+            --input: #0b1120;
+            --border: #263449;
+            --text: #f8fafc;
+            --text-soft: #cbd5e1;
+            --muted: #94a3b8;
+            --muted-dark: #64748b;
+            --green: #22c55e;
+            --green-light: #4ade80;
+            --green-dark: #16a34a;
+            --danger: #f87171;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            min-height: 100%;
+            scrollbar-width: thin;
+            scrollbar-color: #334155 var(--bg);
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:focus-visible,
+        a:focus-visible {
+            outline: 2px solid var(--green-light);
+            outline-offset: 3px;
+        }
+
+        .page {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+        }
+
+        .brand-panel {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px clamp(25px, 5vw, 65px);
+            background:
+                radial-gradient(circle at 15% 15%, rgba(34, 197, 94, 0.08), transparent 35%),
+                var(--panel);
+            border-right: 1px solid var(--border);
+        }
+
+        .brand-content {
+            width: 100%;
+            max-width: 490px;
+        }
+
+        .logo-mark {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 15px;
+            border-radius: 13px;
+            background: rgba(34, 197, 94, 0.14);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-mark svg {
+            width: 27px;
+            height: 27px;
+            fill: none;
+            stroke: var(--green-light);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .brand-title {
+            margin-bottom: 9px;
+            color: #fff;
+            font-size: clamp(30px, 3.5vw, 40px);
+            line-height: 1.1;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        .brand-description {
+            max-width: 440px;
+            margin-bottom: 25px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.65;
+        }
+
+        .flow-heading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 750;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+        }
+
+        .flow-heading svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--green);
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .flow {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .flow-item {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .flow-item:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            left: 17px;
+            top: 37px;
+            height: 14px;
+            width: 1px;
+            background: #334155;
+        }
+
+        .flow-icon {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            background: #172235;
+            color: var(--green-light);
+        }
+
+        .flow-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .flow-content {
+            padding-top: 2px;
+        }
+
+        .flow-content strong {
+            display: block;
+            margin-bottom: 3px;
+            color: #f1f5f9;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .flow-content p {
+            max-width: 370px;
+            color: var(--muted-dark);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .brand-footer {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 25px;
+            color: #64748b;
+            font-size: 9px;
+        }
+
+        .brand-footer svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            stroke: var(--green);
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .login-panel {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px clamp(20px, 4vw, 55px);
+            background:
+                radial-gradient(circle at 85% 15%, rgba(34, 197, 94, 0.035), transparent 35%),
+                var(--bg);
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 410px;
+        }
+
+        .login-card {
+            padding: 24px;
+            background: rgba(17, 24, 39, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            box-shadow: 0 20px 55px rgba(0, 0, 0, 0.25);
+        }
+
+        .welcome-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 10px;
+            color: var(--green-light);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+        }
+
+        .login-header {
+            margin-bottom: 20px;
+        }
+
+        .login-header h1 {
+            margin-bottom: 6px;
+            color: #fff;
+            font-size: 26px;
+            line-height: 1.2;
+            font-weight: 800;
+            letter-spacing: -0.7px;
+        }
+
+        .login-header p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .messages {
+            margin-bottom: 15px;
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 10px 12px;
+            margin-bottom: 7px;
+            border: 1px solid rgba(248, 113, 113, 0.25);
+            border-radius: 8px;
+            background: rgba(127, 29, 29, 0.18);
+            color: #fecaca;
+            font-size: 11px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .message svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+            stroke: var(--danger);
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-soft);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 13px;
+            width: 17px;
+            height: 17px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            stroke: #64748b;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke 0.2s;
+        }
+
+        .input-wrapper:focus-within .input-icon {
+            stroke: var(--green-light);
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            height: 44px;
+            padding: 0 43px;
+            border: 1px solid #334155;
+            border-radius: 9px;
+            outline: none;
+            background: var(--input);
+            color: #f8fafc;
+            font-size: 12px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-wrapper input::placeholder {
+            color: #526178;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.09);
+        }
+
+        .password-wrapper input {
+            padding-right: 45px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
+            transform: translateY(-50%);
+            border: 0;
+            border-radius: 7px;
+            background: transparent;
+            color: #8291a6;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .password-toggle:hover {
+            background: rgba(34, 197, 94, 0.08);
+            color: var(--green-light);
+        }
+
+        .password-toggle svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .login-options {
+            display: flex;
+            justify-content: flex-end;
+            margin: -2px 0 15px;
+        }
+
+        .forgot-password {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--green-light);
+            font-size: 10px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .forgot-password svg {
+            width: 13px;
+            height: 13px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .forgot-password:hover {
+            color: #86efac;
+            text-decoration: underline;
+        }
+
+        .sign-in-button {
+            width: 100%;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            border: 1px solid var(--green);
+            border-radius: 9px;
+            background: var(--green);
+            color: #052e16;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .sign-in-button:hover {
+            background: var(--green-dark);
+            border-color: var(--green-dark);
+            color: #fff;
+            box-shadow: 0 7px 18px rgba(34, 197, 94, 0.15);
+        }
+
+        .sign-in-button:active {
+            transform: scale(0.99);
+        }
+
+        .sign-in-button svg {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .signup-divider {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin: 19px 0 13px;
+            color: #64748b;
+            font-size: 9px;
+            white-space: nowrap;
+        }
+
+        .signup-divider::before,
+        .signup-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .signup-text {
+            color: var(--muted);
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .signup-text a {
+            margin-left: 4px;
+            color: var(--green-light);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .signup-text a:hover {
+            text-decoration: underline;
+        }
+
+        .security-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            margin-top: 17px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(38, 52, 73, 0.8);
+            color: #64748b;
+            font-size: 9px;
+            text-align: center;
+        }
+
+        .security-note svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            stroke: var(--green);
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        @media (min-width: 1400px) {
+            .brand-panel {
+                padding-left: max(55px, calc((100vw - 1400px) / 2));
+            }
+        }
+
+        @media (max-height: 700px) and (min-width: 701px) {
+            .brand-panel,
+            .login-panel {
+                padding-top: 12px;
+                padding-bottom: 12px;
+            }
+
+            .logo-mark {
+                width: 38px;
+                height: 38px;
+                margin-bottom: 10px;
+            }
+
+            .logo-mark svg {
+                width: 23px;
+                height: 23px;
+            }
+
+            .brand-title {
+                font-size: 30px;
+            }
+
+            .brand-description {
+                margin-bottom: 16px;
+                font-size: 11px;
+            }
+
+            .flow-heading {
+                margin-bottom: 10px;
+            }
+
+            .flow {
+                gap: 9px;
+            }
+
+            .flow-content p {
+                font-size: 9px;
+            }
+
+            .brand-footer {
+                margin-top: 15px;
+            }
+
+            .login-card {
+                padding: 19px;
+            }
+
+            .login-header {
+                margin-bottom: 14px;
+            }
+
+            .form-group {
+                margin-bottom: 11px;
+            }
+
+            .signup-divider {
+                margin: 14px 0 10px;
+            }
+
+            .security-note {
+                margin-top: 12px;
+                padding-top: 9px;
+            }
+        }
+
+        @media (max-width: 900px) and (min-width: 701px) {
+            .page {
+                grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+            }
+
+            .brand-panel {
+                padding: 25px 22px;
+            }
+
+            .login-panel {
+                padding: 20px;
+            }
+
+            .brand-title {
+                font-size: 32px;
+            }
+
+            .brand-description {
+                font-size: 11px;
+            }
+
+            .flow-content p {
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .page {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .brand-panel {
+                min-height: auto;
+                padding: 28px 22px 24px;
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .brand-content {
+                max-width: 500px;
+            }
+
+            .brand-title {
+                font-size: 31px;
+            }
+
+            .brand-description {
+                margin-bottom: 20px;
+                font-size: 12px;
+            }
+
+            .flow {
+                gap: 13px;
+            }
+
+            .brand-footer {
+                margin-top: 22px;
+            }
+
+            .login-panel {
+                min-height: auto;
+                padding: 28px 18px 35px;
+            }
+
+            .login-wrapper {
+                max-width: 460px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .brand-panel {
+                padding: 24px 18px;
+            }
+
+            .login-panel {
+                padding: 22px 13px 30px;
+            }
+
+            .login-card {
+                padding: 21px 17px;
+                border-radius: 13px;
+            }
+
+            .login-header h1 {
+                font-size: 24px;
+            }
+
+            .flow-content p {
+                font-size: 10px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <section class="brand-panel">
+        <div class="brand-content">
+
+            <div class="logo-mark" aria-label="Clinic Connect medical logo">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 4v16M4 12h16"/>
+                </svg>
+            </div>
+
+            <h1 class="brand-title">Clinic Connect</h1>
+
+            <p class="brand-description">
+                A school healthcare services system that connects students,
+                teachers, and clinic staff for convenient health requests,
+                referrals, and appointment management.
+            </p>
+
+            <div class="flow-heading">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 5h16M4 12h16M4 19h16"/>
+                    <circle cx="7" cy="5" r="1"/>
+                    <circle cx="7" cy="12" r="1"/>
+                    <circle cx="7" cy="19" r="1"/>
+                </svg>
+                How Clinic Connect works
+            </div>
+
+            <div class="flow">
+
+                <div class="flow-item">
+                    <div class="flow-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M5 21v-2a7 7 0 0 1 14 0v2"/>
+                        </svg>
+                    </div>
+
+                    <div class="flow-content">
+                        <strong>Student requests a checkup</strong>
+                        <p>
+                            Submit a clinic appointment request and provide
+                            your health concern and preferred schedule.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flow-item">
+                    <div class="flow-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="m16 11 2 2 4-4"/>
+                        </svg>
+                    </div>
+
+                    <div class="flow-content">
+                        <strong>Teacher refers a student</strong>
+                        <p>
+                            Teachers can send referrals to the clinic
+                            when a student needs medical attention.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flow-item">
+                    <div class="flow-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 21h18"/>
+                            <path d="M5 21V7l7-4 7 4v14"/>
+                            <path d="M9 21v-5h6v5"/>
+                            <path d="M9 10h.01M15 10h.01"/>
+                        </svg>
+                    </div>
+
+                    <div class="flow-content">
+                        <strong>Clinic staff manages requests</strong>
+                        <p>
+                            Clinic staff review requests, manage appointments,
+                            and maintain student health records.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="brand-footer">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3 4 6v5c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V6l-8-3Z"/>
+                    <path d="m9 12 2 2 4-4"/>
+                </svg>
+                NEMSU Cantilan Campus · Clinic Connect
+            </div>
+
+        </div>
+    </section>
+
+    <main class="login-panel">
+        <div class="login-wrapper">
+
+            <div class="login-card">
+
+                <header class="login-header">
+                    <div class="welcome-label">
+                        <span class="status-dot"></span>
+                        Secure access
+                    </div>
+
+                    <h1>Welcome back</h1>
+
+                    <p>
+                        Log in to your Clinic Connect account.
+                    </p>
+                </header>
+
+                {% if messages %}
+                    <div class="messages" role="status">
+                        {% for message in messages %}
+                            <div class="message">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="9"/>
+                                    <path d="M12 8v5M12 16h.01"/>
+                                </svg>
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form
+                    method="post"
+                    action="{% url 'accounts:login' %}"
+                    autocomplete="off"
+                >
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+
+                        <div class="input-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M5 21v-2a7 7 0 0 1 14 0v2"/>
+                            </svg>
+
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                placeholder="Enter your username"
+                                autocomplete="off"
+                                autocapitalize="none"
+                                spellcheck="false"
+                                required
+                               
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+
+                        <div class="input-wrapper password-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="4" y="10" width="16" height="11" rx="2"/>
+                                <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                            </svg>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="passwordToggle"
+                                aria-label="Show password"
+                                aria-pressed="false"
+                                title="Show password"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="login-options">
+                        <a
+                            href="{% url 'accounts:password_reset' %}"
+                            class="forgot-password"
+                        >
+                            Forgot password?
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M7 17 17 7M7 7h10v10"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <button type="submit" class="sign-in-button">
+                        Log In
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M5 12h14"/>
+                            <path d="m13 6 6 6-6 6"/>
+                        </svg>
+                    </button>
+
+                </form>
+
+                <div class="signup-divider">
+                    <span>New to Clinic Connect?</span>
+                </div>
+
+                <div class="signup-text">
+                    Don't have an account?
+                    <a href="{% url 'accounts:signup' %}">Create one</a>
+                </div>
+
+                <div class="security-note">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3 4 6v5c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V6l-8-3Z"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                    Your account information is securely protected.
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const passwordInput = document.getElementById("password");
+    const passwordToggle = document.getElementById("passwordToggle");
+
+    if (!passwordInput || !passwordToggle) {
+        return;
+    }
+
+    passwordToggle.addEventListener("click", function () {
+        const isPassword = passwordInput.type === "password";
+
+        passwordInput.type = isPassword ? "text" : "password";
+
+        passwordToggle.setAttribute(
+            "aria-label",
+            isPassword ? "Hide password" : "Show password"
+        );
+
+        passwordToggle.setAttribute(
+            "title",
+            isPassword ? "Hide password" : "Show password"
+        );
+
+        passwordToggle.setAttribute(
+            "aria-pressed",
+            String(isPassword)
+        );
+
+        passwordToggle.innerHTML = isPassword
+            ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3.1 3.9"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10 10 0 0 0 4-.8"/></svg>'
+            : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,633 @@
+{% extends 'base.html' %}
+
+{% block title %}My Appointments | Clinic Connect{% endblock %}
+
+{% block content %}
+<style>
+  .appointments-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    color: #e5e7eb;
+  }
+
+  .appointments-header-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 24px;
+    margin-bottom: 18px;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 14px;
+  }
+
+  .appointments-title {
+    color: #f8fafc;
+    font-size: 23px;
+    font-weight: 800;
+    margin: 0 0 5px;
+    letter-spacing: -0.5px;
+  }
+
+  .appointments-subtitle {
+    color: #94a3b8;
+    font-size: 12.5px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .btn-primary-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 9px;
+    background: #16a34a;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    border: 1px solid #22c55e;
+    transition: 0.2s ease;
+  }
+
+  .btn-primary-cta:hover {
+    background: #15803d;
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .metrics-grid-5 {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .metric-card-item {
+    position: relative;
+    overflow: hidden;
+    padding: 15px 16px;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .metric-card-item:hover {
+    border-color: #374151;
+    transform: translateY(-2px);
+  }
+
+  .metric-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .metric-card-label {
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+  }
+
+  .metric-card-icon {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .metric-card-value {
+    margin-top: 9px;
+    color: #f8fafc;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .appointments-panel {
+    padding: 20px;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 14px;
+  }
+
+  .panel-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid #1f2937;
+  }
+
+  .panel-heading-title {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .panel-count-badge {
+    padding: 5px 9px;
+    color: #94a3b8;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .appt-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .appt-row-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 18px;
+    background: #0b1220;
+    border: 1px solid #263449;
+    border-radius: 11px;
+    transition: 0.2s ease;
+  }
+
+  .appt-row-item:hover {
+    border-color: #3b4b61;
+    background: #111c2d;
+  }
+
+  .appt-main-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .appt-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 17px;
+  }
+
+  .appt-icon {
+    width: 35px;
+    height: 35px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4ade80;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 9px;
+    font-size: 15px;
+  }
+
+  .appt-title {
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 800;
+    margin: 0;
+  }
+
+  .appt-details {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    padding-left: 2px;
+  }
+
+  .appt-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .appt-detail-heading {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .appt-detail-icon {
+    width: 17px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 13px;
+  }
+
+  .appt-detail-value {
+    padding-left: 24px;
+    color: #e5e7eb;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .appt-status-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .badge-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .badge-status-pill::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .badge-pending {
+    color: #facc15;
+    background: rgba(234, 179, 8, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.25);
+  }
+
+  .badge-approved {
+    color: #60a5fa;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+  }
+
+  .badge-completed {
+    color: #4ade80;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+  }
+
+  .badge-rejected {
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+  }
+
+  .badge-rescheduled {
+    color: #c084fc;
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.25);
+  }
+
+  .empty-state-container {
+    padding: 45px 20px;
+    text-align: center;
+    background: #0b1220;
+    border: 1px dashed #334155;
+    border-radius: 11px;
+  }
+
+  .empty-state-icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 13px;
+    color: #4ade80;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 50%;
+    font-size: 21px;
+  }
+
+  .empty-state-title {
+    margin-bottom: 6px;
+    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .empty-state-desc {
+    margin-bottom: 17px;
+    color: #94a3b8;
+    font-size: 12px;
+  }
+
+  @media (max-width: 900px) {
+    .metrics-grid-5 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .appt-row-item {
+      gap: 16px;
+    }
+
+    .appt-details {
+      gap: 14px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .appointments-header-card {
+      align-items: flex-start;
+      flex-direction: column;
+      padding: 17px;
+    }
+
+    .appointments-title {
+      font-size: 20px;
+    }
+
+    .btn-primary-cta {
+      width: 100%;
+    }
+
+    .metrics-grid-5 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .metric-card-item {
+      padding: 12px;
+    }
+
+    .metric-card-value {
+      font-size: 22px;
+    }
+
+    .appointments-panel {
+      padding: 14px;
+    }
+
+    .panel-heading-title {
+      font-size: 13px;
+    }
+
+    .appt-row-item {
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px;
+    }
+
+    .appt-title-row {
+      margin-bottom: 15px;
+    }
+
+    .appt-details {
+      gap: 12px 8px;
+    }
+
+    .appt-detail-heading {
+      font-size: 10px;
+    }
+
+    .appt-detail-value {
+      font-size: 11px;
+      padding-left: 22px;
+    }
+
+    .appt-status-section {
+      align-self: flex-start;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .appt-row-item {
+      flex-direction: column;
+    }
+
+    .appt-main-info {
+      width: 100%;
+    }
+
+    .appt-details {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px 5px;
+    }
+
+    .appt-detail-heading {
+      gap: 4px;
+      font-size: 9px;
+    }
+
+    .appt-detail-icon {
+      width: 14px;
+      font-size: 11px;
+    }
+
+    .appt-detail-value {
+      padding-left: 18px;
+      font-size: 10px;
+    }
+
+    .appt-status-section {
+      align-self: flex-start;
+    }
+  }
+</style>
+
+<div class="appointments-wrapper">
+
+  <div class="appointments-header-card">
+    <div>
+      <h1 class="appointments-title">My Appointments</h1>
+      <p class="appointments-subtitle">
+        Track your clinic checkup requests, schedules, and appointment status.
+      </p>
+    </div>
+
+    <a href="{% url 'accounts:request_checkup' %}" class="btn-primary-cta">
+      <i class="fas fa-plus"></i>
+      Request Checkup
+    </a>
+  </div>
+
+  <div class="metrics-grid-5">
+
+    <div class="metric-card-item">
+      <div class="metric-card-top">
+        <span class="metric-card-label">Total</span>
+        <div class="metric-card-icon" style="background: rgba(34, 197, 94, 0.1); color: #4ade80;">
+          <i class="fas fa-clipboard-list"></i>
+        </div>
+      </div>
+      <div class="metric-card-value">{{ appointments.count }}</div>
+    </div>
+
+    <div class="metric-card-item">
+      <div class="metric-card-top">
+        <span class="metric-card-label">Pending</span>
+        <div class="metric-card-icon" style="background: rgba(234, 179, 8, 0.1); color: #facc15;">
+          <i class="fas fa-hourglass-half"></i>
+        </div>
+      </div>
+      <div class="metric-card-value">{{ pending_appointments }}</div>
+    </div>
+
+    <div class="metric-card-item">
+      <div class="metric-card-top">
+        <span class="metric-card-label">Approved</span>
+        <div class="metric-card-icon" style="background: rgba(59, 130, 246, 0.1); color: #60a5fa;">
+          <i class="fas fa-check"></i>
+        </div>
+      </div>
+      <div class="metric-card-value">{{ approved_appointments }}</div>
+    </div>
+
+    <div class="metric-card-item">
+      <div class="metric-card-top">
+        <span class="metric-card-label">Rejected</span>
+        <div class="metric-card-icon" style="background: rgba(239, 68, 68, 0.1); color: #f87171;">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+      <div class="metric-card-value">{{ rejected_appointments }}</div>
+    </div>
+
+    <div class="metric-card-item">
+      <div class="metric-card-top">
+        <span class="metric-card-label">Completed</span>
+        <div class="metric-card-icon" style="background: rgba(168, 85, 247, 0.1); color: #c084fc;">
+          <i class="fas fa-flag-checkered"></i>
+        </div>
+      </div>
+      <div class="metric-card-value">{{ completed_appointments }}</div>
+    </div>
+
+  </div>
+
+  <div class="appointments-panel">
+
+    <div class="panel-header-row">
+      <h2 class="panel-heading-title">My Clinic Appointments</h2>
+      <span class="panel-count-badge">{{ appointments.count }} appointments</span>
+    </div>
+
+    <div class="appt-list-container">
+
+      {% if appointments %}
+        {% for appt in appointments %}
+
+          <div class="appt-row-item">
+
+            <div class="appt-main-info">
+
+              <div class="appt-title-row">
+                <div class="appt-icon">
+                  <i class="fas fa-stethoscope"></i>
+                </div>
+                <h3 class="appt-title">Clinic Checkup</h3>
+              </div>
+
+              <div class="appt-details">
+
+                <div class="appt-detail">
+                  <div class="appt-detail-heading">
+                    <span class="appt-detail-icon">
+                      <i class="fas fa-heartbeat"></i>
+                    </span>
+                    <span>Health Concern</span>
+                  </div>
+                  <div class="appt-detail-value">
+                    {{ appt.concern|default:"Not specified" }}
+                  </div>
+                </div>
+
+                <div class="appt-detail">
+                  <div class="appt-detail-heading">
+                    <span class="appt-detail-icon">
+                      <i class="far fa-calendar-alt"></i>
+                    </span>
+                    <span>Date</span>
+                  </div>
+                  <div class="appt-detail-value">
+                    {% if appt.scheduled_date %}
+                      {{ appt.scheduled_date|date:"M d, Y" }}
+                    {% else %}
+                      {{ appt.preferred_date|date:"M d, Y" }}
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="appt-detail">
+                  <div class="appt-detail-heading">
+                    <span class="appt-detail-icon">
+                      <i class="far fa-clock"></i>
+                    </span>
+                    <span>Time</span>
+                  </div>
+                  <div class="appt-detail-value">
+                    {% if appt.scheduled_time %}
+                      {{ appt.scheduled_time|time:"h:i A" }}
+                    {% else %}
+                      {{ appt.preferred_time|time:"h:i A" }}
+                    {% endif %}
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="appt-status-section">
+              <span class="badge-status-pill {% if appt.status == 'Completed' %}badge-completed{% elif appt.status == 'Approved' %}badge-approved{% elif appt.status == 'Rejected' %}badge-rejected{% elif appt.status == 'Rescheduled' %}badge-rescheduled{% else %}badge-pending{% endif %}">
+                {{ appt.status }}
+              </span>
+            </div>
+
+          </div>
+
+        {% endfor %}
+
+      {% else %}
+
+        <div class="empty-state-container">
+          <div class="empty-state-icon-circle">
+            <i class="fas fa-stethoscope"></i>
+          </div>
+          <div class="empty-state-title">No appointments yet</div>
+          <div class="empty-state-desc">
+            You have not submitted any clinic checkup requests.
+          </div>
+          <a href="{% url 'accounts:request_checkup' %}" class="btn-primary-cta">
+            <i class="fas fa-plus"></i>
+            Request Checkup
+          </a>
+        </div>
+
+      {% endif %}
+
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,372 @@
+{% extends 'base.html' %}
+
+{% block title %}Department | Clinic Connect{% endblock %}
+
+{% block content %}
+
+<style>
+    .sp { max-width: 1400px; margin: 0 auto; padding: 4px 0 24px; color: #e5e7eb; }
+    .sp * { box-sizing: border-box; }
+
+
+    .sp-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 22px; }
+    .sp-heading { display: flex; align-items: flex-start; gap: 12px; }
+    .sp-heading-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #123b29; border: 1px solid #1d593b; color: #4ade80; font-size: 20px; flex-shrink: 0; }
+    .sp-header h1 { color: #f8fafc; font-size: 24px; font-weight: 750; letter-spacing: -.5px; margin: 0 0 5px; }
+    .sp-header p { color: #94a3b8; margin: 0; font-size: 13px; line-height: 1.6; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: #22c55e; color: #052e16; padding: 10px 15px; border: 1px solid #22c55e; border-radius: 7px; text-decoration: none; font-size: 12px; font-weight: 700; white-space: nowrap; transition: .2s; }
+    .btn-primary:hover { background: #16a34a; border-color: #16a34a; color: #fff; }
+
+    .sp-summary { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-bottom: 26px; }
+    .sp-stat { display: flex; align-items: center; gap: 13px; background: #071011; border: 1px solid #1f3030; border-radius: 10px; padding: 17px; }
+    .sp-stat-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 9px; background: #123b29; color: #4ade80; font-size: 20px; flex-shrink: 0; }
+    .sp-stat-label { color: #94a3b8; font-size: 12px; margin-bottom: 4px; }
+    .sp-stat-value { color: #f8fafc; font-size: 22px; font-weight: 750; line-height: 1.2; }
+
+    .sp-section-title { color: #f8fafc; font-size: 15px; font-weight: 700; margin: 0 0 4px; }
+    .sp-section-sub { color: #64748b; font-size: 12px; margin: 0 0 14px; }
+
+    .dept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .dept-card { text-align: left; font-family: inherit; cursor: pointer; background: #071011; border: 1px solid #1f3030; border-radius: 12px; padding: 18px; color: inherit; transition: .2s; position: relative; }
+    .dept-card:hover { border-color: #24613f; transform: translateY(-2px); }
+    .dept-card.active { border-color: #22c55e; background: #0a1a14; box-shadow: 0 0 0 3px rgba(34,197,94,.12); }
+    .dept-code { display: inline-block; padding: 4px 10px; border-radius: 6px; background: #123b29; border: 1px solid #1d593b; color: #4ade80; font-size: 12px; font-weight: 800; letter-spacing: .5px; margin-bottom: 12px; }
+    .dept-name { color: #f8fafc; font-size: 13px; font-weight: 650; line-height: 1.4; min-height: 36px; margin-bottom: 14px; }
+    .dept-meta { display: flex; gap: 14px; color: #94a3b8; font-size: 11px; border-top: 1px solid #172626; padding-top: 12px; }
+    .dept-meta strong { display: block; color: #f8fafc; font-size: 16px; }
+
+    /* Detail panel */
+    .detail { display: none; background: #071011; border: 1px solid #1f3030; border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+    .detail.open { display: block; }
+    .detail-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 20px; background: #0a1415; border-bottom: 1px solid #1f3030; flex-wrap: wrap; }
+    .detail-head h2 { color: #4ade80; font-size: 17px; font-weight: 750; margin: 0 0 3px; }
+    .detail-head p { color: #64748b; font-size: 11px; margin: 0; }
+    .close-btn { background: #101b1c; border: 1px solid #263737; color: #94a3b8; padding: 7px 12px; border-radius: 6px; font-size: 11px; font-family: inherit; cursor: pointer; }
+    .close-btn:hover { color: #fff; border-color: #22c55e; }
+
+    .tabs { display: flex; gap: 4px; padding: 10px 14px 0; border-bottom: 1px solid #1f3030; background: #0a1415; overflow-x: auto; }
+    .tab { background: transparent; border: none; border-bottom: 2px solid transparent; color: #94a3b8; padding: 10px 14px; font-size: 12px; font-weight: 650; font-family: inherit; cursor: pointer; white-space: nowrap; }
+    .tab:hover { color: #e5e7eb; }
+    .tab.active { color: #4ade80; border-bottom-color: #22c55e; }
+    .tab-count { margin-left: 6px; padding: 1px 7px; border-radius: 10px; background: #14251c; color: #86efac; font-size: 10px; }
+
+    .pane { display: none; padding: 20px; }
+    .pane.active { display: block; }
+
+    /* Floors & rooms */
+    .floor { margin-bottom: 20px; }
+    .floor:last-child { margin-bottom: 0; }
+    .floor-title { display: flex; align-items: center; gap: 10px; color: #f8fafc; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+    .floor-badge { background: #123b29; color: #4ade80; border: 1px solid #1d593b; border-radius: 6px; padding: 3px 9px; font-size: 11px; }
+    .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+    .room { background: #050c0d; border: 1px solid #1f3030; border-radius: 8px; padding: 11px 12px; }
+    .room-no { color: #86efac; font-size: 12px; font-weight: 750; }
+    .room-name { color: #94a3b8; font-size: 11px; margin-top: 3px; }
+
+    /* Courses */
+    .course-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+    .course { background: #050c0d; border: 1px solid #1f3030; border-radius: 9px; padding: 14px; display: flex; gap: 12px; align-items: flex-start; }
+    .course-code { background: #14251c; border: 1px solid #244b32; color: #86efac; border-radius: 6px; padding: 5px 9px; font-size: 11px; font-weight: 750; white-space: nowrap; }
+    .course-name { color: #f8fafc; font-size: 12px; font-weight: 650; line-height: 1.45; }
+    .course-students { color: #64748b; font-size: 11px; margin-top: 4px; }
+
+    /* Students table */
+    .tools { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+    .search-wrap { position: relative; width: 320px; max-width: 100%; }
+    .search-wrap span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #4ade80; font-size: 18px; pointer-events: none; }
+    .search-input { width: 100%; height: 38px; padding: 8px 12px 8px 36px; background: #050c0d; border: 1px solid #263737; border-radius: 7px; color: #f8fafc; font-family: inherit; font-size: 12px; outline: none; }
+    .search-input:focus { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.1); }
+    .count-pill { color: #94a3b8; font-size: 11px; padding: 7px 9px; background: #101b1c; border: 1px solid #263737; border-radius: 6px; }
+    .count-pill strong { color: #4ade80; }
+
+    .table-wrap { overflow-x: auto; border: 1px solid #1f3030; border-radius: 9px; }
+    .tbl { width: 100%; min-width: 900px; border-collapse: collapse; text-align: left; }
+    .tbl th { background: #0a1415; color: #94a3b8; font-size: 10px; text-transform: uppercase; letter-spacing: .6px; padding: 12px 14px; border-bottom: 1px solid #1f3030; white-space: nowrap; }
+    .tbl td { color: #cbd5e1; font-size: 12px; padding: 12px 14px; border-bottom: 1px solid #172626; vertical-align: middle; }
+    .tbl tbody tr:last-child td { border-bottom: none; }
+    .tbl tbody tr:hover { background: #0c1919; }
+    .stu { display: flex; align-items: center; gap: 10px; min-width: 180px; }
+    .avatar { width: 34px; height: 34px; border-radius: 50%; background: #123b29; border: 1px solid #24613f; color: #86efac; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 750; flex-shrink: 0; }
+    .stu-name { color: #f8fafc; font-weight: 650; white-space: nowrap; }
+    .stu-sub { color: #64748b; font-size: 10px; margin-top: 2px; }
+    .chip { display: inline-block; padding: 4px 9px; background: #14251c; border: 1px solid #244b32; border-radius: 5px; color: #86efac; font-size: 11px; font-weight: 650; white-space: nowrap; }
+    .missing { color: #64748b; font-style: italic; font-size: 11px; }
+    .actions { display: flex; gap: 5px; }
+    .a-btn { display: inline-flex; padding: 6px 9px; border-radius: 5px; font-size: 10px; font-weight: 650; text-decoration: none; font-family: inherit; cursor: pointer; transition: .2s; }
+    .a-edit { background: #172638; border: 1px solid #30465f; color: #93c5fd; }
+    .a-edit:hover { background: #1e3a5f; color: #fff; }
+    .a-remove { background: #351b1b; border: 1px solid #6b2929; color: #fca5a5; }
+    .a-remove:hover { background: #7f1d1d; color: #fff; }
+    .a-refer { background: #163b2a; border: 1px solid #24613f; color: #86efac; }
+    .a-refer:hover { background: #166534; color: #fff; }
+    .remove-form { display: inline; margin: 0; }
+    .empty { padding: 30px 20px; text-align: center; color: #94a3b8; font-size: 12px; }
+
+    .hint { padding: 28px; text-align: center; color: #64748b; font-size: 13px; border: 1px dashed #1f3030; border-radius: 12px; }
+
+    @media (max-width: 900px) {
+        .sp-summary { grid-template-columns: 1fr; }
+        .sp-header { flex-direction: column; align-items: flex-start; }
+    }
+</style>
+
+<div class="sp">
+
+    <div class="sp-header">
+        <div class="sp-heading">
+            <div class="sp-heading-icon">♙</div>
+            <div>
+                <h1>My Students</h1>
+                <p>Select a department to view its floors, rooms, courses and enrolled students.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="sp-summary">
+        <div class="sp-stat">
+            <div class="sp-stat-icon">♙</div>
+            <div>
+                <div class="sp-stat-label">Total Assigned Students</div>
+                <div class="sp-stat-value">{{ students|length }}</div>
+            </div>
+        </div>
+        <div class="sp-stat">
+            <div class="sp-stat-icon">🏛</div>
+            <div>
+                <div class="sp-stat-label">Departments</div>
+                <div class="sp-stat-value">{{ departments|length }} Active</div>
+            </div>
+        </div>
+        <div class="sp-stat">
+            <div class="sp-stat-icon">✓</div>
+            <div>
+                <div class="sp-stat-label">Management Status</div>
+                <div class="sp-stat-value">Active</div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="sp-section-title">Departments</h2>
+    <p class="sp-section-sub">Click a department to open its details.</p>
+
+    <div class="dept-grid">
+        {% for dept in departments %}
+        <button type="button" class="dept-card" data-target="dept-{{ dept.id }}">
+            <span class="dept-code">{{ dept.code|default:"DEPT" }}</span>
+            <div class="dept-name">{{ dept.name }}</div>
+            <div class="dept-meta">
+                <div><strong>{{ dept.floors|length }}</strong>Floors</div>
+                <div><strong>{{ dept.room_total }}</strong>Rooms</div>
+                <div><strong>{{ dept.courses|length }}</strong>Courses</div>
+                <div><strong>{{ dept.student_count }}</strong>Students</div>
+            </div>
+        </button>
+        {% empty %}
+        <div class="hint">No departments configured yet.</div>
+        {% endfor %}
+    </div>
+
+    <div class="hint" id="pickHint">Select a department above to see its details.</div>
+
+    {% for dept in departments %}
+    <section class="detail" id="dept-{{ dept.id }}">
+        <div class="detail-head">
+            <div>
+                <h2>{{ dept.name }}{% if dept.code %} ({{ dept.code }}){% endif %}</h2>
+                <p>{{ dept.floors|length }} floors &middot; {{ dept.room_total }} rooms &middot; {{ dept.courses|length }} courses &middot; {{ dept.student_count }} students</p>
+            </div>
+            <button type="button" class="close-btn">✕ Close</button>
+        </div>
+
+        <div class="tabs">
+            <button type="button" class="tab active" data-pane="rooms-{{ dept.id }}">Floors &amp; Rooms <span class="tab-count">{{ dept.room_total }}</span></button>
+            <button type="button" class="tab" data-pane="courses-{{ dept.id }}">Courses <span class="tab-count">{{ dept.courses|length }}</span></button>
+            <button type="button" class="tab" data-pane="students-{{ dept.id }}">Students <span class="tab-count">{{ dept.student_count }}</span></button>
+        </div>
+
+        <!-- Floors & Rooms -->
+        <div class="pane active" id="rooms-{{ dept.id }}">
+            {% for floor in dept.floors %}
+            <div class="floor">
+                <div class="floor-title">
+                    <span class="floor-badge">{{ floor.label }}</span>
+                    {{ floor.rooms|length }} rooms
+                </div>
+                <div class="room-grid">
+                    {% for room in floor.rooms %}
+                    <div class="room">
+                        <div class="room-no">{{ room.number }}</div>
+                        <div class="room-name">{{ room.name }}</div>
+                        <div class="room-name">{{ room.building }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty">No rooms set up for this department yet. Add them in the admin site.</div>
+            {% endfor %}
+        </div>
+
+        <!-- Courses -->
+        <div class="pane" id="courses-{{ dept.id }}">
+            <div class="course-list">
+                {% for course in dept.courses %}
+                <div class="course">
+                    <span class="course-code">{{ course.code }}</span>
+                    <div>
+                        <div class="course-name">{{ course.name }}</div>
+                        <div class="course-students">{{ course.student_count }} student{{ course.student_count|pluralize }}</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty">No courses listed.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Students -->
+        <div class="pane" id="students-{{ dept.id }}">
+            <div class="tools">
+                <div class="search-wrap">
+                    <span>⌕</span>
+                    <input type="search" class="search-input" placeholder="Search students in {{ dept.name }}..." autocomplete="off">
+                </div>
+                <div class="count-pill">Showing <strong class="shown">{{ dept.student_count }}</strong> of {{ dept.student_count }}</div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Student</th><th>Student ID</th><th>Sex</th><th>Course</th><th>Year / Block</th><th>Email</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in dept.students %}
+                        <tr class="student-row">
+                            <td>
+                                <div class="stu">
+                                    <div class="avatar">{% if student.first_name %}{{ student.first_name|first|upper }}{% else %}{{ student.username|first|upper }}{% endif %}</div>
+                                    <div>
+                                        <div class="stu-name">{{ student.get_full_name|default:student.username }}</div>
+                                        <div class="stu-sub">Student account</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{% if student.id_number %}{{ student.id_number }}{% else %}<span class="missing">Not provided</span>{% endif %}</td>
+                            <td>{% if student.sex %}{{ student.sex }}{% else %}<span class="missing">Not provided</span>{% endif %}</td>
+                            <td>{% if student.course %}{{ student.course }}{% else %}<span class="missing">Not provided</span>{% endif %}</td>
+                            <td>{% if student.year_block %}<span class="chip">{{ student.year_block }}</span>{% else %}<span class="missing">Not provided</span>{% endif %}</td>
+                            <td>{% if student.email %}{{ student.email }}{% else %}<span class="missing">Not provided</span>{% endif %}</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="{% url 'accounts:edit_student' student.id %}" class="a-btn a-edit">Edit</a>
+                                    <form method="post" action="{% url 'accounts:remove_student' student.id %}" class="remove-form" onsubmit="return confirm('Are you sure you want to remove this student?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="a-btn a-remove">Remove</button>
+                                    </form>
+                                    <a href="{% url 'accounts:refer_student' %}" class="a-btn a-refer">Refer</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="7" class="empty">No students in this department yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    {% endfor %}
+
+    {% if unassigned %}
+    <section class="detail open" style="margin-top:24px;">
+        <div class="detail-head">
+            <div>
+                <h2>Unassigned Students</h2>
+                <p>{{ unassigned|length }} student{{ unassigned|length|pluralize }} without a department. Edit them to assign one.</p>
+            </div>
+        </div>
+        <div class="pane active">
+            <div class="table-wrap">
+                <table class="tbl">
+                    <thead><tr><th>Student</th><th>Student ID</th><th>Course</th><th>Email</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        {% for student in unassigned %}
+                        <tr>
+                            <td class="stu-name">{{ student.get_full_name|default:student.username }}</td>
+                            <td>{{ student.id_number|default:"—" }}</td>
+                            <td>{{ student.course|default:"—" }}</td>
+                            <td>{{ student.email|default:"—" }}</td>
+                            <td><a href="{% url 'accounts:edit_student' student.id %}" class="a-btn a-edit">Assign</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const cards = document.querySelectorAll(".dept-card");
+    const details = document.querySelectorAll(".dept-section, .detail[id^='dept-']");
+    const hint = document.getElementById("pickHint");
+
+    function closeAll() {
+        document.querySelectorAll(".detail[id^='dept-']").forEach(d => d.classList.remove("open"));
+        cards.forEach(c => c.classList.remove("active"));
+        if (hint) hint.style.display = "";
+    }
+
+    cards.forEach(card => {
+        card.addEventListener("click", function () {
+            const target = document.getElementById(this.dataset.target);
+            const wasOpen = target.classList.contains("open");
+            closeAll();
+            if (!wasOpen) {
+                target.classList.add("open");
+                this.classList.add("active");
+                if (hint) hint.style.display = "none";
+                target.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        });
+    });
+
+    document.querySelectorAll(".close-btn").forEach(btn => btn.addEventListener("click", closeAll));
+
+   
+    document.querySelectorAll(".detail[id^='dept-']").forEach(section => {
+        const tabs = section.querySelectorAll(".tab");
+        const panes = section.querySelectorAll(".pane");
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                tabs.forEach(t => t.classList.remove("active"));
+                panes.forEach(p => p.classList.remove("active"));
+                tab.classList.add("active");
+                section.querySelector("#" + tab.dataset.pane).classList.add("active");
+            });
+        });
+
+        const input = section.querySelector(".search-input");
+        const shown = section.querySelector(".shown");
+        if (input) {
+            input.addEventListener("input", function () {
+                const q = this.value.toLowerCase().trim();
+                let n = 0;
+                section.querySelectorAll(".student-row").forEach(row => {
+                    const match = !q || row.innerText.toLowerCase().includes(q);
+                    row.style.display = match ? "" : "none";
+                    if (match) n++;
+                });
+                if (shown) shown.textContent = n;
+            });
+        }
+    });
+});
+</script>
+
+{% endblock %}

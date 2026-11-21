@@ -1,0 +1,512 @@
+<style>
+.dashboard {
+    width: 100%;
+}
+
+.dashboard-header {
+    margin-bottom: 28px;
+}
+
+.dashboard-date {
+    color: #49d63e;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    color: #f5f7f5;
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.dashboard-header p {
+    margin: 8px 0 0;
+    color: #9aa7a5;
+    font-size: 17px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    min-height: 178px;
+    padding: 25px;
+    background: #071011;
+    border: 1px solid #1b292a;
+    border-radius: 15px;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    border-color: #2d4930;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-title {
+    color: #dfe5e2;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: #0b3515;
+    color: #54dc47;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.stat-number {
+    margin-top: 22px;
+    color: #50d640;
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.stat-description {
+    margin-top: 9px;
+    color: #9aa7a5;
+    font-size: 14px;
+}
+
+.appointments-card {
+    background: #071011;
+    border: 1px solid #1b292a;
+    border-radius: 15px;
+    padding: 28px;
+}
+
+.appointments-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.appointments-heading h2 {
+    margin: 0;
+    color: #f5f7f5;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.appointments-heading a {
+    color: #54dc47;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.appointments-heading a:hover {
+    background: #0b3515;
+    text-decoration: none;
+}
+
+.appointment-table {
+    width: 100%;
+}
+
+.table-header,
+.table-row {
+    display: grid;
+    grid-template-columns: 1.1fr .8fr 1.3fr .7fr;
+    align-items: center;
+    column-gap: 20px;
+}
+
+.table-header {
+    min-height: 50px;
+    padding: 0 14px;
+    border-top: 1px solid #1b292a;
+    border-bottom: 1px solid #1b292a;
+}
+
+.table-header div {
+    color: #8f9d9a;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .7px;
+}
+
+.table-row {
+    min-height: 78px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #172425;
+    transition: background 0.2s ease;
+}
+
+.table-row:hover {
+    background: #091617;
+}
+
+.table-row:last-child {
+    border-bottom: none;
+}
+
+.table-date,
+.table-time,
+.table-reason {
+    color: #f1f4f2;
+    font-size: 15px;
+}
+
+.table-date {
+    font-weight: 700;
+}
+
+.table-time,
+.table-reason {
+    color: #cbd4d1;
+}
+
+.table-reason {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.date-icon {
+    color: #53dc48;
+    font-size: 20px;
+    margin-right: 12px;
+}
+
+.date-cell {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-width: 82px;
+    padding: 8px 13px;
+    border-radius: 9px;
+    background: #493d08;
+    color: #f5ce00;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.status.approved {
+    background: #123018;
+    color: #62dc6b;
+}
+
+.status.rescheduled {
+    background: #182c38;
+    color: #63b9e8;
+}
+
+.status.rejected {
+    background: #351719;
+    color: #ff7777;
+}
+
+.status.completed {
+    background: #172124;
+    color: #dce3e1;
+}
+
+.empty-state {
+    padding: 45px 20px;
+    text-align: center;
+}
+
+.empty-state h3 {
+    margin: 0 0 8px;
+    color: #f5f7f5;
+    font-size: 18px;
+}
+
+.empty-state p {
+    margin: 0;
+    color: #9aa7a5;
+    font-size: 14px;
+}
+
+@media (max-width: 1100px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr .8fr 1.2fr .8fr;
+    }
+}
+
+@media (max-width: 750px) {
+    .dashboard-header h1 {
+        font-size: 30px;
+    }
+
+    .dashboard-header p {
+        font-size: 15px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .appointments-card {
+        padding: 18px;
+        overflow-x: auto;
+    }
+
+    .appointments-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .appointment-table {
+        min-width: 650px;
+    }
+}
+
+@media (max-width: 430px) {
+    .dashboard-header h1 {
+        font-size: 26px;
+    }
+
+    .stat-card {
+        min-height: 160px;
+        padding: 20px;
+    }
+
+    .stat-number {
+        font-size: 34px;
+    }
+
+    .appointments-card {
+        padding: 15px;
+    }
+}
+</style>
+
+<div class="dashboard">
+
+    <div class="dashboard-header">
+
+        <div class="dashboard-date">
+            {% now "l, F j, Y" %}
+        </div>
+
+        <h1>
+            Good afternoon,
+            {{ user.first_name|default:user.username }}.
+        </h1>
+
+        <p>
+            Here's what's happening with your clinic care.
+        </p>
+
+    </div>
+
+    <div class="stats">
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+                <div class="stat-title">APPOINTMENTS</div>
+                <div class="stat-icon">▣</div>
+            </div>
+
+            <div class="stat-number">
+                {{ appointments|length }}
+            </div>
+
+            <div class="stat-description">
+                Total clinic visits
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+                <div class="stat-title">PENDING</div>
+                <div class="stat-icon">◷</div>
+            </div>
+
+            <div class="stat-number">
+                {{ pending_appointments }}
+            </div>
+
+            <div class="stat-description">
+                Awaiting clinic action
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+                <div class="stat-title">REFERRALS</div>
+                <div class="stat-icon">▤</div>
+            </div>
+
+            <div class="stat-number">
+                {{ referrals|length }}
+            </div>
+
+            <div class="stat-description">
+                Teacher referrals
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+                <div class="stat-title">SICK NOTES</div>
+                <div class="stat-icon">▧</div>
+            </div>
+
+            <div class="stat-number">
+                {{ sick_notes|length }}
+            </div>
+
+            <div class="stat-description">
+                Issued notes
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="appointments-card">
+
+        <div class="appointments-heading">
+
+            <h2>Recent Appointments</h2>
+
+            <a href="{% url 'accounts:student_appointments' %}">
+                View all appointments →
+            </a>
+
+        </div>
+
+        {% if appointments %}
+
+        <div class="appointment-table">
+
+            <div class="table-header">
+                <div>DATE</div>
+                <div>TIME</div>
+                <div>REASON</div>
+                <div>STATUS</div>
+            </div>
+
+            {% for appointment in appointments|slice:":5" %}
+
+            <div class="table-row">
+
+                <div class="date-cell table-date">
+
+                    <span class="date-icon">
+                        □
+                    </span>
+
+                    {{ appointment.preferred_date|date:"M. d, Y" }}
+
+                </div>
+
+                <div class="table-time">
+                    {{ appointment.preferred_time|time:"g:i A" }}
+                </div>
+
+                <div class="table-reason">
+                    {{ appointment.concern }}
+                </div>
+
+                <div>
+
+                    {% if appointment.status == 'Pending' %}
+
+                        <span class="status">
+                            Pending
+                        </span>
+
+                    {% elif appointment.status == 'Approved' %}
+
+                        <span class="status approved">
+                            Approved
+                        </span>
+
+                    {% elif appointment.status == 'Rescheduled' %}
+
+                        <span class="status rescheduled">
+                            Rescheduled
+                        </span>
+
+                    {% elif appointment.status == 'Rejected' %}
+
+                        <span class="status rejected">
+                            Rejected
+                        </span>
+
+                    {% elif appointment.status == 'Completed' %}
+
+                        <span class="status completed">
+                            Completed
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <h3>No appointments yet</h3>
+
+            <p>
+                You have not submitted a clinic checkup request yet.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>

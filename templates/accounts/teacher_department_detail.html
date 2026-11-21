@@ -1,0 +1,1167 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ department.name|default:"Department Detail" }} | Clinic Connect{% endblock %}
+
+{% block content %}
+<style>
+  .dept-view-wrap {
+    color: #f8fafc;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 8px 0 36px;
+  }
+
+  .dept-view-wrap *,
+  .dept-view-wrap *::before,
+  .dept-view-wrap *::after {
+    box-sizing: border-box;
+  }
+
+  .back-nav-link {
+    color: #86efac;
+    background: #111827;
+    border: 1px solid #263449;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    transition: background 0.16s, border-color 0.16s, color 0.16s;
+  }
+
+  .back-nav-link:hover {
+    background: #10251b;
+    border-color: #22c55e;
+    color: #bbf7d0;
+  }
+
+  .dept-header-card,
+  .panel-box-container {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  }
+
+  .dept-pill-active {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #052e16;
+    border: 1px solid #166534;
+    color: #86efac;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    margin-bottom: 10px;
+  }
+
+  .dept-pill-inactive {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #2a1215;
+    border: 1px solid #7f1d1d;
+    color: #fca5a5;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    margin-bottom: 10px;
+  }
+
+  .dept-header-top {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  @media (min-width: 640px) {
+    .dept-header-top {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+  }
+
+  .dept-title-h1 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.35px;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  .dept-sub-txt {
+    font-size: 12.5px;
+    color: #94a3b8;
+    margin: 4px 0 0;
+  }
+
+  .btn-emergency-dispatch {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border: 1px solid #f87171;
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 800;
+    padding: 11px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    box-shadow: 0 6px 18px rgba(239, 68, 68, 0.25);
+    transition: transform 0.16s, background 0.16s;
+  }
+
+  .btn-emergency-dispatch:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-1px);
+  }
+
+  .dept-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .dept-metrics-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .dept-metrics-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  .metric-card {
+    background: #0d1524;
+    border: 1px solid #23324a;
+    border-radius: 11px;
+    padding: 14px 15px;
+  }
+
+  .metric-lbl {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 650;
+  }
+
+  .metric-val {
+    font-size: 23px;
+    font-weight: 800;
+    color: #fff;
+    margin-top: 5px;
+  }
+
+  .app-dashboard-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+
+  @media (min-width: 1024px) {
+    .app-dashboard-layout {
+      grid-template-columns: minmax(0, 1.75fr) minmax(310px, 1fr);
+    }
+  }
+
+  .panel-h2-title {
+    font-size: 15.5px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .panel-title-icon {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    color: #4ade80;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .filter-bar-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  @media (min-width: 640px) {
+    .filter-bar-row {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  .input-search-student,
+  .select-dropdown-filter {
+    width: 100%;
+    height: 38px;
+    padding: 0 12px;
+    background: #0b1120;
+    border: 1px solid #2b3b52;
+    border-radius: 9px;
+    color: #fff;
+    font-size: 12.5px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .select-dropdown-filter {
+    min-width: 130px;
+    cursor: pointer;
+  }
+
+  .select-dropdown-filter option {
+    background: #111827;
+    color: #fff;
+  }
+
+  .input-search-student:focus,
+  .select-dropdown-filter:focus {
+    border-color: #22c55e;
+  }
+
+  .student-directory-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    margin-top: 6px;
+  }
+
+  .student-directory-tbl th {
+    text-align: left;
+    padding: 10px 12px;
+    color: #8fa1ba;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #1f2937;
+    white-space: nowrap;
+  }
+
+  .student-directory-tbl td {
+    padding: 11px 12px;
+    border-bottom: 1px solid #192232;
+    color: #e2e8f0;
+    vertical-align: middle;
+  }
+
+  .student-directory-tbl tr:last-child td {
+    border-bottom: none;
+  }
+
+  .student-directory-tbl tr:hover td {
+    background: #131d2f;
+  }
+
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .user-identity-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .user-avatar-photo {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #2b3b52;
+    background: #0b1120;
+    flex-shrink: 0;
+  }
+
+  .user-avatar-initials {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #052e16;
+    border: 1px solid #166534;
+    color: #86efac;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .course-chip {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: #172554;
+    border: 1px solid #1e3a8a;
+    color: #93c5fd;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .btn-page-step {
+    height: 38px;
+    padding: 0 14px;
+    background: #172238;
+    border: 1px solid #2b3b52;
+    color: #f8fafc;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .btn-page-step:hover {
+    background: #10251b;
+    border-color: #22c55e;
+    color: #4ade80;
+  }
+
+  .building-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .building-card {
+    background: #0d1524;
+    border: 1px solid #23324a;
+    border-radius: 13px;
+    overflow: hidden;
+    min-width: 0;
+    transition: border-color 0.2s ease;
+  }
+
+  .building-card:hover {
+    border-color: rgba(56, 189, 248, 0.45);
+  }
+
+  .building-card-header {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #1f2d42;
+  }
+
+  .building-title-group {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+  }
+
+  .building-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    color: #38bdf8;
+    font-size: 14px;
+  }
+
+  .building-name {
+    font-weight: 800;
+    color: #fff;
+    font-size: 13.5px;
+    overflow-wrap: anywhere;
+  }
+
+  .building-meta {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+
+  .building-room-count {
+    flex-shrink: 0;
+    background: #052e16;
+    border: 1px solid #166534;
+    color: #86efac;
+    padding: 4px 9px;
+    border-radius: 8px;
+    font-size: 10.5px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .building-card-body {
+    padding: 13px 15px 15px;
+  }
+
+  .floor-group + .floor-group {
+    margin-top: 13px;
+    padding-top: 12px;
+    border-top: 1px solid #1c283b;
+  }
+
+  .floor-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 9px;
+  }
+
+  .floor-title {
+    font-size: 12px;
+    color: #93c5fd;
+    font-weight: 750;
+  }
+
+  .floor-room-count {
+    font-size: 10.5px;
+    color: #94a3b8;
+  }
+
+  .room-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    gap: 8px;
+  }
+
+  .room-chip {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    background: #131e33;
+    border: 1px solid #26364e;
+    border-radius: 9px;
+    min-width: 0;
+  }
+
+  .room-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    border-radius: 7px;
+    color: #38bdf8;
+    font-size: 12px;
+  }
+
+  .room-details {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .room-chip-name {
+    display: block;
+    color: #f1f5f9;
+    font-size: 11.5px;
+    font-weight: 750;
+    text-transform: capitalize;
+    overflow-wrap: anywhere;
+  }
+
+  .room-chip-type {
+    display: block;
+    color: #7dd3fc;
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .building-empty {
+    color: #94a3b8;
+    font-size: 12px;
+    padding: 12px;
+    background: #0b1120;
+    border-radius: 9px;
+    border: 1px dashed #2b3b52;
+    text-align: center;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 20px;
+    color: #94a3b8;
+    font-size: 12.5px;
+    background: #0d1524;
+    border: 1px dashed #2b3b52;
+    border-radius: 11px;
+  }
+
+  .calendar-container {
+    background: #0d1524;
+    border: 1px solid #23324a;
+    border-radius: 12px;
+    padding: 13px;
+  }
+
+  .calendar-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .calendar-navigation a {
+    color: #86efac;
+    background: #111827;
+    border: 1px solid #263449;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+  }
+
+  .calendar-navigation a:hover {
+    background: #10251b;
+    border-color: #22c55e;
+  }
+
+  .cal-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+    text-align: center;
+    font-size: 11px;
+  }
+
+  .cal-day-name {
+    color: #8fa1ba;
+    font-weight: 700;
+    font-size: 10px;
+    padding-bottom: 5px;
+  }
+
+  .cal-cell {
+    padding: 7px 2px;
+    border-radius: 6px;
+    background: #111b2e;
+    color: #cbd5e1;
+    font-weight: 600;
+    font-size: 11px;
+  }
+
+  .cal-cell.other-month {
+    opacity: 0.35;
+  }
+
+  .cal-cell.today {
+    background: #16a34a;
+    border: 1px solid #4ade80;
+    color: #ffffff;
+    font-weight: 800;
+  }
+
+  .schedule-item,
+  .faculty-item,
+  .incident-item {
+    background: #0d1524;
+    border: 1px solid #23324a;
+    border-radius: 11px;
+    padding: 12px;
+  }
+
+  .incident-item {
+    border-color: #3b1c24;
+  }
+
+  .schedule-list,
+  .faculty-list,
+  .incident-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .status-label {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .muted-text {
+    font-size: 11.5px;
+    color: #94a3b8;
+  }
+
+  @media (max-width: 480px) {
+    .dept-header-card,
+    .panel-box-container {
+      padding: 16px;
+    }
+
+    .dept-title-h1 {
+      font-size: 22px;
+    }
+
+    .metric-val {
+      font-size: 20px;
+    }
+
+    .filter-bar-row > div:last-child {
+      width: 100%;
+    }
+
+    .building-card-header,
+    .building-card-body {
+      padding: 12px;
+    }
+
+    .room-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
+
+<div class="dept-view-wrap">
+
+  <a href="{% url 'accounts:teacher_department' %}" class="back-nav-link">
+    <i class="fa-solid fa-arrow-left"></i>
+    Back to All Departments
+  </a>
+
+  <section class="dept-header-card">
+    {% if department.is_active %}
+      <div class="dept-pill-active">
+        <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;"></span>
+        ACTIVE DEPARTMENT OVERVIEW
+      </div>
+    {% else %}
+      <div class="dept-pill-inactive">
+        <span style="width:7px;height:7px;border-radius:50%;background:#f87171;"></span>
+        INACTIVE DEPARTMENT
+      </div>
+    {% endif %}
+
+    <div class="dept-header-top">
+      <div>
+        <h1 class="dept-title-h1">
+          {{ department.name }}
+          {% if department.code %}({{ department.code }}){% endif %}
+        </h1>
+        <p class="dept-sub-txt">
+          North Eastern Mindanao State University — Cantilan Campus
+        </p>
+      </div>
+
+      <a href="{% url 'accounts:teacher_referrals' %}" class="btn-emergency-dispatch">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        Emergency Referral
+      </a>
+    </div>
+
+    <div class="dept-metrics-grid">
+      <div class="metric-card">
+        <div class="metric-lbl">Total Enrolled Students</div>
+        <div class="metric-val" style="color:#4ade80;">{{ total_students|default:0 }}</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-lbl">Assigned Buildings</div>
+        <div class="metric-val" style="color:#38bdf8;">{{ building_count|default:0 }}</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-lbl">Total Facility Rooms</div>
+        <div class="metric-val" style="color:#c084fc;">{{ room_count|default:0 }}</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-lbl">Affiliated Faculty</div>
+        <div class="metric-val" style="color:#facc15;">{{ faculty_count|default:0 }}</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-lbl">Active Emergency Referrals</div>
+        <div class="metric-val" style="color:#f87171;">{{ active_referral_count|default:0 }}</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="app-dashboard-layout">
+
+    <div>
+
+      <section class="panel-box-container">
+        <div style="margin-bottom:14px;">
+          <h2 class="panel-h2-title" style="margin-bottom:5px;">
+            <span class="panel-title-icon" aria-hidden="true">
+              <i class="fa-solid fa-graduation-cap"></i>
+            </span>
+            <span>Department Students</span>
+          </h2>
+
+          <div class="muted-text">
+            Total enrolled:
+            <strong style="color:#fff;font-size:13px;">{{ total_students|default:0 }}</strong>
+            <span style="margin-left:6px;">
+              · Showing {{ filtered_student_count|default:0 }} matching student{{ filtered_student_count|pluralize }}
+            </span>
+          </div>
+        </div>
+
+        <form method="get" action="">
+          <div class="filter-bar-row">
+            <div style="flex:1;min-width:0;">
+              <input
+                type="text"
+                name="search"
+                class="input-search-student"
+                placeholder="Search student ID or name..."
+                value="{{ search|default:'' }}"
+              >
+            </div>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <select name="year" class="select-dropdown-filter">
+                <option value="">All Years</option>
+                {% for yr in year_options %}
+                  <option value="{{ yr }}" {% if selected_year == yr %}selected{% endif %}>
+                    {{ yr }}
+                  </option>
+                {% endfor %}
+              </select>
+
+              <button type="submit" class="btn-page-step">
+                Apply
+              </button>
+
+              <a href="{{ request.path }}" class="btn-page-step">
+                Reset
+              </a>
+            </div>
+          </div>
+        </form>
+
+        <div class="table-responsive">
+          <table class="student-directory-tbl">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Student ID</th>
+                <th>Course</th>
+                <th>Year / Block</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for student in students %}
+                <tr>
+                  <td>
+                    <div class="user-identity-cell">
+                      {% if student.profile_picture %}
+                        <img
+                          src="{{ student.profile_picture.url }}"
+                          alt="{{ student.get_full_name|default:student.username }}"
+                          class="user-avatar-photo"
+                        >
+                      {% elif student.avatar %}
+                        <img
+                          src="{{ student.avatar.url }}"
+                          alt="{{ student.get_full_name|default:student.username }}"
+                          class="user-avatar-photo"
+                        >
+                      {% else %}
+                        <span class="user-avatar-initials" aria-hidden="true">
+                          {{ student.first_name|default:student.username|slice:":1"|upper }}{{ student.last_name|slice:":1"|upper }}
+                        </span>
+                      {% endif %}
+                      <span style="font-weight:700;color:#fff;font-size:13px;">
+                        {{ student.get_full_name|default:student.username }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td style="color:#94a3b8;">
+                    {{ student.id_number|default:"No ID" }}
+                  </td>
+
+                  <td>
+                    <span class="course-chip">
+                      {{ student.course|default:"N/A" }}
+                    </span>
+                  </td>
+
+                  <td style="color:#cbd5e1;">
+                    {{ student.year_block|default:"N/A" }}
+                  </td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="4">
+                    <div class="empty-state">
+                      No students found matching this department and your selected filters.
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel-box-container">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+          <div>
+            <h2 class="panel-h2-title" style="margin-bottom:4px;">
+              <span class="panel-title-icon" aria-hidden="true">
+                <i class="fa-solid fa-building"></i>
+              </span>
+              <span>Buildings &amp; Room Allocations</span>
+            </h2>
+            <p class="muted-text" style="margin:0;">
+              Overview of department facilities and assigned rooms.
+            </p>
+          </div>
+
+          <span class="building-room-count">
+            {{ building_count|default:0 }} Building{{ building_count|pluralize }}
+          </span>
+        </div>
+
+        {% if buildings %}
+          <div class="building-grid">
+            {% for building in buildings %}
+              <article class="building-card">
+
+                <div class="building-card-header">
+                  <div class="building-title-group">
+                    <div class="building-icon" aria-hidden="true">
+                      <i class="fa-solid fa-building"></i>
+                    </div>
+
+                    <div style="min-width:0;">
+                      <div class="building-name">
+                        {{ building.name }}
+                      </div>
+                      <div class="building-meta">
+                        Department Facility
+                      </div>
+                    </div>
+                  </div>
+
+                  <span class="building-room-count">
+                    {{ building.rooms.count }} Room{{ building.rooms.count|pluralize }}
+                  </span>
+                </div>
+
+                <div class="building-card-body">
+                  {% if building.rooms.exists %}
+                    {% regroup building.rooms.all by floor as floor_groups %}
+
+                    {% for floor_group in floor_groups %}
+                      <div class="floor-group">
+
+                        <div class="floor-heading">
+                          <span class="floor-title">
+                            {% if floor_group.grouper %}
+                              Floor {{ floor_group.grouper }}
+                            {% else %}
+                              Floor Not Specified
+                            {% endif %}
+                          </span>
+
+                          <span class="floor-room-count">
+                            {{ floor_group.list|length }} Room{{ floor_group.list|length|pluralize }}
+                          </span>
+                        </div>
+
+                        <div class="room-list">
+                          {% for room in floor_group.list %}
+                            <div class="room-chip">
+
+                              <div class="room-icon" aria-hidden="true">
+                                <i class="fa-solid fa-door-open"></i>
+                              </div>
+
+                              <div class="room-details">
+                                <span class="room-chip-name">
+                                  {% if room.room_name %}
+                                    {{ room.room_name }}
+                                  {% else %}
+                                    Room
+                                  {% endif %}
+
+                                  {% if room.room_number %}
+                                    {{ room.room_number }}
+                                  {% else %}
+                                    {{ forloop.counter }}
+                                  {% endif %}
+                                </span>
+
+                                <span class="room-chip-type">
+                                  {% if room.room_type %}
+                                    {{ room.get_room_type_display|default:room.room_type }}
+                                  {% else %}
+                                    Room
+                                  {% endif %}
+                                </span>
+                              </div>
+
+                            </div>
+                          {% endfor %}
+                        </div>
+
+                      </div>
+                    {% endfor %}
+
+                  {% else %}
+                    <div class="building-empty">
+                      No individual rooms have been registered for this building.
+                    </div>
+                  {% endif %}
+                </div>
+
+              </article>
+            {% endfor %}
+          </div>
+
+        {% else %}
+          <div class="empty-state">
+            <div style="font-size:20px;margin-bottom:8px;color:#38bdf8;">
+              <i class="fa-solid fa-building"></i>
+            </div>
+            <strong style="color:#e2e8f0;">No buildings assigned</strong>
+            <div style="margin-top:6px;">
+              No physical buildings have been registered under this department yet.
+            </div>
+          </div>
+        {% endif %}
+      </section>
+
+      <section class="panel-box-container">
+        <h2 class="panel-h2-title">
+          <span class="panel-title-icon" aria-hidden="true">
+            <i class="fa-solid fa-clipboard-list"></i>
+          </span>
+          <span>Upcoming Department Schedules</span>
+        </h2>
+
+        <div class="schedule-list">
+          <div class="schedule-item" style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+            <div>
+              <div style="font-weight:700;color:#fff;font-size:13px;">
+                <i class="fa-solid fa-stethoscope" style="color:#4ade80;margin-right:6px;"></i>
+                Routine Student Health Clearances
+              </div>
+              <div class="muted-text" style="margin-top:4px;">
+                October 27, 2026 · 09:00 AM–02:00 PM
+              </div>
+            </div>
+
+            <span class="status-label" style="background:rgba(56,189,248,.15);border:1px solid rgba(56,189,248,.3);color:#38bdf8;">
+              Sample
+            </span>
+          </div>
+
+          <div class="schedule-item" style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+            <div>
+              <div style="font-weight:700;color:#fff;font-size:13px;">
+                <i class="fa-solid fa-kit-medical" style="color:#fbbf24;margin-right:6px;"></i>
+                Lab First-Aid Kit Refill &amp; Safety Audit
+              </div>
+              <div class="muted-text" style="margin-top:4px;">
+                November 3, 2026 · 10:00 AM–12:00 PM
+              </div>
+            </div>
+
+            <span class="status-label" style="background:rgba(250,204,21,.15);border:1px solid rgba(250,204,21,.3);color:#facc15;">
+              Sample
+            </span>
+          </div>
+        </div>
+
+        <p class="muted-text" style="margin:12px 0 0;">
+          These are sample schedule entries and are not retrieved from a scheduling model.
+        </p>
+      </section>
+
+    </div>
+
+    <aside>
+
+      <section class="panel-box-container">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;">
+          <h2 class="panel-h2-title" style="margin:0;font-size:15px;">
+            <span class="panel-title-icon" aria-hidden="true">
+              <i class="fa-solid fa-calendar-days"></i>
+            </span>
+            <span>Medical Calendar</span>
+          </h2>
+        </div>
+
+        <div class="calendar-container">
+          <div class="calendar-navigation">
+            <a href="?calendar_year={{ previous_month.0 }}&calendar_month={{ previous_month.1 }}" aria-label="Previous month">
+              <i class="fa-solid fa-chevron-left"></i>
+            </a>
+
+            <span style="font-size:13px;color:#38bdf8;font-weight:800;">
+              {{ calendar_month_name }} {{ calendar_year }}
+            </span>
+
+            <a href="?calendar_year={{ next_month.0 }}&calendar_month={{ next_month.1 }}" aria-label="Next month">
+              <i class="fa-solid fa-chevron-right"></i>
+            </a>
+          </div>
+
+          <div class="cal-days-grid">
+            <div class="cal-day-name">Sun</div>
+            <div class="cal-day-name">Mon</div>
+            <div class="cal-day-name">Tue</div>
+            <div class="cal-day-name">Wed</div>
+            <div class="cal-day-name">Thu</div>
+            <div class="cal-day-name">Fri</div>
+            <div class="cal-day-name">Sat</div>
+
+            {% for week in calendar_weeks %}
+              {% for day in week %}
+                <div class="cal-cell {% if day.month != calendar_month %}other-month{% endif %} {% if day == today %}today{% endif %}">
+                  {{ day.day }}
+                </div>
+              {% endfor %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <p class="muted-text" style="margin:12px 0 0;">
+          The calendar displays the current date and month. Event markers will be connected when a scheduling model is available.
+        </p>
+      </section>
+
+      <section class="panel-box-container">
+        <h2 class="panel-h2-title" style="font-size:15px;">
+          <span class="panel-title-icon" aria-hidden="true">
+            <i class="fa-solid fa-chalkboard-user"></i>
+          </span>
+          <span>Department Faculty</span>
+        </h2>
+
+        {% if faculty_list %}
+          <div class="faculty-list">
+            {% for teacher in faculty_list %}
+              <div class="faculty-item" style="display:flex;align-items:center;gap:10px;">
+                {% if teacher.profile_picture %}
+                  <img
+                    src="{{ teacher.profile_picture.url }}"
+                    alt="{{ teacher.get_full_name|default:teacher.username }}"
+                    class="user-avatar-photo"
+                  >
+                {% elif teacher.avatar %}
+                  <img
+                    src="{{ teacher.avatar.url }}"
+                    alt="{{ teacher.get_full_name|default:teacher.username }}"
+                    class="user-avatar-photo"
+                  >
+                {% else %}
+                  <div class="user-avatar-initials" aria-hidden="true">
+                    {{ teacher.first_name|default:teacher.username|slice:":1"|upper }}{{ teacher.last_name|slice:":1"|upper }}
+                  </div>
+                {% endif %}
+
+                <div style="min-width:0;">
+                  <div style="font-weight:700;color:#fff;font-size:13px;">
+                    {{ teacher.get_full_name|default:teacher.username }}
+                  </div>
+                  <div class="muted-text">
+                    {{ teacher.department|default:"Faculty" }}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state">
+            No faculty records were found for this department.
+          </div>
+        {% endif %}
+      </section>
+
+      <section class="panel-box-container">
+        <h2 class="panel-h2-title" style="font-size:15px;">
+          <span class="panel-title-icon" style="color:#f87171;background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.28);" aria-hidden="true">
+            <i class="fa-solid fa-bell"></i>
+          </span>
+          <span>Recent Incidents</span>
+        </h2>
+
+        {% if recent_incidents %}
+          <div class="incident-list">
+            {% for incident in recent_incidents %}
+              <div class="incident-item">
+                <div style="font-weight:700;color:#f87171;font-size:12px;">
+                  {{ incident.student_name|default:"Student Referral" }}
+                </div>
+
+                <div style="font-size:11.5px;color:#e2e8f0;margin-top:4px;">
+                  {{ incident.symptoms|default:incident.concern|default:"No incident details provided." }}
+                </div>
+
+                <div style="font-size:10.5px;color:#94a3b8;margin-top:6px;">
+                  {{ incident.created_at|date:"M d, Y · h:i A" }}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state">
+            No recent incidents were found for this department.
+          </div>
+        {% endif %}
+      </section>
+
+    </aside>
+
+  </div>
+</div>
+{% endblock %}

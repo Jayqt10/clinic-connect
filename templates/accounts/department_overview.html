@@ -1,0 +1,551 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ department.name }} | Clinic Connect{% endblock %}
+
+{% block content %}
+<style>
+  .dept-detail-wrapper {
+    color: #f8fafc;
+  }
+
+  .dept-top-banner {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(51, 65, 85, 0.8);
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dept-top-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #22c55e, #38bdf8);
+  }
+
+  .dept-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #4ade80;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .dept-header-flex {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  @media (min-width: 768px) {
+    .dept-header-flex {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .dept-title-text {
+    font-size: 26px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  .dept-sub-text {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-top: 4px;
+    margin-bottom: 0;
+  }
+
+  .btn-emergency-dispatch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    border-radius: 12px;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+    transition: all 0.2s ease;
+  }
+
+  .btn-emergency-dispatch:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.45);
+  }
+
+  .dept-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  @media (min-width: 1024px) {
+    .dept-stats-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .stat-card-item {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(51, 65, 85, 0.8);
+    border-radius: 14px;
+    padding: 18px;
+  }
+
+  .stat-label-text {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .stat-number-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: #f1f5f9;
+  }
+
+  .dept-main-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  @media (min-width: 1024px) {
+    .dept-main-grid {
+      grid-template-columns: 2fr 1fr;
+    }
+  }
+
+  .dept-section-box {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(51, 65, 85, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .section-title-head {
+    font-size: 16px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .building-card-sub {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .building-name-txt {
+    font-size: 14px;
+    font-weight: 700;
+    color: #38bdf8;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .room-pill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid #475569;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #e2e8f0;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+
+  .teacher-row-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+  }
+
+  .teacher-row-item:last-child {
+    border-bottom: none;
+  }
+
+  .referral-mini-card {
+    padding: 12px;
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 3px solid #ef4444;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+
+  
+  .calendar-container {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 16px;
+  }
+
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .calendar-month-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #f1f5f9;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    text-align: center;
+  }
+
+  .cal-day-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    padding-bottom: 6px;
+  }
+
+  .cal-date-cell {
+    padding: 8px 4px;
+    font-size: 12px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.6);
+    color: #cbd5e1;
+    position: relative;
+    min-height: 38px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cal-date-cell.today {
+    background: rgba(34, 197, 94, 0.15);
+    border: 1px solid rgba(34, 197, 94, 0.5);
+    color: #4ade80;
+    font-weight: 800;
+  }
+
+  .cal-date-cell.event-checkup::after {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #38bdf8;
+    margin-top: 2px;
+  }
+
+  .cal-date-cell.event-wellness::after {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #4ade80;
+    margin-top: 2px;
+  }
+
+  .cal-date-cell.event-inspection::after {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #fbbf24;
+    margin-top: 2px;
+  }
+
+  .event-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #334155;
+    font-size: 11px;
+    color: #94a3b8;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .legend-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+
+  .schedule-item-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+</style>
+
+<div class="dept-detail-wrapper">
+  <div class="dept-top-banner">
+    <div class="dept-badge-pill">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: #4ade80;"></span>
+      Active Department Overview
+    </div>
+    <div class="dept-header-flex">
+      <div>
+        <h1 class="dept-title-text">{{ department.name }} {% if department.code %}({{ department.code }}){% endif %}</h1>
+        <p class="dept-sub-text">North Eastern Mindanao State University — Cantilan Campus</p>
+      </div>
+      <a href="{% url 'accounts:refer_student' %}" class="btn-emergency-dispatch">
+        🚨 Emergency Referral
+      </a>
+    </div>
+  </div>
+
+  <div class="dept-stats-grid">
+    <div class="stat-card-item">
+      <div class="stat-label-text">Assigned Buildings</div>
+      <div class="stat-number-val" style="color: #38bdf8;">{{ buildings.count }}</div>
+    </div>
+    <div class="stat-card-item">
+      <div class="stat-label-text">Total Facility Rooms</div>
+      <div class="stat-number-val" style="color: #c084fc;">{{ room_count }}</div>
+    </div>
+    <div class="stat-card-item">
+      <div class="stat-label-text">Affiliated Faculty</div>
+      <div class="stat-number-val" style="color: #4ade80;">{{ teachers.count }}</div>
+    </div>
+    <div class="stat-card-item">
+      <div class="stat-label-text">Active Emergency Referrals</div>
+      <div class="stat-number-val" style="color: #f87171;">{{ my_referrals_open }}</div>
+    </div>
+  </div>
+
+  <div class="dept-main-grid">
+    <div>
+      
+      <div class="dept-section-box">
+        <h2 class="section-title-head">
+          <span>🏢 Buildings & Room Allocations</span>
+        </h2>
+
+        {% if buildings %}
+          {% for building in buildings %}
+            <div class="building-card-sub">
+              <div class="building-name-txt">
+                <span>{{ building.name }}</span>
+                <span style="font-size: 11px; font-weight: 600; color: #94a3b8; background: rgba(15,23,42,0.6); padding: 2px 8px; border-radius: 6px;">
+                  Capacity: {{ building.total_rooms }} Rooms
+                </span>
+              </div>
+              <div style="margin-top: 10px;">
+                {% for room in building.rooms.all %}
+                  <span class="room-pill-tag">
+                    🚪 Floor {{ room.floor }} — Room {{ room.room_number }}
+                    {% if room.room_name %}<span style="color:#94a3b8;">({{ room.room_name }})</span>{% endif %}
+                  </span>
+                {% empty %}
+                  <span style="font-size: 12px; color: #64748b;">No specific rooms cataloged yet.</span>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div style="padding: 32px; text-align: center; border: 1px dashed #334155; border-radius: 12px;">
+            <p style="font-size: 13px; color: #94a3b8; margin: 0;">No physical buildings assigned to this department yet.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      
+      <div class="dept-section-box">
+        <h2 class="section-title-head">
+          <span>📅 Department Medical & Health Calendar</span>
+          <span style="font-size: 11px; font-weight: 600; color: #38bdf8;">October 2026</span>
+        </h2>
+
+        <div class="calendar-container">
+          <div class="calendar-grid">
+            <div class="cal-day-label">Sun</div>
+            <div class="cal-day-label">Mon</div>
+            <div class="cal-day-label">Tue</div>
+            <div class="cal-day-label">Wed</div>
+            <div class="cal-day-label">Thu</div>
+            <div class="cal-day-label">Fri</div>
+            <div class="cal-day-label">Sat</div>
+
+            <div class="cal-date-cell" style="opacity:0.3;">27</div>
+            <div class="cal-date-cell" style="opacity:0.3;">28</div>
+            <div class="cal-date-cell" style="opacity:0.3;">29</div>
+            <div class="cal-date-cell" style="opacity:0.3;">30</div>
+            <div class="cal-date-cell">1</div>
+            <div class="cal-date-cell">2</div>
+            <div class="cal-date-cell">3</div>
+
+            <div class="cal-date-cell">4</div>
+            <div class="cal-date-cell event-checkup">5</div>
+            <div class="cal-date-cell">6</div>
+            <div class="cal-date-cell">7</div>
+            <div class="cal-date-cell event-wellness">8</div>
+            <div class="cal-date-cell">9</div>
+            <div class="cal-date-cell">10</div>
+
+            <div class="cal-date-cell">11</div>
+            <div class="cal-date-cell">12</div>
+            <div class="cal-date-cell event-inspection">13</div>
+            <div class="cal-date-cell">14</div>
+            <div class="cal-date-cell">15</div>
+            <div class="cal-date-cell">16</div>
+            <div class="cal-date-cell">17</div>
+
+            <div class="cal-date-cell">18</div>
+            <div class="cal-date-cell">19</div>
+            <div class="cal-date-cell">20</div>
+            <div class="cal-date-cell">21</div>
+            <div class="cal-date-cell">22</div>
+            <div class="cal-date-cell">23</div>
+            <div class="cal-date-cell">24</div>
+
+            <div class="cal-date-cell today">25</div>
+            <div class="cal-date-cell">26</div>
+            <div class="cal-date-cell event-checkup">27</div>
+            <div class="cal-date-cell">28</div>
+            <div class="cal-date-cell">29</div>
+            <div class="cal-date-cell">30</div>
+            <div class="cal-date-cell">31</div>
+          </div>
+
+          <div class="event-legend">
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #38bdf8;"></span>
+              <span>Physical Checkups</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #4ade80;"></span>
+              <span>Wellness / Blood Drive</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #fbbf24;"></span>
+              <span>First-Aid Inspection</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+          <h3 style="font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 8px;">Upcoming Department Schedules</h3>
+          
+          <div class="schedule-item-card">
+            <div>
+              <div style="font-size: 12px; font-weight: 700; color: #f1f5f9;">🩺 Routine Student Health Clearances</div>
+              <div style="font-size: 11px; color: #94a3b8;">Oct 27, 2026 • 09:00 AM - 02:00 PM</div>
+            </div>
+            <span style="font-size: 10px; font-weight: 700; color: #38bdf8; background: rgba(56,189,248,0.15); padding: 3px 8px; border-radius: 6px;">
+              Scheduled
+            </span>
+          </div>
+
+          <div class="schedule-item-card">
+            <div>
+              <div style="font-size: 12px; font-weight: 700; color: #f1f5f9;">🧰 Lab First-Aid Kit Refill & Safety Audit</div>
+              <div style="font-size: 11px; color: #94a3b8;">Nov 03, 2026 • 01:30 PM</div>
+            </div>
+            <span style="font-size: 10px; font-weight: 700; color: #fbbf24; background: rgba(251,191,36,0.15); padding: 3px 8px; border-radius: 6px;">
+              Upcoming
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+     
+      <div class="dept-section-box">
+        <h2 class="section-title-head">
+          <span>👨‍🏫 Department Faculty</span>
+        </h2>
+        {% if teachers %}
+          {% for teacher in teachers %}
+            <div class="teacher-row-item">
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #f1f5f9;">
+                  {{ teacher.get_full_name|default:teacher.username }}
+                </div>
+                <div style="font-size: 11px; color: #64748b;">{{ teacher.email|default:"No email recorded" }}</div>
+              </div>
+              <span style="font-size: 11px; color: #38bdf8; background: rgba(56,189,248,0.1); padding: 2px 8px; border-radius: 6px;">
+                Instructor
+              </span>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p style="font-size: 12px; color: #94a3b8; margin: 0;">No teachers directly mapped to this department code.</p>
+        {% endif %}
+      </div>
+
+      <div class="dept-section-box">
+        <h2 class="section-title-head">
+          <span>🚨 Recent Department Incidents</span>
+        </h2>
+        {% if recent_referrals %}
+          {% for ref in recent_referrals %}
+            <div class="referral-mini-card">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: #f8fafc;">
+                <span>{{ ref.student_name|default:"Unknown Student" }}</span>
+                <span style="font-size: 10px; color: #ef4444; background: rgba(239,68,68,0.15); padding: 2px 6px; border-radius: 4px;">
+                  {{ ref.status }}
+                </span>
+              </div>
+              <p style="font-size: 11px; color: #94a3b8; margin: 4px 0 0;">{{ ref.symptoms|truncatewords:8 }}</p>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p style="font-size: 12px; color: #94a3b8; margin: 0;">No recent emergency dispatches recorded.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

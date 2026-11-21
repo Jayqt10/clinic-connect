@@ -1,0 +1,1129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authorized Account Creation | Clinic Connect</title>
+
+    <style>
+        :root {
+            --bg: #0b1120;
+            --panel: #111827;
+            --panel-light: #172033;
+            --border: #263247;
+            --green: #22c55e;
+            --green-dark: #16a34a;
+            --green-soft: rgba(34, 197, 94, 0.11);
+            --text: #f3f4f6;
+            --muted: #94a3b8;
+            --danger: #f87171;
+            --input-bg: #0b1220;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            min-height: 100%;
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        button, input, select {
+            font: inherit;
+        }
+
+        .topbar {
+            min-height: 66px;
+            padding: 0 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(17, 24, 39, .94);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 39px;
+            height: 39px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--green-soft);
+            border: 1px solid rgba(34, 197, 94, .25);
+            color: var(--green);
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .brand-name {
+            font-size: 17px;
+            font-weight: 750;
+            letter-spacing: -.4px;
+        }
+
+        .brand-subtitle {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .authorization {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid rgba(34, 197, 94, .25);
+            border-radius: 30px;
+            color: #86efac;
+            background: var(--green-soft);
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .authorization-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px rgba(34, 197, 94, .5);
+        }
+
+        main {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .layout {
+            width: 100%;
+            max-width: 1030px;
+            display: grid;
+            grid-template-columns: .82fr 1.18fr;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .25);
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 34px 30px;
+            background:
+                radial-gradient(ellipse at 15% 10%, rgba(34, 197, 94, .14), transparent 48%),
+                linear-gradient(145deg, #142235, #101827 72%);
+            border-right: 1px solid var(--border);
+        }
+
+        .eyebrow {
+            color: #86efac;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .side-panel h1 {
+            font-size: clamp(25px, 2.5vw, 34px);
+            line-height: 1.16;
+            letter-spacing: -1.1px;
+            margin-bottom: 15px;
+        }
+
+        .side-panel h1 span {
+            color: var(--green);
+        }
+
+        .side-description {
+            color: #a8b5c7;
+            font-size: 13px;
+            line-height: 1.75;
+            max-width: 310px;
+        }
+
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 17px;
+            margin-top: 35px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .step-number {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border: 1px solid #35445a;
+            background: rgba(255, 255, 255, .025);
+            color: #b6c3d4;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .step-number.active {
+            border-color: rgba(34, 197, 94, .4);
+            color: #86efac;
+            background: var(--green-soft);
+        }
+
+        .step-title {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .step-description {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .form-panel {
+            padding: 28px 32px;
+            min-width: 0;
+        }
+
+        .form-heading {
+            margin-bottom: 20px;
+        }
+
+        .small-label {
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 9px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .form-heading h2 {
+            font-size: 23px;
+            letter-spacing: -.6px;
+            margin-bottom: 7px;
+        }
+
+        .form-heading p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .form-section {
+            margin-bottom: 17px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-number {
+            display: grid;
+            place-items: center;
+            width: 26px;
+            height: 26px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            background: var(--green-soft);
+            color: #86efac;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .section-heading h3 {
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .section-heading p {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .field-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px 14px;
+        }
+
+        .name-grid {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px 14px;
+        }
+
+        .field {
+            min-width: 0;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field label {
+            display: block;
+            color: #d6deea;
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .required {
+            color: var(--green);
+        }
+
+        .optional-tag {
+            color: var(--muted);
+            font-weight: 500;
+            font-size: 9px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            height: 39px;
+            padding: 0 11px;
+            outline: none;
+            border: 1px solid #303d52;
+            border-radius: 8px;
+            color: var(--text);
+            background: var(--input-bg);
+            font-size: 11px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .field input::placeholder {
+            color: #68778d;
+        }
+
+        .field select {
+            cursor: pointer;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, .1);
+        }
+
+        .password-input {
+            padding-right: 43px !important;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 9px;
+            transform: translateY(-50%);
+            border: 0;
+            background: transparent;
+            color: #9caec3;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 5px;
+        }
+
+        .password-toggle:hover {
+            color: var(--green);
+        }
+
+        .field-help {
+            color: var(--muted);
+            font-size: 9px;
+            line-height: 1.5;
+            margin-top: 5px;
+        }
+
+        .errorlist {
+            list-style: none;
+            color: var(--danger);
+            font-size: 10px;
+            line-height: 1.5;
+            margin-top: 5px;
+        }
+
+        .form-errors {
+            margin-bottom: 14px;
+            padding: 10px 12px;
+            border: 1px solid rgba(248, 113, 113, .3);
+            border-radius: 8px;
+            color: #fecaca;
+            background: rgba(248, 113, 113, .07);
+            font-size: 11px;
+        }
+
+        .form-errors ul {
+            padding-left: 17px;
+        }
+
+        .password-feedback {
+            display: none;
+            font-size: 9px;
+            margin-top: 5px;
+        }
+
+        .password-feedback.visible {
+            display: block;
+        }
+
+        .form-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 15px;
+            margin-top: 5px;
+            border-top: 1px solid var(--border);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #bdc8d8;
+            font-size: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: color .2s;
+        }
+
+        .back-link:hover {
+            color: #fff;
+        }
+
+        .submit-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 41px;
+            padding: 0 17px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--green);
+            color: #052e16;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background .2s, transform .2s;
+        }
+
+        .submit-button:hover {
+            background: #4ade80;
+            transform: translateY(-1px);
+        }
+
+        .footer {
+            padding: 12px 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 10px;
+        }
+
+        @media (min-width: 1100px) and (min-height: 800px) {
+            .layout {
+                max-width: 1050px;
+            }
+
+            .side-panel {
+                padding: 40px 34px;
+            }
+
+            .form-panel {
+                padding: 34px 38px;
+            }
+
+            .form-section {
+                margin-bottom: 21px;
+            }
+
+            .field-grid,
+            .name-grid {
+                gap: 15px 16px;
+            }
+
+            .field input,
+            .field select {
+                height: 42px;
+            }
+        }
+
+        @media (max-height: 760px) and (min-width: 761px) {
+            main {
+                padding-top: 12px;
+                padding-bottom: 12px;
+            }
+
+            .layout {
+                max-width: 980px;
+            }
+
+            .side-panel {
+                padding: 23px 26px;
+            }
+
+            .side-panel h1 {
+                font-size: 27px;
+            }
+
+            .steps {
+                gap: 12px;
+                margin-top: 22px;
+            }
+
+            .form-panel {
+                padding: 20px 27px;
+            }
+
+            .form-heading {
+                margin-bottom: 14px;
+            }
+
+            .form-heading h2 {
+                font-size: 21px;
+            }
+
+            .form-section {
+                margin-bottom: 12px;
+            }
+
+            .section-heading {
+                padding-bottom: 7px;
+                margin-bottom: 9px;
+            }
+
+            .field-grid,
+            .name-grid {
+                gap: 9px 12px;
+            }
+
+            .field input,
+            .field select {
+                height: 35px;
+            }
+
+            .form-actions {
+                padding-top: 11px;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .topbar {
+                min-height: 60px;
+                padding: 0 18px;
+            }
+
+            .brand-name {
+                font-size: 15px;
+            }
+
+            .authorization {
+                font-size: 9px;
+                padding: 7px 9px;
+            }
+
+            main {
+                padding: 20px 14px;
+                align-items: flex-start;
+            }
+
+            .layout {
+                max-width: 520px;
+                grid-template-columns: 1fr;
+                margin: auto;
+            }
+
+            .side-panel {
+                padding: 23px 24px;
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .side-panel h1 {
+                font-size: 25px;
+            }
+
+            .side-description {
+                max-width: none;
+            }
+
+            .steps {
+                display: none;
+            }
+
+            .form-panel {
+                padding: 24px;
+            }
+
+            .form-heading h2 {
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .name-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .authorization {
+                max-width: 135px;
+                white-space: normal;
+                line-height: 1.4;
+            }
+
+            .field-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .field.full,
+            .name-grid {
+                grid-column: auto;
+            }
+
+            .form-panel {
+                padding: 20px 17px;
+            }
+
+            .form-actions {
+                align-items: stretch;
+                flex-direction: column-reverse;
+            }
+
+            .submit-button {
+                width: 100%;
+            }
+
+            .back-link {
+                justify-content: center;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-icon">+</div>
+            <div>
+                <div class="brand-name">Clinic Connect</div>
+                <div class="brand-subtitle">Campus Healthcare Management</div>
+            </div>
+        </div>
+
+        <div class="authorization">
+            <span class="authorization-dot"></span>
+            Authorized personnel only
+        </div>
+    </header>
+
+    <main>
+        <div class="layout">
+
+            <aside class="side-panel">
+                <div>
+                    <div class="eyebrow">Account Administration</div>
+
+                    <h1>
+                        Create a new<br>
+                        <span>authorized account.</span>
+                    </h1>
+
+                    <p class="side-description">
+                        Register teachers and clinic staff securely so they can
+                        access the tools and services they need in Clinic Connect.
+                    </p>
+
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number active">01</div>
+                            <div>
+                                <div class="step-title">Account details</div>
+                                <div class="step-description">
+                                    Personal information and role
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number">02</div>
+                            <div>
+                                <div class="step-title">Login details</div>
+                                <div class="step-description">
+                                    Username and secure password
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="form-panel">
+
+                <div class="form-heading">
+                    <div class="small-label">New personnel</div>
+                    <h2>Create an account</h2>
+                    <p>
+                        Complete the information below to register a teacher
+                        or clinic staff member.
+                    </p>
+                </div>
+
+                <form method="POST" id="accountForm">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="form-errors">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    {% if form.errors %}
+                        <div class="form-errors">
+                            Please check the highlighted fields and correct the errors.
+                        </div>
+                    {% endif %}
+
+                    <div class="form-section">
+
+                        <div class="section-heading">
+                            <div class="section-number">01</div>
+                            <div>
+                                <h3>Account details</h3>
+                                <p>Basic information about the account holder.</p>
+                            </div>
+                        </div>
+
+                        <div class="field-grid">
+
+                            <div class="name-grid">
+                                <div class="field">
+                                    <label for="{{ form.first_name.id_for_label }}">
+                                        First name <span class="required">*</span>
+                                    </label>
+                                    {{ form.first_name }}
+                                    {{ form.first_name.errors }}
+                                </div>
+
+                                <div class="field">
+                                    <label for="{{ form.middle_name.id_for_label }}">
+                                        Middle name <span class="optional-tag">(Optional)</span>
+                                    </label>
+                                    {{ form.middle_name }}
+                                    {{ form.middle_name.errors }}
+                                </div>
+
+                                <div class="field">
+                                    <label for="{{ form.last_name.id_for_label }}">
+                                        Last name <span class="required">*</span>
+                                    </label>
+                                    {{ form.last_name }}
+                                    {{ form.last_name.errors }}
+                                </div>
+                            </div>
+
+                            <div class="field full">
+                                <label for="{{ form.role.id_for_label }}">
+                                    Account type <span class="required">*</span>
+                                </label>
+                                {{ form.role }}
+                                {{ form.role.errors }}
+                                <div class="field-help">
+                                    Select Teacher or Clinic Staff.
+                                </div>
+                            </div>
+
+                            <div class="field full" id="identificationField" style="display:none;">
+                                <label for="{{ form.id_number.id_for_label }}" id="identificationLabel">
+                                    Identification Number <span class="required">*</span>
+                                </label>
+
+                                {{ form.id_number }}
+                                {{ form.id_number.errors }}
+
+                                <div class="field-help" id="identificationHelp">
+                                    Enter the identification number assigned to the account holder.
+                                </div>
+                            </div>
+
+                            <div class="field" id="departmentField" style="display:none;">
+                                <label for="{{ form.department.id_for_label }}">
+                                    Department <span class="required">*</span>
+                                </label>
+
+                                {{ form.department }}
+                                {{ form.department.errors }}
+
+                                <div class="field-help">
+                                    Select the academic department assigned to the teacher.
+                                </div>
+                            </div>
+
+                            <div class="field" id="staffPositionField" style="display:none;">
+                                <label for="{{ form.staff_position.id_for_label }}">
+                                    Staff position <span class="required">*</span>
+                                </label>
+
+                                {{ form.staff_position }}
+                                {{ form.staff_position.errors }}
+
+                                <div class="field-help">
+                                    Select the assigned position of the clinic staff member.
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label for="{{ form.sex.id_for_label }}">
+                                    Gender
+                                    {% if form.sex.field.required %}
+                                        <span class="required">*</span>
+                                    {% endif %}
+                                </label>
+
+                                {{ form.sex }}
+                                {{ form.sex.errors }}
+                            </div>
+
+                            <div class="field">
+                                <label for="{{ form.contact_number.id_for_label }}">
+                                    Contact number <span class="optional-tag">(Optional)</span>
+                                </label>
+
+                                {{ form.contact_number }}
+                                {{ form.contact_number.errors }}
+                            </div>
+
+                            <div class="field full">
+                                <label for="{{ form.email.id_for_label }}">
+                                    Email address <span class="required">*</span>
+                                </label>
+
+                                {{ form.email }}
+                                {{ form.email.errors }}
+
+                                <div class="field-help">
+                                    Enter a valid email address for the account holder.
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+
+                        <div class="section-heading">
+                            <div class="section-number">02</div>
+                            <div>
+                                <h3>Login details</h3>
+                                <p>Set the credentials needed to access Clinic Connect.</p>
+                            </div>
+                        </div>
+
+                        <div class="field-grid">
+
+                            <div class="field full">
+                                <label for="{{ form.username.id_for_label }}">
+                                    Username <span class="required">*</span>
+                                </label>
+
+                                {{ form.username }}
+                                {{ form.username.errors }}
+                            </div>
+
+                            <div class="field">
+                                <label for="{{ form.password1.id_for_label }}">
+                                    Password <span class="required">*</span>
+                                </label>
+
+                                <div class="input-wrap">
+                                    {{ form.password1 }}
+
+                                    <button
+                                        type="button"
+                                        class="password-toggle"
+                                        data-target="{{ form.password1.id_for_label }}"
+                                        aria-label="Show or hide password">
+                                        Show
+                                    </button>
+                                </div>
+
+                                {{ form.password1.errors }}
+                                <div class="password-feedback" id="passwordFeedback"></div>
+                            </div>
+
+                            <div class="field">
+                                <label for="{{ form.password2.id_for_label }}">
+                                    Confirm password <span class="required">*</span>
+                                </label>
+
+                                <div class="input-wrap">
+                                    {{ form.password2 }}
+
+                                    <button
+                                        type="button"
+                                        class="password-toggle"
+                                        data-target="{{ form.password2.id_for_label }}"
+                                        aria-label="Show or hide confirm password">
+                                        Show
+                                    </button>
+                                </div>
+
+                                {{ form.password2.errors }}
+                                <div class="password-feedback" id="confirmFeedback"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+
+                        <a href="{% url 'accounts:dashboard' %}" class="back-link">
+                            <span>←</span> Back to Dashboard
+                        </a>
+
+                        <button type="submit" class="submit-button" id="submitButton">
+                            Create Authorized Account <span>→</span>
+                        </button>
+
+                    </div>
+
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        Clinic Connect · Campus Healthcare Management System
+    </footer>
+
+    <script>
+        document.querySelectorAll(".password-toggle").forEach(function(button) {
+            button.addEventListener("click", function() {
+                const input = document.getElementById(button.dataset.target);
+
+                if (!input) return;
+
+                const showPassword = input.type === "password";
+
+                input.type = showPassword ? "text" : "password";
+                button.textContent = showPassword ? "Hide" : "Show";
+            });
+        });
+
+        const accountType = document.getElementById(
+            "{{ form.role.id_for_label|escapejs }}"
+        );
+
+        const identificationField = document.getElementById("identificationField");
+
+        const identificationInput = document.getElementById(
+            "{{ form.id_number.id_for_label|escapejs }}"
+        );
+
+        const identificationLabel = document.getElementById("identificationLabel");
+        const identificationHelp = document.getElementById("identificationHelp");
+
+        const departmentField = document.getElementById("departmentField");
+
+        const departmentSelect = document.getElementById(
+            "{{ form.department.id_for_label|escapejs }}"
+        );
+
+        const staffPositionField = document.getElementById("staffPositionField");
+
+        const staffPositionSelect = document.getElementById(
+            "{{ form.staff_position.id_for_label|escapejs }}"
+        );
+
+        function updateAccountFields() {
+            if (!accountType) return;
+
+            const isTeacher = accountType.value === "teacher";
+            const isStaff = accountType.value === "staff";
+            const hasSelectedRole = isTeacher || isStaff;
+
+            if (identificationField && identificationInput) {
+                identificationField.style.display =
+                    hasSelectedRole ? "block" : "none";
+
+                identificationInput.required = hasSelectedRole;
+
+                if (isTeacher) {
+                    identificationLabel.innerHTML =
+                        'Teacher ID <span class="required">*</span>';
+
+                    identificationHelp.textContent =
+                        "Enter the teacher ID assigned to this teacher.";
+
+                    identificationInput.placeholder = "Enter Teacher ID";
+
+                } else if (isStaff) {
+                    identificationLabel.innerHTML =
+                        'Employee Number <span class="required">*</span>';
+
+                    identificationHelp.textContent =
+                        "Enter the employee number assigned to this clinic staff member.";
+
+                    identificationInput.placeholder = "Enter Employee Number";
+
+                } else {
+                    identificationLabel.innerHTML =
+                        'Identification Number <span class="required">*</span>';
+
+                    identificationHelp.textContent =
+                        "Enter the identification number assigned to the account holder.";
+
+                    identificationInput.placeholder =
+                        "Enter identification number";
+                }
+            }
+
+            if (departmentField && departmentSelect) {
+                departmentField.style.display =
+                    isTeacher ? "block" : "none";
+
+                departmentSelect.required = isTeacher;
+
+                if (!isTeacher) {
+                    departmentSelect.value = "";
+                }
+            }
+
+            if (staffPositionField && staffPositionSelect) {
+                staffPositionField.style.display =
+                    isStaff ? "block" : "none";
+
+                staffPositionSelect.required = isStaff;
+
+                if (!isStaff) {
+                    staffPositionSelect.value = "";
+                }
+            }
+        }
+
+        if (accountType) {
+            accountType.addEventListener("change", updateAccountFields);
+            updateAccountFields();
+        }
+
+        const passwordInput = document.getElementById(
+            "{{ form.password1.id_for_label|escapejs }}"
+        );
+
+        const confirmInput = document.getElementById(
+            "{{ form.password2.id_for_label|escapejs }}"
+        );
+
+        const passwordFeedback = document.getElementById("passwordFeedback");
+        const confirmFeedback = document.getElementById("confirmFeedback");
+
+        if (passwordInput && passwordFeedback) {
+            passwordInput.addEventListener("input", function() {
+                const password = passwordInput.value;
+
+                passwordFeedback.classList.add("visible");
+
+                if (!password) {
+                    passwordFeedback.textContent = "";
+                    passwordFeedback.classList.remove("visible");
+                    return;
+                }
+
+                if (password.length < 8) {
+                    passwordFeedback.textContent =
+                        "Use at least 8 characters.";
+
+                    passwordFeedback.style.color = "#fbbf24";
+
+                } else {
+                    passwordFeedback.textContent =
+                        "Password length looks good.";
+
+                    passwordFeedback.style.color = "#86efac";
+                }
+
+                if (confirmInput && confirmInput.value) {
+                    confirmInput.dispatchEvent(new Event("input"));
+                }
+            });
+        }
+
+        if (confirmInput && confirmFeedback) {
+            confirmInput.addEventListener("input", function() {
+                confirmFeedback.classList.add("visible");
+
+                if (!confirmInput.value) {
+                    confirmFeedback.textContent = "";
+                    confirmFeedback.classList.remove("visible");
+
+                } else if (
+                    passwordInput &&
+                    passwordInput.value === confirmInput.value
+                ) {
+                    confirmFeedback.textContent = "Passwords match.";
+                    confirmFeedback.style.color = "#86efac";
+
+                } else {
+                    confirmFeedback.textContent =
+                        "Passwords do not match yet.";
+
+                    confirmFeedback.style.color = "#f87171";
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

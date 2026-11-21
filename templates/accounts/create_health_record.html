@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Health Record | Clinic Connect{% endblock %}
+
+{% block content %}
+<style>
+  .form-card-wrap {
+    max-width: 700px;
+    margin: 0 auto;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(51, 65, 85, 0.8);
+    border-radius: 16px;
+    padding: 28px;
+    color: #f8fafc;
+  }
+
+  .form-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .form-sub {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 24px;
+  }
+
+  .student-info-box {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #cbd5e1;
+    margin-bottom: 6px;
+  }
+
+  .form-group textarea,
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 13px;
+    box-sizing: border-box;
+  }
+
+  .form-group textarea:focus,
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: #22c55e;
+    outline: none;
+  }
+
+  .dispense-box {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+  }
+
+  .dispense-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #f8fafc;
+    margin-bottom: 4px;
+  }
+
+  .dispense-sub {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 14px;
+  }
+
+  .dispense-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px;
+    gap: 12px;
+  }
+
+  @media (max-width: 520px) {
+    .dispense-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .btn-submit-record {
+    width: 100%;
+    padding: 12px;
+    background: #22c55e;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-submit-record:hover {
+    background: #16a34a;
+  }
+</style>
+
+<div class="form-card-wrap">
+  <h1 class="form-title">📋 Create Clinical Health Record</h1>
+  <p class="form-sub">Document diagnosis, administered treatment, and medical observations for this completed checkup.</p>
+
+  <div class="student-info-box">
+    <div style="font-weight: 800; font-size: 15px; color: #ffffff;">
+      {{ appointment.student.get_full_name|default:appointment.student.username }}
+    </div>
+    <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">
+      Student ID: {{ appointment.student.id_number|default:"N/A" }} · Course: {{ appointment.student.course|default:"N/A" }}
+    </div>
+    <div style="font-size: 12px; color: #38bdf8; margin-top: 4px;">
+      Initial Concern: {{ appointment.concern }}
+    </div>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label>Observed Symptoms</label>
+      {{ form.symptoms }}
+    </div>
+
+    <div class="form-group">
+      <label>Clinical Diagnosis</label>
+      {{ form.diagnosis }}
+    </div>
+
+    <div class="form-group">
+      <label>Treatment</label>
+      {{ form.treatment }}
+    </div>
+
+    <div class="dispense-box">
+      <div class="dispense-title">Dispense Clinic Medicine (Optional)</div>
+      <div class="dispense-sub">Automatically deducts stock from clinic inventory and records it in Treatment.</div>
+
+      <div class="dispense-grid">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="id_dispense_medicine">Medicine</label>
+          <select id="id_dispense_medicine" name="dispense_medicine">
+            <option value="">-- None dispensed --</option>
+            {% for med in available_medicines %}
+              <option value="{{ med.pk }}" {% if selected_medicine_id == med.pk|stringformat:"s" %}selected{% endif %}>
+                {{ med.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="id_dispense_quantity">Qty</label>
+          <input
+            id="id_dispense_quantity"
+            type="number"
+            name="dispense_quantity"
+            min="1"
+            value="{{ dispense_quantity|default:1 }}"
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Additional Clinical Notes</label>
+      {{ form.notes }}
+    </div>
+
+    <button type="submit" class="btn-submit-record">Save Health Record</button>
+  </form>
+</div>
+{% endblock %}

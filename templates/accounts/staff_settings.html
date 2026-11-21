@@ -1,0 +1,188 @@
+
+{% extends 'base.html' %}
+
+{% block title %}System Administration | Clinic Connect{% endblock %}
+
+{% block content %}
+<style>
+  .settings-wrap {
+    color: #f8fafc;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .settings-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(51, 65, 85, 0.8);
+  }
+
+  .settings-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  .settings-sub {
+    font-size: 13px;
+    color: #94a3b8;
+    margin: 4px 0 0;
+  }
+
+  .settings-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .settings-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .setting-card {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(51, 65, 85, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .setting-card:hover {
+    border-color: rgba(34, 197, 94, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(34, 197, 94, 0.15);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #4ade80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .card-h {
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  .card-p {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 4px 0 0;
+    line-height: 1.5;
+  }
+
+  .btn-setting-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid #334155;
+    color: #f8fafc;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .btn-setting-action:hover {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: #22c55e;
+    color: #4ade80;
+  }
+</style>
+
+<div class="settings-wrap">
+  <div class="settings-header">
+    <h1 class="settings-title">System Administration</h1>
+    <p class="settings-sub">
+      Manage user authorization, campus infrastructure, and administrative account security.
+    </p>
+  </div>
+
+  <div class="settings-grid">
+    <div class="setting-card">
+      <div>
+        <div class="card-top">
+          <div class="card-icon">👤</div>
+          <div>
+            <h2 class="card-h">User Authorization</h2>
+            <p class="card-p">Create authorized Teacher and Clinic Staff accounts with pre-assigned roles and permissions.</p>
+          </div>
+        </div>
+        <div style="font-size: 11px; color: #64748b; margin-bottom: 16px;">
+          Active Staff: <strong style="color:#e2e8f0;">{{ total_staff }}</strong>
+          · Active Teachers: <strong style="color:#e2e8f0;">{{ total_teachers }}</strong>
+        </div>
+      </div>
+      <a href="{% url 'accounts:create_authorized_account' %}" class="btn-setting-action">
+        + Create Authorized Account
+      </a>
+    </div>
+
+    <div class="setting-card">
+      <div>
+        <div class="card-top">
+          <div class="card-icon">🏢</div>
+          <div>
+            <h2 class="card-h">Campus Infrastructure Setup</h2>
+            <p class="card-p">Manage academic departments, campus buildings, room numbers, and degree courses.</p>
+          </div>
+        </div>
+        <div style="font-size: 11px; color: #64748b; margin-bottom: 16px;">
+          Registered Departments: <strong style="color:#e2e8f0;">{{ total_departments }}</strong>
+        </div>
+      </div>
+      <a href="{% url 'accounts:staff_departments' %}" class="btn-setting-action">
+        Manage Departments & Buildings
+      </a>
+    </div>
+
+    <div class="setting-card">
+      <div>
+        <div class="card-top">
+          <div class="card-icon">🔒</div>
+          <div>
+            <h2 class="card-h">Personal Account Security</h2>
+            <p class="card-p">Update your administrator profile information or change your account password.</p>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <a href="{% url 'accounts:profile' %}" class="btn-setting-action" style="flex: 1;">
+          Edit Profile
+        </a>
+        <a href="{% url 'accounts:password_change' %}" class="btn-setting-action" style="flex: 1;">
+          Change Password
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

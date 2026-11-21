@@ -1,0 +1,697 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Medical Sick Note | Clinic Connect{% endblock %}
+
+{% block content %}
+
+<style>
+    .sick-page {
+        max-width: 900px;
+        margin: 0 auto;
+        color: #e5e7eb;
+    }
+
+    .page-header {
+        margin-bottom: 18px;
+    }
+
+    .page-header h1 {
+        margin: 0;
+        color: #f8fafc;
+        font-size: 23px;
+        font-weight: 700;
+    }
+
+    .page-header p {
+        margin: 5px 0 0;
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    .note-card {
+        background: #111827;
+        border: 1px solid #263449;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, .15);
+    }
+
+    .clinic-header {
+        padding: 22px 26px;
+        background: linear-gradient(120deg, #102b36, #142b42);
+        border-bottom: 3px solid #16a36a;
+    }
+
+    .clinic-identity {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .clinic-logo {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 9px;
+        background: #064e3b;
+        border: 1px solid #15803d;
+        color: #86efac;
+        font-size: 23px;
+        font-weight: 700;
+    }
+
+    .clinic-name {
+        margin: 0;
+        color: #f8fafc;
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: .5px;
+    }
+
+    .clinic-subtitle {
+        margin: 3px 0 0;
+        color: #a7bacb;
+        font-size: 11px;
+    }
+
+    .document-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .document-heading h2 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .document-heading p {
+        margin: 4px 0 0;
+        color: #a7bacb;
+        font-size: 11px;
+    }
+
+    .official-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        background: rgba(22, 163, 74, .13);
+        border: 1px solid rgba(74, 222, 128, .35);
+        border-radius: 20px;
+        color: #86efac;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .note-body {
+        padding: 23px 26px;
+    }
+
+    .section {
+        margin-bottom: 21px;
+    }
+
+    .section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .section-marker {
+        width: 4px;
+        height: 15px;
+        border-radius: 5px;
+        background: #22c55e;
+        flex-shrink: 0;
+    }
+
+    .section-title {
+        margin: 0;
+        color: #e2e8f0;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .8px;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    .info-item {
+        min-width: 0;
+        padding: 11px 13px;
+        background: #0b1120;
+        border: 1px solid #263449;
+        border-radius: 8px;
+    }
+
+    .info-item span {
+        display: block;
+        margin-bottom: 4px;
+        color: #8292a8;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .55px;
+    }
+
+    .info-item strong {
+        display: block;
+        color: #f1f5f9;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .student-item {
+        border-left: 3px solid #16a36a;
+    }
+
+    .clinical-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(180px, .8fr);
+        gap: 10px;
+    }
+
+    .symptoms-box,
+    .rest-card {
+        min-width: 0;
+        padding: 13px 15px;
+        border-radius: 8px;
+    }
+
+    .symptoms-box {
+        background: #0b1721;
+        border: 1px solid #244353;
+        border-left: 3px solid #38bdf8;
+    }
+
+    .symptoms-box span,
+    .rest-card span {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .6px;
+        text-transform: uppercase;
+    }
+
+    .symptoms-box span {
+        color: #7dd3fc;
+    }
+
+    .symptoms-box p {
+        margin: 0;
+        color: #e2e8f0;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .rest-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        background: #0c211d;
+        border: 1px solid #185c46;
+    }
+
+    .rest-card span {
+        color: #86efac;
+    }
+
+    .rest-card strong {
+        display: block;
+        color: #f0fdf4;
+        font-size: 16px;
+        font-weight: 750;
+    }
+
+    .rest-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex-shrink: 0;
+        background: #064e3b;
+        border-radius: 8px;
+        color: #86efac;
+        font-size: 18px;
+    }
+
+    .notes-box {
+        padding: 12px 14px;
+        background: #0b1120;
+        border: 1px solid #263449;
+        border-radius: 8px;
+    }
+
+    .notes-box p {
+        margin: 0;
+        color: #cbd5e1;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .issuer-section {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 22px;
+        padding-top: 17px;
+        border-top: 1px solid #29374a;
+    }
+
+    .issuer-block {
+        min-width: 0;
+        padding: 12px 14px;
+        background: #0b1120;
+        border: 1px solid #263449;
+        border-radius: 8px;
+    }
+
+    .issuer-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #8292a8;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+    }
+
+    .issuer-name {
+        display: block;
+        color: #f8fafc;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .issuer-role {
+        display: block;
+        margin-top: 3px;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .issuer-date {
+        display: block;
+        color: #e2e8f0;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .document-footer {
+        padding: 12px 20px;
+        background: #0d1524;
+        border-top: 1px solid #263449;
+    }
+
+    .footer-note {
+        margin: 0;
+        color: #64748b;
+        font-size: 10px;
+        line-height: 1.6;
+        text-align: center;
+    }
+
+    .note-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 26px;
+        background: #111827;
+        border-top: 1px solid #263449;
+    }
+
+    .footer-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 36px;
+        padding: 8px 13px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 650;
+        text-decoration: none;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .back-button {
+        background: #1f2937;
+        border-color: #374151;
+        color: #cbd5e1;
+    }
+
+    .back-button:hover {
+        background: #374151;
+        color: #ffffff;
+    }
+
+    .download-button {
+        background: #15803d;
+        border-color: #166534;
+        color: #f0fdf4;
+    }
+
+    .download-button:hover {
+        background: #166534;
+        color: #ffffff;
+    }
+
+    .email-button {
+        background: #172554;
+        border-color: #1e40af;
+        color: #dbeafe;
+    }
+
+    .email-button:hover {
+        background: #1e3a8a;
+        color: #ffffff;
+    }
+
+    .email-form {
+        margin: 0;
+    }
+
+    @media (max-width: 650px) {
+        .clinic-header {
+            padding: 18px;
+        }
+
+        .document-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .note-body {
+            padding: 18px 15px;
+        }
+
+        .details-grid,
+        .issuer-section {
+            grid-template-columns: 1fr;
+        }
+
+        .clinical-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .rest-card {
+            min-height: 75px;
+        }
+
+        .note-actions {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 14px;
+        }
+
+        .footer-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .action-button {
+            width: 100%;
+        }
+
+        .document-footer {
+            padding: 12px 15px;
+        }
+    }
+</style>
+
+<div class="sick-page">
+
+    <div class="page-header">
+        <h1>Medical Sick Note</h1>
+        <p>View and manage your officially issued clinic document.</p>
+    </div>
+
+    <div class="note-card">
+
+        <div class="clinic-header">
+
+            <div class="clinic-identity">
+                <div class="clinic-logo">+</div>
+
+                <div>
+                    <h2 class="clinic-name">CLINIC CONNECT</h2>
+                    <p class="clinic-subtitle">
+                        School Clinic Management System
+                    </p>
+                </div>
+            </div>
+
+            <div class="document-heading">
+                <div>
+                    <h2>MEDICAL SICK NOTE</h2>
+                    <p>Student Medical Documentation</p>
+                </div>
+
+                <div class="official-badge">
+                    ✓ Official Record
+                </div>
+            </div>
+
+        </div>
+
+        <div class="note-body">
+
+            <div class="section">
+
+                <div class="section-heading">
+                    <div class="section-marker"></div>
+                    <h3 class="section-title">Patient Information</h3>
+                </div>
+
+                <div class="details-grid">
+
+                    <div class="info-item student-item">
+                        <span>Student Name</span>
+                        <strong>
+                            {{ sick_note.appointment.student.get_full_name|default:sick_note.appointment.student.username }}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Student ID</span>
+                        <strong>
+                            {{ sick_note.appointment.student.id_number|default:"Not provided" }}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="section">
+
+                <div class="section-heading">
+                    <div class="section-marker"></div>
+                    <h3 class="section-title">Appointment Information</h3>
+                </div>
+
+                <div class="details-grid">
+
+                    <div class="info-item">
+                        <span>Appointment Date</span>
+                        <strong>
+                            {% if sick_note.appointment.scheduled_date %}
+                                {{ sick_note.appointment.scheduled_date|date:"F d, Y" }}
+                            {% else %}
+                                {{ sick_note.appointment.preferred_date|date:"F d, Y" }}
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Appointment Time</span>
+                        <strong>
+                            {% if sick_note.appointment.scheduled_time %}
+                                {{ sick_note.appointment.scheduled_time|time:"g:i A" }}
+                            {% else %}
+                                {{ sick_note.appointment.preferred_time|time:"g:i A" }}
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Health Concern</span>
+                        <strong>
+                            {{ sick_note.appointment.concern|default:"Not specified" }}
+                        </strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Appointment Status</span>
+                        <strong>
+                            {{ sick_note.appointment.get_status_display|default:sick_note.appointment.status }}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="section">
+
+                <div class="section-heading">
+                    <div class="section-marker"></div>
+                    <h3 class="section-title">Clinical Information</h3>
+                </div>
+
+                <div class="clinical-grid">
+
+                    <div class="symptoms-box">
+                        <span>Reported Symptoms</span>
+                        <p>{% if health_record and health_record.symptoms %}{{ health_record.symptoms }}{% else %}No symptoms recorded{% endif %}</p>
+                    </div>
+
+                    <div class="rest-card">
+                        <div>
+                            <span>Recommended Rest Period</span>
+                            <strong>
+                                {{ sick_note.days_recommended }}
+                                {% if sick_note.days_recommended == 1 %}day{% else %}days{% endif %}
+                            </strong>
+                        </div>
+
+                        <div class="rest-icon">+</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% if sick_note.notes %}
+                <div class="section">
+
+                    <div class="section-heading">
+                        <div class="section-marker"></div>
+                        <h3 class="section-title">Additional Notes</h3>
+                    </div>
+
+                    <div class="notes-box">
+                        <p>{{ sick_note.notes }}</p>
+                    </div>
+
+                </div>
+            {% endif %}
+
+            <div class="issuer-section">
+
+                <div class="issuer-block">
+                    <span class="issuer-label">Issued By</span>
+
+                    <strong class="issuer-name">
+                        {% if sick_note.issued_by %}
+                            {{ sick_note.issued_by.get_full_name|default:sick_note.issued_by.username }}
+                        {% else %}
+                            Clinic Staff
+                        {% endif %}
+                    </strong>
+
+                    <span class="issuer-role">Clinic Staff</span>
+                </div>
+
+                <div class="issuer-block">
+                    <span class="issuer-label">Date Issued</span>
+
+                    <strong class="issuer-date">
+                        {{ sick_note.issued_at|date:"F d, Y" }}
+                    </strong>
+
+                    <span class="issuer-role">
+                        {{ sick_note.issued_at|time:"g:i A" }}
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="document-footer">
+            <p class="footer-note">
+                This document was issued through Clinic Connect.
+                For verification, please contact the school clinic.
+            </p>
+        </div>
+
+        <div class="note-actions">
+
+            <a
+                href="{% url 'accounts:student_sick_notes' %}"
+                class="action-button back-button">
+                ← Back to Sick Notes
+            </a>
+
+            <div class="footer-actions">
+
+                <a
+                    href="{% url 'accounts:download_sick_note' sick_note.id %}"
+                    class="action-button download-button">
+                    ↓ Download Sick Note
+                </a>
+
+                <form
+                    method="post"
+                    action="{% url 'accounts:email_sick_note' sick_note.id %}"
+                    class="email-form"
+                >
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="action-button email-button">
+                        ✉ Email Sick Note
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

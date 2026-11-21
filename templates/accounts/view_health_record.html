@@ -1,0 +1,639 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Health Record Details | Clinic Connect{% endblock %}
+
+{% block content %}
+
+<style>
+    .record-page {
+        --rp-panel: #111827;
+        --rp-border: #1f2937;
+        --rp-text: #f8fafc;
+        --rp-muted: #94a3b8;
+        --rp-subtle: #64748b;
+        width: 100%;
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 4px 0 20px;
+        color: var(--rp-text);
+    }
+
+    .record-page *,
+    .record-page *::before,
+    .record-page *::after {
+        box-sizing: border-box;
+    }
+
+    .rp-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 15px;
+        color: var(--rp-subtle);
+        font-size: 11px;
+    }
+
+    .rp-breadcrumb a {
+        color: var(--rp-muted);
+        text-decoration: none;
+        transition: color .2s;
+    }
+
+    .rp-breadcrumb a:hover {
+        color: #86efac;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .rp-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .rp-heading-icon {
+        display: grid;
+        place-items: center;
+        width: 43px;
+        height: 43px;
+        flex-shrink: 0;
+        border: 1px solid #1e3a5f;
+        border-radius: 11px;
+        background: #14243c;
+        color: #93c5fd;
+    }
+
+    .rp-heading-icon svg {
+        width: 21px;
+        height: 21px;
+    }
+
+    .page-header h1 {
+        margin: 0;
+        color: #f8fafc;
+        font-size: clamp(21px, 2.5vw, 26px);
+        font-weight: 750;
+        letter-spacing: -.5px;
+        line-height: 1.3;
+    }
+
+    .page-header p {
+        margin: 4px 0 0;
+        color: var(--rp-muted);
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .rp-header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        flex-shrink: 0;
+        padding: 8px 10px;
+        border: 1px solid #1e3a5f;
+        border-radius: 8px;
+        background: #14243c;
+        color: #93c5fd;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .rp-header-badge svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .record-card {
+        overflow: hidden;
+        border: 1px solid var(--rp-border);
+        border-radius: 12px;
+        background: var(--rp-panel);
+        box-shadow: 0 8px 25px #00000012;
+    }
+
+    .record-header {
+        position: relative;
+        padding: 17px 19px;
+        border-bottom: 1px solid var(--rp-border);
+        background:
+            radial-gradient(ellipse at top right, #1e3a8a35, transparent 55%),
+            linear-gradient(135deg, #172554, #111827);
+    }
+
+    .record-header-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .student-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .student-avatar {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+        border: 1px solid #3b5998;
+        border-radius: 11px;
+        background: #1e3a8a;
+        color: #bfdbfe;
+        font-size: 17px;
+        font-weight: 750;
+        text-transform: uppercase;
+    }
+
+    .student-heading-copy {
+        min-width: 0;
+    }
+
+    .student-eyebrow {
+        margin: 0 0 3px;
+        color: #93c5fd;
+        font-size: 9px;
+        font-weight: 750;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .student-name {
+        color: #f8fafc;
+        font-size: 16px;
+        font-weight: 750;
+        overflow-wrap: anywhere;
+    }
+
+    .student-id {
+        margin-top: 4px;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .record-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 10px;
+        border: 1px solid #1e40af;
+        border-radius: 8px;
+        background: #1e3a8a45;
+        color: #bfdbfe;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .record-type svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .record-content {
+        padding: 18px 19px;
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .section-heading svg {
+        width: 17px;
+        height: 17px;
+        color: #86efac;
+    }
+
+    .section-heading h2 {
+        margin: 0;
+        color: #f8fafc;
+        font-size: 13px;
+        font-weight: 750;
+    }
+
+    .clinical-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .info-box {
+        min-width: 0;
+        padding: 13px 14px;
+        border: 1px solid #263246;
+        border-radius: 9px;
+        background: #0e1625;
+    }
+
+    .info-box-notes {
+        grid-column: 1 / -1;
+    }
+
+    .info-box-top {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 9px;
+    }
+
+    .info-icon {
+        display: grid;
+        place-items: center;
+        width: 27px;
+        height: 27px;
+        flex-shrink: 0;
+        border: 1px solid #294436;
+        border-radius: 7px;
+        background: #183126;
+        color: #86efac;
+    }
+
+    .info-icon svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .info-label {
+        color: #cbd5e1;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .info-value {
+        color: #e2e8f0;
+        font-size: 12px;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+        white-space: pre-line;
+    }
+
+    .record-meta-section {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .meta-box {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 0;
+        padding: 11px 13px;
+        border: 1px solid #263246;
+        border-radius: 9px;
+        background: #0e1625;
+    }
+
+    .meta-icon {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        background: #172033;
+        color: #93c5fd;
+    }
+
+    .meta-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .meta-copy {
+        min-width: 0;
+    }
+
+    .meta-label {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--rp-subtle);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    .meta-value {
+        color: #e2e8f0;
+        font-size: 11px;
+        font-weight: 650;
+    }
+
+    .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 9px;
+        border: 1px solid #166534;
+        border-radius: 20px;
+        background: #052e16;
+        color: #4ade80;
+        font-size: 10px;
+        font-weight: 750;
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #4ade80;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-top: 17px;
+        padding-top: 14px;
+        border-top: 1px solid var(--rp-border);
+    }
+
+    .action-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 37px;
+        padding: 9px 13px;
+        border: 1px solid #374151;
+        border-radius: 8px;
+        background: #1f2937;
+        color: #cbd5e1;
+        font-size: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: background .2s, border-color .2s, transform .2s;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-1px);
+        border-color: #475569;
+        background: #374151;
+        color: #fff;
+    }
+
+    .action-btn svg {
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
+    }
+
+    .edit-btn {
+        border-color: #15803d;
+        background: #166534;
+        color: #dcfce7;
+    }
+
+    .edit-btn:hover {
+        border-color: #16a34a;
+        background: #15803d;
+        color: #fff;
+    }
+
+    @media (max-width: 650px) {
+        .page-header {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .record-content,
+        .record-header {
+            padding: 14px;
+        }
+
+        .clinical-grid,
+        .record-meta-section {
+            grid-template-columns: 1fr;
+        }
+
+        .info-box-notes {
+            grid-column: auto;
+        }
+
+        .actions {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .action-group {
+            flex-direction: column;
+        }
+
+        .action-btn {
+            width: 100%;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .record-page *,
+        .record-page *::before,
+        .record-page *::after {
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+
+<div class="record-page">
+
+    <nav class="rp-breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'accounts:staff_health_records' %}">Health Records</a>
+        <span aria-hidden="true">/</span>
+        <span>Record Details</span>
+    </nav>
+
+    <header class="page-header">
+        <div class="rp-heading">
+            <div class="rp-heading-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16v16H4z"/>
+                    <path d="M8 9h8M8 13h8M8 17h4"/>
+                </svg>
+            </div>
+            <div>
+                <h1>Health Record Details</h1>
+                <p>Review the student's recorded clinical information.</p>
+            </div>
+        </div>
+
+        <div class="rp-header-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/>
+                <path d="m9 12 2 2 4-4"/>
+            </svg>
+            Clinic Staff Workspace
+        </div>
+    </header>
+
+    <section class="record-card">
+
+        <div class="record-header">
+            <div class="record-header-top">
+
+                <div class="student-heading">
+                    <div class="student-avatar">
+                        {{ record.student.first_name|default:record.student.username|first|upper }}
+                    </div>
+
+                    <div class="student-heading-copy">
+                        <p class="student-eyebrow">Student Information</p>
+                        <div class="student-name">
+                            {{ record.student.get_full_name|default:record.student.username }}
+                        </div>
+                        <div class="student-id">
+                            Student ID: {{ record.student.id_number|default:record.student.username }}
+                        </div>
+                    </div>
+                </div>
+
+                <span class="record-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/>
+                        <path d="M12 8v8M8 12h8"/>
+                    </svg>
+                    Clinical Health Record
+                </span>
+
+            </div>
+        </div>
+
+        <div class="record-content">
+
+            <div class="section-heading">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/>
+                    <path d="M12 8v8M8 12h8"/>
+                </svg>
+                <h2>Clinical Information</h2>
+            </div>
+
+            <div class="clinical-grid">
+
+                <div class="info-box">
+                    <div class="info-box-top">
+                        <div class="info-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="M12 7v5l3 2"/>
+                            </svg>
+                        </div>
+                        <div class="info-label">Observed Symptoms</div>
+                    </div>
+                    <div class="info-value">{{ record.symptoms|default:"No symptoms recorded." }}</div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-top">
+                        <div class="info-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m10 14 4-4"/>
+                                <path d="M7 17a4 4 0 0 1 0-6l4-4a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0z"/>
+                            </svg>
+                        </div>
+                        <div class="info-label">Treatment</div>
+                    </div>
+                    <div class="info-value">{{ record.treatment|default:"No treatment recorded." }}</div>
+                </div>
+
+                <div class="info-box info-box-notes">
+                    <div class="info-box-top">
+                        <div class="info-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <path d="M14 2v6h6M8 13h8M8 17h8"/>
+                            </svg>
+                        </div>
+                        <div class="info-label">Additional Clinical Notes</div>
+                    </div>
+                    <div class="info-value">{{ record.notes|default:"No additional notes recorded." }}</div>
+                </div>
+
+            </div>
+
+            <div class="record-meta-section">
+
+                <div class="meta-box">
+                    <div class="meta-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="17" rx="2"/>
+                            <path d="M16 2v4M8 2v4M3 10h18"/>
+                        </svg>
+                    </div>
+                    <div class="meta-copy">
+                        <span class="meta-label">Last Updated</span>
+                        <span class="meta-value">{{ record.updated_at|date:"F d, Y" }}</span>
+                    </div>
+                </div>
+
+                <div class="meta-box">
+                    <div class="meta-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/>
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <div class="meta-copy">
+                        <span class="meta-label">Record Status</span>
+                        <span class="status">
+                            <span class="status-dot"></span>
+                            Recorded
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="actions">
+
+                <a href="{% url 'accounts:staff_health_records' %}" class="action-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"/>
+                        <path d="M9 12h12"/>
+                    </svg>
+                    Back to Health Records
+                </a>
+
+                <div class="action-group">
+                    <a href="{% url 'accounts:edit_health_record' record.id %}" class="action-btn edit-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L9 17l-4 1 1-4Z"/>
+                        </svg>
+                        Edit Health Record
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}

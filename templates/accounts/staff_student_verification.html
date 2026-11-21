@@ -1,0 +1,1758 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Verification | Clinic Connect{% endblock %}
+{% block page_title %}Student Verification{% endblock %}
+
+{% block content %}
+<style>
+.verification-page {
+    max-width: 1600px;
+    margin: 0 auto;
+    color: #e5e7eb;
+}
+
+.verification-page *,
+.verification-page *::before,
+.verification-page *::after {
+    box-sizing: border-box;
+}
+
+.verification-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.verification-heading-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.verification-heading-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border: 1px solid #166534;
+    border-radius: 11px;
+    background: #102b1d;
+    color: #4ade80;
+    font-size: 17px;
+}
+
+.verification-heading h1 {
+    margin: 0 0 4px;
+    font-size: 25px;
+    letter-spacing: -.5px;
+    color: #f1f5f9;
+}
+
+.verification-heading p {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.verification-status {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.status-tab {
+    display: inline-flex;
+    gap: 7px;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 13px;
+    border: 1px solid #263449;
+    border-radius: 9px;
+    background: #101b30;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    transition: .18s ease;
+}
+
+.status-tab.active {
+    color: #4ade80;
+    border-color: #166534;
+    background: #102b1d;
+}
+
+.status-tab:hover {
+    background: #172238;
+}
+
+.verification-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.summary-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    min-height: 98px;
+    padding: 13px 15px 13px 17px;
+    overflow: hidden;
+    background: #101b30;
+    border: 1px solid #23324a;
+    border-radius: 11px;
+    color: #e5e7eb;
+    text-decoration: none;
+    transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.summary-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 13px;
+    bottom: 13px;
+    width: 3px;
+    border-radius: 0 4px 4px 0;
+    background: #334155;
+}
+
+.summary-card:hover {
+    background: #15243a;
+    border-color: #3b4e68;
+    transform: translateY(-1px);
+}
+
+.summary-card.active {
+    background: #102b1d;
+    border-color: #16803d;
+}
+
+.summary-card.active::before {
+    background: #22c55e;
+}
+
+.summary-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.summary-label {
+    display: block;
+    color: #cbd5e1;
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.dept-icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-size: 13px;
+}
+
+.dept-icon-box.lg {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    font-size: 14px;
+}
+
+.dept-icon-box.dcs {
+    background: rgba(16, 185, 129, .14);
+    border-color: rgba(16, 185, 129, .35);
+    color: #34d399;
+}
+
+.dept-icon-box.dit {
+    background: rgba(14, 165, 233, .14);
+    border-color: rgba(14, 165, 233, .35);
+    color: #38bdf8;
+}
+
+.dept-icon-box.dbm {
+    background: rgba(139, 92, 246, .14);
+    border-color: rgba(139, 92, 246, .35);
+    color: #a78bfa;
+}
+
+.dept-icon-box.dgtt {
+    background: rgba(234, 179, 8, .14);
+    border-color: rgba(234, 179, 8, .35);
+    color: #facc15;
+}
+
+.dept-icon-box.ccje {
+    background: rgba(45, 212, 191, .14);
+    border-color: rgba(45, 212, 191, .35);
+    color: #2dd4bf;
+}
+
+.dept-icon-box.default {
+    background: rgba(148, 163, 184, .14);
+    border-color: rgba(148, 163, 184, .3);
+    color: #cbd5e1;
+}
+
+.summary-count {
+    display: block;
+    color: #f8fafc;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.department-card-caption {
+    display: block;
+    margin-top: 6px;
+    color: #718198;
+    font-size: 10px;
+}
+
+.summary-card.active .department-card-caption {
+    color: #86efac;
+}
+
+.verification-filters {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(180px, 250px) minmax(120px, 155px) auto;
+    gap: 9px;
+    margin-bottom: 16px;
+    align-items: center;
+}
+
+.verification-filters input,
+.verification-filters select {
+    width: 100%;
+    min-width: 0;
+    height: 38px;
+    padding: 0 12px;
+    background: #0b1120;
+    color: #e5e7eb;
+    border: 1px solid #263449;
+    border-radius: 8px;
+    outline: none;
+    font-size: 11px;
+}
+
+.verification-filters input:focus,
+.verification-filters select:focus {
+    border-color: #22c55e;
+}
+
+.verification-filters select {
+    cursor: pointer;
+}
+
+.verification-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.verification-search-lead {
+    position: absolute;
+    left: 11px;
+    color: #64748b;
+    font-size: 11px;
+    pointer-events: none;
+}
+
+.verification-search-wrap input {
+    padding-left: 31px;
+    padding-right: 36px;
+}
+
+.search-indicator {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 12px;
+    pointer-events: none;
+}
+
+.search-indicator.searching {
+    color: #4ade80;
+}
+
+.search-submit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 9px 17px;
+    background: #22c55e;
+    border: 0;
+    border-radius: 8px;
+    color: #052e16;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background .18s ease;
+    white-space: nowrap;
+}
+
+.search-submit-button:hover {
+    background: #4ade80;
+}
+
+.filter-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: -6px;
+    margin-bottom: 14px;
+}
+
+.clear-filters {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #60a5fa;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.clear-filters:hover {
+    text-decoration: underline;
+}
+
+.department-section {
+    margin-bottom: 17px;
+    overflow: hidden;
+    background: #101b30;
+    border: 1px solid #23324a;
+    border-radius: 12px;
+}
+
+.department-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 17px;
+    background: #14233d;
+    border-bottom: 1px solid #23324a;
+}
+
+.department-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.department-accent {
+    flex-shrink: 0;
+    width: 3px;
+    min-height: 34px;
+    border-radius: 4px;
+    background: #22c55e;
+}
+
+.department-heading h2 {
+    margin: 0 0 3px;
+    color: #f1f5f9;
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 750;
+}
+
+.department-courses {
+    color: #94a3b8;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.department-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    flex-shrink: 0;
+}
+
+.pending-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+    padding: 5px 10px;
+    color: #fbbf24;
+    background: #302609;
+    border: 1px solid #51400d;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.verified-badge {
+    color: #4ade80;
+    background: #103522;
+    border-color: #166534;
+}
+
+.department-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.department-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.department-table th {
+    padding: 11px 14px;
+    background: #101b30;
+    color: #8fa1ba;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.department-table th i {
+    margin-right: 5px;
+    color: #64748b;
+}
+
+.department-table td {
+    padding: 11px 14px;
+    border-top: 1px solid #1e293b;
+    color: #cbd5e1;
+    font-size: 10px;
+    vertical-align: middle;
+}
+
+.department-table tbody tr:not(.year-divider):hover {
+    background: #15243a;
+}
+
+.student-name {
+    display: block;
+    color: #e2e8f0;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.student-email {
+    display: block;
+    margin-top: 2px;
+    color: #94a3b8;
+    font-size: 9px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.student-id {
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.course-pill {
+    display: inline-block;
+    padding: 4px 7px;
+    color: #cbd5e1;
+    background: #1b2a43;
+    border-radius: 5px;
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.year-block-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    padding: 5px 8px;
+    color: #86efac;
+    background: #103522;
+    border: 1px solid #166534;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.year-divider td {
+    padding: 9px 14px;
+    background: #0c1830;
+    color: #e2e8f0;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.year-divider td span {
+    float: right;
+    color: #94a3b8;
+    font-size: 9px;
+    font-weight: 400;
+}
+
+.evidence-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #60a5fa;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.evidence-link:hover {
+    text-decoration: underline;
+}
+
+.verify-form {
+    margin: 0;
+}
+
+.verify-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 12px;
+    background: #22c55e;
+    border: 0;
+    border-radius: 7px;
+    color: #052e16;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background .18s ease;
+}
+
+.verify-button:hover {
+    background: #4ade80;
+}
+
+.verified-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #4ade80;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.no-evidence {
+    color: #64748b;
+    font-size: 10px;
+}
+
+.empty-state {
+    padding: 35px 16px;
+    color: #94a3b8;
+    text-align: center;
+    font-size: 12px;
+}
+
+.empty-state strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #e2e8f0;
+    font-size: 14px;
+}
+
+.verification-notifications {
+    position: fixed;
+    top: 85px;
+    right: 24px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(390px, calc(100vw - 32px));
+}
+
+.verification-toast {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 14px;
+    border: 1px solid #263449;
+    border-radius: 11px;
+    background: #101b30;
+    color: #e5e7eb;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .3);
+    font-size: 12px;
+    line-height: 1.5;
+    animation: toast-enter .25s ease-out;
+}
+
+.verification-toast.success {
+    border-color: #166534;
+}
+
+.verification-toast.error {
+    border-color: #991b1b;
+}
+
+.verification-toast.info {
+    border-color: #1d4ed8;
+}
+
+.toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #103522;
+    color: #4ade80;
+    font-weight: 800;
+}
+
+.verification-toast.error .toast-icon {
+    background: #3b1118;
+    color: #fca5a5;
+}
+
+.verification-toast.info .toast-icon {
+    background: #172554;
+    color: #93c5fd;
+}
+
+.toast-message {
+    flex: 1;
+    min-width: 0;
+}
+
+.toast-close {
+    flex-shrink: 0;
+    border: 0;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 21px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.toast-close:hover {
+    color: #f8fafc;
+}
+
+.verify-modal,
+.evidence-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.verify-modal {
+    z-index: 11000;
+}
+
+.evidence-modal {
+    z-index: 12000;
+}
+
+.verify-modal.show,
+.evidence-modal.show {
+    display: flex;
+}
+
+.verify-modal-backdrop,
+.evidence-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 6, 23, .82);
+    backdrop-filter: blur(4px);
+}
+
+.verify-modal-card {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    padding: 27px;
+    border: 1px solid #263449;
+    border-radius: 16px;
+    background: #101b30;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .4);
+    text-align: center;
+    color: #e5e7eb;
+    animation: modal-enter .2s ease-out;
+}
+
+.verify-modal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+    border-radius: 14px;
+    background: #103522;
+    color: #4ade80;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.verify-modal-card h2 {
+    margin: 0 0 9px;
+    font-size: 18px;
+    color: #f1f5f9;
+}
+
+.verify-modal-card p {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.verify-modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.verify-modal-actions button {
+    flex: 1;
+    padding: 11px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.modal-cancel {
+    background: #0b1120;
+    color: #cbd5e1;
+    border: 1px solid #263449;
+}
+
+.modal-cancel:hover {
+    background: #172238;
+}
+
+.modal-confirm {
+    background: #22c55e;
+    color: #052e16;
+    border: 1px solid #22c55e;
+}
+
+.modal-confirm:hover {
+    background: #4ade80;
+}
+
+.modal-confirm:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+.evidence-modal-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1100px;
+    height: min(850px, 92vh);
+    overflow: hidden;
+    background: #101b30;
+    border: 1px solid #263449;
+    border-radius: 14px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .5);
+    animation: modal-enter .2s ease-out;
+}
+
+.evidence-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-shrink: 0;
+    padding: 15px 18px;
+    border-bottom: 1px solid #263449;
+}
+
+.evidence-modal-heading {
+    min-width: 0;
+}
+
+.evidence-modal-heading h2 {
+    margin: 0;
+    color: #f1f5f9;
+    font-size: 15px;
+}
+
+.evidence-modal-heading p {
+    margin: 4px 0 0;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.evidence-modal-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.evidence-fullsize {
+    padding: 8px 11px;
+    color: #93c5fd;
+    background: #172554;
+    border: 1px solid #1e40af;
+    border-radius: 7px;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.evidence-fullsize:hover {
+    background: #1e3a8a;
+}
+
+.evidence-close {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    background: #0b1120;
+    color: #cbd5e1;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.evidence-close:hover {
+    background: #263449;
+    color: #fff;
+}
+
+.evidence-preview {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 18px;
+    background: #080e1b;
+}
+
+.evidence-preview img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+}
+
+.evidence-preview iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #fff;
+}
+
+.evidence-preview img[hidden],
+.evidence-preview iframe[hidden] {
+    display: none;
+}
+
+.evidence-loading,
+.evidence-error {
+    color: #94a3b8;
+    font-size: 12px;
+    text-align: center;
+}
+
+.evidence-error {
+    color: #fca5a5;
+}
+
+@keyframes toast-enter {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modal-enter {
+    from { opacity: 0; transform: translateY(8px) scale(.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 1200px) {
+    .verification-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 850px) {
+    .verification-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .verification-filters {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .verification-search-wrap {
+        grid-column: 1 / -1;
+    }
+
+    .search-submit-button {
+        grid-column: 1 / -1;
+    }
+
+    .verification-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .verification-heading h1 {
+        font-size: 22px;
+    }
+
+    .verification-status {
+        width: 100%;
+    }
+
+    .status-tab {
+        flex: 1;
+    }
+
+    .verification-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .verification-search-wrap,
+    .search-submit-button {
+        grid-column: auto;
+    }
+
+    .department-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .department-actions {
+        justify-content: flex-start;
+    }
+
+    .department-table {
+        min-width: 760px;
+    }
+
+    .verification-notifications {
+        top: 16px;
+        right: 16px;
+    }
+
+    .verify-modal-card {
+        padding: 23px 19px;
+    }
+
+    .evidence-modal {
+        padding: 10px;
+    }
+
+    .evidence-modal-card {
+        height: 92vh;
+    }
+
+    .evidence-preview {
+        padding: 8px;
+    }
+
+    .evidence-modal-header {
+        padding: 12px;
+    }
+
+    .evidence-modal-heading h2 {
+        font-size: 13px;
+    }
+
+    .evidence-modal-heading p {
+        display: none;
+    }
+
+    .evidence-fullsize {
+        padding: 7px 8px;
+        font-size: 9px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .verification-toast,
+    .verify-modal-card,
+    .evidence-modal-card {
+        animation: none;
+    }
+}
+</style>
+
+<div class="verification-page">
+
+    {% if messages %}
+        <div class="verification-notifications" aria-live="polite" aria-atomic="false">
+            {% for message in messages %}
+                <div class="verification-toast {{ message.tags }}">
+                    <span class="toast-icon">
+                        {% if "success" in message.tags %}
+                            <i class="fa-solid fa-check"></i>
+                        {% elif "error" in message.tags %}
+                            <i class="fa-solid fa-exclamation"></i>
+                        {% else %}
+                            <i class="fa-solid fa-info"></i>
+                        {% endif %}
+                    </span>
+
+                    <span class="toast-message">{{ message }}</span>
+
+                    <button type="button" class="toast-close" aria-label="Dismiss notification">
+                        &times;
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="verification-heading">
+        <div class="verification-heading-left">
+            <div class="verification-heading-icon" aria-hidden="true">
+                <i class="fa-solid fa-user-check"></i>
+            </div>
+            <div>
+                <h1>Student Verification</h1>
+                <p>Review registrations and verify student access to the clinic system.</p>
+            </div>
+        </div>
+
+        <nav class="verification-status" aria-label="Verification status">
+            <a
+                class="status-tab {% if selected_status == 'pending' %}active{% endif %}"
+                href="?status=pending"
+            >
+                <i class="fa-solid fa-clock"></i>
+                Pending <span>{{ pending_count }}</span>
+            </a>
+
+            <a
+                class="status-tab {% if selected_status == 'verified' %}active{% endif %}"
+                href="?status=verified"
+            >
+                <i class="fa-solid fa-circle-check"></i>
+                Verified <span>{{ verified_count }}</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="verification-summary" id="verification-summary">
+        {% for department in department_cards %}
+            {% if "Computer Science" not in department.name %}
+                <a
+                    class="summary-card {% if department.active %}active{% endif %}"
+                    data-dept-name="{{ department.name }}"
+                    href="?status={{ selected_status }}&department={{ department.name|urlencode }}"
+                >
+                    <div class="summary-top">
+                        <span class="summary-label">
+                            {% if department.name == "Department of Computer Studies" %}
+                                Department of Computer Studies
+                            {% elif department.name == "Department of Industrial Technology" %}
+                                Department of Industrial Technology
+                            {% elif department.name == "Department of Business Management" %}
+                                Department of Business Management
+                            {% elif department.name == "Department of General Teacher Training" %}
+                                Department of General Teacher Training
+                            {% elif department.name == "College of Criminal Justice Education" %}
+                                College of Criminal Justice Education
+                            {% else %}
+                                {{ department.name }}
+                            {% endif %}
+                        </span>
+
+                        <span
+                            class="dept-icon-box {% if 'Computer' in department.name %}dcs{% elif 'Industrial' in department.name %}dit{% elif 'Business' in department.name %}dbm{% elif 'Teacher' in department.name %}dgtt{% elif 'Criminal' in department.name %}ccje{% else %}default{% endif %}"
+                            aria-hidden="true"
+                        >
+                            {% if 'Computer' in department.name %}
+                                <i class="fa-solid fa-code"></i>
+                            {% elif 'Industrial' in department.name %}
+                                <i class="fa-solid fa-microchip"></i>
+                            {% elif 'Business' in department.name %}
+                                <i class="fa-solid fa-briefcase"></i>
+                            {% elif 'Teacher' in department.name %}
+                                <i class="fa-solid fa-leaf"></i>
+                            {% elif 'Criminal' in department.name %}
+                                <i class="fa-solid fa-scale-balanced"></i>
+                            {% else %}
+                                <i class="fa-solid fa-building-columns"></i>
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <span class="summary-count">{{ department.count }}</span>
+
+                    <span class="department-card-caption">
+                        {% if selected_status == "verified" %}
+                            Verified students
+                        {% else %}
+                            Pending registrations
+                        {% endif %}
+                    </span>
+                </a>
+            {% endif %}
+        {% empty %}
+            <div class="summary-card">
+                <span class="summary-label">No departments available</span>
+                <span class="department-card-caption">
+                    Department information will appear here.
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <form method="get" class="verification-filters" id="verification-filters">
+        <input type="hidden" name="status" value="{{ selected_status }}">
+
+        <div class="verification-search-wrap">
+            <i class="fa-solid fa-magnifying-glass verification-search-lead" aria-hidden="true"></i>
+            <input
+                class="verification-search"
+                type="search"
+                name="search"
+                value="{{ search }}"
+                placeholder="Search student name, ID, or username..."
+                aria-label="Search students"
+                autocomplete="off"
+            >
+            <span class="search-indicator" id="search-indicator">⌕</span>
+        </div>
+
+        <select name="department" aria-label="Filter by department">
+            <option value="">All departments</option>
+            {% for department in departments %}
+                {% if "Computer Science" not in department %}
+                    <option
+                        value="{{ department }}"
+                        {% if selected_department == department %}selected{% endif %}
+                    >
+                        {{ department }}
+                    </option>
+                {% endif %}
+            {% endfor %}
+        </select>
+
+        <select name="year" aria-label="Filter by year">
+            <option value="">All years</option>
+            {% for year in year_options %}
+                <option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>
+                    {{ year }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="search-submit-button">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            Search
+        </button>
+    </form>
+
+    {% if search or selected_department or selected_year %}
+        <div class="filter-actions">
+            <a class="clear-filters" href="?status={{ selected_status }}">
+                <i class="fa-solid fa-rotate-left"></i>
+                Clear filters
+            </a>
+        </div>
+    {% endif %}
+
+    {% for section in department_sections %}
+        {% if "Computer Science" not in section.name %}
+            <section class="department-section">
+                <div class="department-header">
+                    <div class="department-heading">
+                        <span class="department-accent"></span>
+                        <span
+                            class="dept-icon-box lg {% if 'Computer' in section.name %}dcs{% elif 'Industrial' in section.name %}dit{% elif 'Business' in section.name %}dbm{% elif 'Teacher' in section.name %}dgtt{% elif 'Criminal' in section.name %}ccje{% else %}default{% endif %}"
+                            aria-hidden="true"
+                        >
+                            {% if 'Computer' in section.name %}
+                                <i class="fa-solid fa-code"></i>
+                            {% elif 'Industrial' in section.name %}
+                                <i class="fa-solid fa-microchip"></i>
+                            {% elif 'Business' in section.name %}
+                                <i class="fa-solid fa-briefcase"></i>
+                            {% elif 'Teacher' in section.name %}
+                                <i class="fa-solid fa-leaf"></i>
+                            {% elif 'Criminal' in section.name %}
+                                <i class="fa-solid fa-scale-balanced"></i>
+                            {% else %}
+                                <i class="fa-solid fa-building-columns"></i>
+                            {% endif %}
+                        </span>
+
+                        <div>
+                            <h2>{{ section.name }}</h2>
+
+                            <div class="department-courses">
+                                {% for course in section.courses %}
+                                    {{ course }}{% if not forloop.last %} · {% endif %}
+                                {% empty %}
+                                    No courses listed
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="department-actions">
+                        {% if selected_status == "verified" %}
+                            <span class="pending-badge verified-badge">
+                                <i class="fa-solid fa-circle-check"></i>
+                                {{ section.count }} verified
+                            </span>
+                        {% else %}
+                            <span class="pending-badge">
+                                <i class="fa-solid fa-hourglass-half"></i>
+                                {{ section.count }} pending
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="department-table-wrap">
+                    <table class="department-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fa-solid fa-user"></i>Student</th>
+                                <th><i class="fa-solid fa-id-card"></i>Student ID</th>
+                                <th><i class="fa-solid fa-book"></i>Course</th>
+                                <th><i class="fa-solid fa-layer-group"></i>Year / Block</th>
+                                <th><i class="fa-solid fa-calendar"></i>Registered</th>
+                                <th><i class="fa-solid fa-address-card"></i>ID Evidence</th>
+                                <th><i class="fa-solid fa-sliders"></i>Action</th>
+                            </tr>
+                        </thead>
+
+                        {% for group in section.year_groups %}
+                            <tbody>
+                                <tr class="year-divider">
+                                    <td colspan="7">
+                                        <i class="fa-solid fa-graduation-cap" style="margin-right:6px;color:#86efac;"></i>
+                                        {{ group.name }}
+                                        <span>
+                                            {{ group.count }} student{{ group.count|pluralize }}
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                {% for student in group.students %}
+                                    <tr>
+                                        <td>
+                                            <span class="student-name">
+                                                {{ student.get_full_name|default:student.username }}
+                                            </span>
+
+                                            <span class="student-email">
+                                                {{ student.email|default:"No email provided" }}
+                                            </span>
+                                        </td>
+
+                                        <td class="student-id">
+                                            {{ student.id_number|default:"Not provided" }}
+                                        </td>
+
+                                        <td>
+                                            <span class="course-pill">
+                                                {{ student.course|default:"Not provided" }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="year-block-pill">
+                                                {% if student.year_block %}
+                                                    {{ student.year_block }}
+                                                {% else %}
+                                                    —
+                                                {% endif %}
+                                            </span>
+                                        </td>
+
+                                        <td>{{ student.date_joined|date:"M d, Y" }}</td>
+
+                                        <td>
+                                            {% if student.verification_evidence %}
+                                                <a
+                                                    class="evidence-link evidence-preview-trigger"
+                                                    href="{% url 'accounts:staff_verification_evidence' student.pk %}"
+                                                    data-student-name="{{ student.get_full_name|default:student.username }}"
+                                                >
+                                                    <i class="fa-regular fa-eye"></i>
+                                                    View ID
+                                                </a>
+                                            {% else %}
+                                                <span class="no-evidence">No ID uploaded</span>
+                                            {% endif %}
+                                        </td>
+
+                                        <td>
+                                            {% if student.verification_status == "verified" %}
+                                                <span class="verified-label">
+                                                    <i class="fa-solid fa-circle-check"></i>
+                                                    Verified
+                                                </span>
+                                            {% else %}
+                                                <form
+                                                    method="post"
+                                                    action="{% url 'accounts:staff_verify_student' student.pk %}"
+                                                    class="verify-form"
+                                                >
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="verify-button">
+                                                        <i class="fa-solid fa-check"></i>
+                                                        Verify
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        {% empty %}
+                            <tbody>
+                                <tr>
+                                    <td colspan="7" class="empty-state">
+                                        No students in this group.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+            </section>
+        {% endif %}
+    {% empty %}
+        <div class="department-section">
+            <div class="empty-state">
+                <strong>No students found</strong>
+                Try changing the search or filters.
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div id="verify-modal" class="verify-modal" aria-hidden="true">
+    <div class="verify-modal-backdrop"></div>
+
+    <div
+        class="verify-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="verify-modal-title"
+        aria-describedby="verify-modal-message"
+    >
+        <div class="verify-modal-icon"><i class="fa-solid fa-user-check"></i></div>
+
+        <h2 id="verify-modal-title">Verify Student Verification</h2>
+
+        <p id="verify-modal-message">
+            Confirm that you have reviewed the student's verification details.
+        </p>
+
+        <div class="verify-modal-actions">
+            <button type="button" id="cancel-verify" class="modal-cancel">
+                Cancel
+            </button>
+
+            <button type="button" id="confirm-verify" class="modal-confirm">
+                Verify Student
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="evidence-modal" class="evidence-modal" aria-hidden="true">
+    <div class="evidence-modal-backdrop"></div>
+
+    <div
+        class="evidence-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="evidence-modal-title"
+    >
+        <div class="evidence-modal-header">
+            <div class="evidence-modal-heading">
+                <h2 id="evidence-modal-title">Student ID Evidence</h2>
+                <p id="evidence-student-name">Verification document preview</p>
+            </div>
+
+            <div class="evidence-modal-actions">
+                <a
+                    id="evidence-fullsize"
+                    class="evidence-fullsize"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Open Full Size <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+
+                <button
+                    type="button"
+                    id="close-evidence"
+                    class="evidence-close"
+                    aria-label="Close ID preview"
+                >
+                    &times;
+                </button>
+            </div>
+        </div>
+
+        <div class="evidence-preview" id="evidence-preview">
+            <p class="evidence-loading" id="evidence-loading">
+                Loading student ID evidence...
+            </p>
+
+            <img
+                id="evidence-image"
+                src=""
+                alt="Student uploaded ID evidence"
+                hidden
+            >
+
+            <iframe
+                id="evidence-frame"
+                title="Student uploaded ID evidence"
+                src="about:blank"
+                hidden
+            ></iframe>
+
+            <p class="evidence-error" id="evidence-error" hidden>
+                Unable to display this evidence file.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const seenSummaryKeys = new Set();
+    document.querySelectorAll("#verification-summary .summary-card[data-dept-name]").forEach(function (card) {
+        const labelEl = card.querySelector(".summary-label");
+        const rawKey = (labelEl ? labelEl.textContent : card.dataset.deptName || "")
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, " ");
+        if (!rawKey) return;
+        if (seenSummaryKeys.has(rawKey)) {
+            card.remove();
+        } else {
+            seenSummaryKeys.add(rawKey);
+        }
+    });
+
+    const filterForm = document.getElementById("verification-filters");
+    const searchInput = filterForm
+        ? filterForm.querySelector('input[name="search"]')
+        : null;
+
+    const searchIndicator = document.getElementById("search-indicator");
+
+    if (filterForm && searchInput) {
+        searchInput.addEventListener("input", function () {
+            if (searchIndicator) {
+                searchIndicator.classList.remove("searching");
+                searchIndicator.textContent = "⌕";
+            }
+        });
+
+        filterForm.addEventListener("submit", function () {
+            if (searchIndicator) {
+                searchIndicator.classList.add("searching");
+                searchIndicator.textContent = "…";
+            }
+
+            sessionStorage.setItem(
+                "verificationScrollPosition",
+                String(window.scrollY)
+            );
+        });
+
+        filterForm.querySelectorAll("select").forEach(function (select) {
+            select.addEventListener("change", function () {
+                sessionStorage.setItem(
+                    "verificationScrollPosition",
+                    String(window.scrollY)
+                );
+
+                filterForm.requestSubmit();
+            });
+        });
+
+        const savedScrollPosition = sessionStorage.getItem(
+            "verificationScrollPosition"
+        );
+
+        if (savedScrollPosition !== null) {
+            sessionStorage.removeItem("verificationScrollPosition");
+
+            requestAnimationFrame(function () {
+                window.scrollTo({
+                    top: Number(savedScrollPosition),
+                    behavior: "instant"
+                });
+            });
+        }
+    }
+
+    document.querySelectorAll(".toast-close").forEach(function (button) {
+        button.addEventListener("click", function () {
+            button.closest(".verification-toast").remove();
+        });
+    });
+
+    document.querySelectorAll(".verification-toast").forEach(function (toast) {
+        setTimeout(function () {
+            toast.style.transition = "opacity .3s ease, transform .3s ease";
+            toast.style.opacity = "0";
+            toast.style.transform = "translateY(-8px)";
+
+            setTimeout(function () {
+                toast.remove();
+            }, 300);
+        }, 5000);
+    });
+
+    const modal = document.getElementById("verify-modal");
+    const modalMessage = document.getElementById("verify-modal-message");
+    const cancelButton = document.getElementById("cancel-verify");
+    const confirmButton = document.getElementById("confirm-verify");
+    const backdrop = modal.querySelector(".verify-modal-backdrop");
+
+    let selectedForm = null;
+    let previousFocus = null;
+
+    function openModal(form) {
+        selectedForm = form;
+        previousFocus = document.activeElement;
+
+        const row = form.closest("tr");
+        const nameElement = row ? row.querySelector(".student-name") : null;
+        const studentName = nameElement ? nameElement.textContent.trim() : "";
+
+        modalMessage.textContent = studentName
+            ? "Have you checked the verification details and ID evidence for " + studentName + "?"
+            : "Confirm that you have reviewed the student's verification details.";
+
+        confirmButton.disabled = false;
+        confirmButton.textContent = "Verify Student";
+
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+        cancelButton.focus();
+    }
+
+    function closeModal() {
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+        selectedForm = null;
+
+        if (previousFocus && typeof previousFocus.focus === "function") {
+            previousFocus.focus();
+        }
+    }
+
+    document.querySelectorAll(".verify-form").forEach(function (form) {
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            openModal(form);
+        });
+    });
+
+    cancelButton.addEventListener("click", closeModal);
+    backdrop.addEventListener("click", closeModal);
+
+    const evidenceModal = document.getElementById("evidence-modal");
+    const evidenceImage = document.getElementById("evidence-image");
+    const evidenceFrame = document.getElementById("evidence-frame");
+    const evidenceStudentName = document.getElementById("evidence-student-name");
+    const evidenceFullsize = document.getElementById("evidence-fullsize");
+    const closeEvidenceButton = document.getElementById("close-evidence");
+    const evidenceBackdrop = evidenceModal.querySelector(".evidence-modal-backdrop");
+    const evidenceLoading = document.getElementById("evidence-loading");
+    const evidenceError = document.getElementById("evidence-error");
+
+    let evidencePreviousFocus = null;
+    let previousBodyOverflow = "";
+    let currentImageUrl = null;
+    let evidenceRequestNumber = 0;
+
+    function resetEvidencePreview() {
+        evidenceImage.hidden = true;
+        evidenceFrame.hidden = true;
+        evidenceImage.removeAttribute("src");
+        evidenceFrame.src = "about:blank";
+
+        evidenceLoading.hidden = true;
+        evidenceError.hidden = true;
+
+        if (currentImageUrl) {
+            URL.revokeObjectURL(currentImageUrl);
+            currentImageUrl = null;
+        }
+    }
+
+    async function openEvidencePreview(link) {
+        const evidenceUrl = link.getAttribute("href");
+        const studentName = link.dataset.studentName || "Student";
+
+        if (!evidenceUrl) return;
+
+        evidenceRequestNumber += 1;
+        const requestNumber = evidenceRequestNumber;
+
+        resetEvidencePreview();
+
+        evidencePreviousFocus = document.activeElement;
+        previousBodyOverflow = document.body.style.overflow;
+
+        evidenceStudentName.textContent = studentName;
+        evidenceFullsize.href = evidenceUrl;
+
+        evidenceModal.classList.add("show");
+        evidenceModal.setAttribute("aria-hidden", "false");
+
+        document.body.style.overflow = "hidden";
+        evidenceLoading.hidden = false;
+
+        closeEvidenceButton.focus();
+
+        try {
+            const response = await fetch(evidenceUrl, {
+                method: "GET",
+                credentials: "same-origin"
+            });
+
+            if (!response.ok) {
+                throw new Error("The evidence file could not be loaded.");
+            }
+
+            const contentType = (
+                response.headers.get("Content-Type") || ""
+            ).split(";")[0].trim().toLowerCase();
+
+            const blob = await response.blob();
+
+            if (requestNumber !== evidenceRequestNumber) return;
+
+            evidenceLoading.hidden = true;
+
+            if (contentType.startsWith("image/")) {
+                currentImageUrl = URL.createObjectURL(blob);
+                evidenceImage.src = currentImageUrl;
+                evidenceImage.hidden = false;
+            } else if (contentType === "application/pdf") {
+                evidenceFrame.src = evidenceUrl;
+                evidenceFrame.hidden = false;
+            } else {
+                throw new Error("Unsupported evidence file format.");
+            }
+        } catch (error) {
+            if (requestNumber !== evidenceRequestNumber) return;
+
+            evidenceLoading.hidden = true;
+            evidenceError.hidden = false;
+        }
+    }
+
+    function closeEvidencePreview() {
+        evidenceRequestNumber += 1;
+
+        evidenceModal.classList.remove("show");
+        evidenceModal.setAttribute("aria-hidden", "true");
+
+        resetEvidencePreview();
+
+        evidenceFullsize.href = "#";
+        document.body.style.overflow = previousBodyOverflow;
+
+        if (
+            evidencePreviousFocus &&
+            typeof evidencePreviousFocus.focus === "function"
+        ) {
+            evidencePreviousFocus.focus();
+        }
+    }
+
+    document.querySelectorAll(".evidence-preview-trigger").forEach(function (link) {
+        link.addEventListener("click", function (event) {
+            event.preventDefault();
+            openEvidencePreview(link);
+        });
+    });
+
+    closeEvidenceButton.addEventListener("click", closeEvidencePreview);
+    evidenceBackdrop.addEventListener("click", closeEvidencePreview);
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            if (evidenceModal.classList.contains("show")) {
+                closeEvidencePreview();
+            } else if (modal.classList.contains("show")) {
+                closeModal();
+            }
+        }
+    });
+
+    confirmButton.addEventListener("click", function () {
+        if (!selectedForm) return;
+
+        const formToSubmit = selectedForm;
+
+        confirmButton.disabled = true;
+        confirmButton.textContent = "Verifying...";
+
+        formToSubmit.submit();
+    });
+})();
+</script>
+{% endblock %}
