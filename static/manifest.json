@@ -1,46 +1,22 @@
 {
   "name": "Clinic Connect",
   "short_name": "Clinic Connect",
-<<<<<<< HEAD
-  "description": "School Clinic Management System for Students, Teachers, and Clinic Staff",
-=======
-  "description": "School clinic management web application for students, teachers, and clinic staff.",
->>>>>>> 5569bfb (Add Digital Asset Links endpoint for Android TWA)
+  "description": "School Clinic Management System",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-<<<<<<< HEAD
   "background_color": "#0b1120",
-  "theme_color": "#16a34a",
+  "theme_color": "#0f766e",
   "icons": [
     {
-      "src": "/static/icon-192.png",
+      "src": "/static/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "/static/icon-512.png",
+      "src": "/static/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-=======
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
-  "icons": [
-    {
-      "src": "/static/images/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/static/images/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
->>>>>>> 5569bfb (Add Digital Asset Links endpoint for Android TWA)
+      "type": "image/png"
     }
   ]
 }
