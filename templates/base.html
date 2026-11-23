@@ -1,13 +1,23 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5569bfb (Add Digital Asset Links endpoint for Android TWA)
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+=======
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1120">
+    <meta name="mobile-web-app-capable" content="yes">
+>>>>>>> 5569bfb (Add Digital Asset Links endpoint for Android TWA)
 
     <title>{% block title %}Clinic Connect{% endblock %}</title>
 
+    <link rel="manifest" href="{% static 'manifest.json' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="manifest" href="{% static 'manifest.json' %}">
     <meta name="theme-color" content="#111827">
@@ -1119,9 +1129,18 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <script>
+<<<<<<< HEAD
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
         navigator.serviceWorker.register("{% static 'sw.js' %}", { scope: "/" }).catch(function () {});
+=======
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register("{% static 'sw.js' %}")
+            .catch(function (error) {
+                console.error('Service worker registration failed:', error);
+            });
+>>>>>>> 5569bfb (Add Digital Asset Links endpoint for Android TWA)
     });
 }
 </script>

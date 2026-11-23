@@ -13,27 +13,33 @@
     color: #e5e7eb;
 }
 
+.student-profile *,
+.student-profile *::before,
+.student-profile *::after {
+    box-sizing: border-box;
+}
+
 .sp-heading {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .sp-heading h1 {
     margin: 0 0 5px;
     color: #f8fafc;
-    font-size: 25px;
+    font-size: 24px;
     font-weight: 750;
 }
 
 .sp-heading p {
     margin: 0;
     color: #94a3b8;
-    font-size: 13px;
+    font-size: 12.5px;
 }
 
 .sp-layout {
     display: grid;
     grid-template-columns: 340px minmax(0, 1fr);
-    gap: 18px;
+    gap: 16px;
     align-items: start;
 }
 
@@ -41,12 +47,13 @@
 .sp-right {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 14px;
     min-width: 0;
 }
 
 .sp-card {
-    padding: 19px;
+    min-width: 0;
+    padding: 18px;
     border: 1px solid #1f2937;
     border-radius: 14px;
     background: #111827;
@@ -56,23 +63,23 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 24px 18px;
+    padding: 22px 16px;
     border-color: #245039;
     background: linear-gradient(145deg, #123323, #111827 75%);
     text-align: center;
 }
 
 .sp-avatar {
-    width: 76px;
-    height: 76px;
+    width: 72px;
+    height: 72px;
     display: grid;
     place-items: center;
     overflow: hidden;
-    margin-bottom: 13px;
+    margin-bottom: 12px;
     border-radius: 19px;
     background: #22c55e;
     color: #052e16;
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 800;
 }
 
@@ -85,8 +92,9 @@
 .sp-name {
     margin: 0 0 5px;
     color: #f8fafc;
-    font-size: 19px;
+    font-size: 18px;
     font-weight: 750;
+    overflow-wrap: anywhere;
 }
 
 .sp-email {
@@ -98,36 +106,40 @@
 
 .sp-role {
     display: inline-block;
-    margin-top: 13px;
-    padding: 7px 14px;
+    margin-top: 12px;
+    padding: 6px 13px;
     border: 1px solid #166534;
     border-radius: 20px;
-    background: rgba(34, 197, 94, .10);
+    background: rgba(34, 197, 94, 0.10);
     color: #4ade80;
     font-size: 10px;
     font-weight: 800;
-    letter-spacing: .7px;
+    letter-spacing: 0.7px;
 }
 
 .sp-card-heading {
     display: flex;
     align-items: center;
     gap: 11px;
-    margin-bottom: 15px;
-    padding-bottom: 13px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
     border-bottom: 1px solid #1f2937;
 }
 
+.sp-card-heading > div:last-child {
+    min-width: 0;
+}
+
 .sp-heading-icon {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     display: grid;
     place-items: center;
     flex-shrink: 0;
     border-radius: 11px;
     background: #123323;
     color: #4ade80;
-    font-size: 17px;
+    font-size: 16px;
 }
 
 .sp-card-heading h2 {
@@ -146,13 +158,13 @@
 .sp-info-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 11px;
+    gap: 10px;
 }
 
 .sp-info-item {
     min-width: 0;
-    min-height: 74px;
-    padding: 12px;
+    min-height: 70px;
+    padding: 11px;
     border: 1px solid #263247;
     border-radius: 10px;
     background: #0b1120;
@@ -160,11 +172,11 @@
 
 .sp-info-label {
     display: block;
-    margin-bottom: 7px;
+    margin-bottom: 6px;
     color: #94a3b8;
     font-size: 10px;
     font-weight: 750;
-    letter-spacing: .5px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 
@@ -174,19 +186,23 @@
     color: #f8fafc;
     font-size: 12px;
     font-weight: 700;
-    line-height: 1.5;
+    line-height: 1.45;
 }
 
 .sp-info-item.highlight {
     border-color: #245039;
-    background: rgba(18, 51, 35, .45);
+    background: rgba(18, 51, 35, 0.45);
 }
 
 .sp-account {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 15px;
+    gap: 14px;
+}
+
+.sp-account > div:first-child {
+    min-width: 0;
 }
 
 .sp-account h2 {
@@ -212,7 +228,7 @@
 
 .sp-button {
     min-height: 40px;
-    padding: 0 15px;
+    padding: 0 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -223,7 +239,8 @@
     font-size: 11px;
     font-weight: 750;
     text-decoration: none;
-    transition: .18s ease;
+    transition: 0.18s ease;
+    white-space: nowrap;
 }
 
 .sp-edit {
@@ -275,28 +292,21 @@
 
     .sp-left {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .sp-overview {
-        justify-content: center;
+        grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 520px) {
     .sp-heading h1 {
-        font-size: 22px;
-    }
-
-    .sp-left {
-        grid-template-columns: 1fr;
+        font-size: 21px;
     }
 
     .sp-card {
-        padding: 15px;
+        padding: 14px;
     }
 
     .sp-info-grid {
+        grid-template-columns: 1fr;
         gap: 8px;
     }
 

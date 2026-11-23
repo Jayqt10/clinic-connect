@@ -15,6 +15,12 @@
     box-shadow: 0 10px 30px rgba(239, 68, 68, 0.08);
 }
 
+.emergency-card *,
+.emergency-card *::before,
+.emergency-card *::after {
+    box-sizing: border-box;
+}
+
 .emergency-header {
     display: flex;
     align-items: center;
@@ -31,6 +37,11 @@
     align-items: center;
     gap: 10px;
     min-width: 0;
+    flex: 1 1 auto;
+}
+
+.emergency-header-left > div:last-child {
+    min-width: 0;
 }
 
 .emergency-icon {
@@ -43,14 +54,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 19px;
+    font-size: 18px;
     border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.emergency-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.emergency-subtitle {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.4;
 }
 
 .btn-back-referrals {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 7px;
+    min-height: 38px;
     padding: 8px 13px;
     background: rgba(30, 41, 59, 0.85);
     border: 1px solid #334155;
@@ -60,6 +89,7 @@
     font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
+    flex-shrink: 0;
     transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
 
@@ -70,13 +100,15 @@
     transform: translateY(-1px);
 }
 
-.btn-back-referrals:focus-visible {
+.btn-back-referrals:focus-visible,
+.quick-zone-btn:focus-visible,
+.btn-submit-emergency:focus-visible {
     outline: 2px solid #f87171;
     outline-offset: 2px;
 }
 
 .form-group {
-    margin-bottom: 12px;
+    margin-bottom: 13px;
 }
 
 .form-group label {
@@ -90,14 +122,14 @@
 .form-control,
 .emergency-control {
     width: 100%;
+    min-height: 40px;
     padding: 9px 12px;
     background: rgba(30, 41, 59, 0.8);
     border: 1px solid #334155;
     border-radius: 9px;
     color: #f8fafc;
-    font-size: 12px;
+    font-size: 12.5px;
     outline: none;
-    box-sizing: border-box;
 }
 
 .form-control:focus,
@@ -114,25 +146,39 @@
 
 textarea.form-control,
 textarea.emergency-control {
-    min-height: 76px;
+    min-height: 84px;
     resize: vertical;
 }
 
 .quick-zone-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
     margin-top: 6px;
 }
 
+@media (min-width: 520px) {
+    .quick-zone-pills {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
 .quick-zone-btn {
-    padding: 6px 10px;
-    background: rgba(30, 41, 59, 0.6);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 7px 10px;
+    background: rgba(30, 41, 59, 0.65);
     border: 1px solid #475569;
     border-radius: 8px;
     color: #cbd5e1;
     font-size: 11px;
+    font-weight: 600;
     cursor: pointer;
+    text-align: center;
     transition: all 0.2s ease;
 }
 
@@ -140,25 +186,31 @@ textarea.emergency-control {
 .quick-zone-btn.active {
     border-color: #ef4444;
     color: #f87171;
-    background: rgba(239, 68, 68, 0.1);
+    background: rgba(239, 68, 68, 0.12);
 }
 
 .btn-submit-emergency {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     width: 100%;
-    padding: 11px 12px;
+    min-height: 44px;
+    padding: 12px 14px;
     background: linear-gradient(135deg, #ef4444, #dc2626);
     color: #ffffff;
     font-weight: 800;
-    font-size: 13px;
-    border: none;
+    font-size: 12.5px;
+    letter-spacing: 0.2px;
+    border: 1px solid #f87171;
     border-radius: 10px;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
-    margin-top: 2px;
+    margin-top: 4px;
 }
 
 .btn-submit-emergency:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35);
 }
 
@@ -170,21 +222,23 @@ textarea.emergency-control {
 
 .location-help {
     color: #94a3b8;
-    font-size: 10px;
+    font-size: 10.5px;
     margin-top: 4px;
+    line-height: 1.4;
 }
 
 @media (max-width: 600px) {
     .emergency-card {
         padding: 15px;
+        border-radius: 14px;
     }
 
-    .emergency-header h1 {
-        font-size: 17px !important;
+    .emergency-title {
+        font-size: 17px;
     }
 
-    .quick-zone-btn {
-        flex: 1 1 auto;
+    .btn-back-referrals {
+        width: 100%;
     }
 }
 </style>
@@ -192,12 +246,14 @@ textarea.emergency-control {
 <div class="emergency-card">
     <div class="emergency-header">
         <div class="emergency-header-left">
-            <div class="emergency-icon">🚨</div>
+            <div class="emergency-icon" aria-hidden="true">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
             <div>
-                <h1 style="margin:0; font-size:20px; font-weight:800; color:#ffffff;">
+                <h1 class="emergency-title">
                     Emergency Student Referral
                 </h1>
-                <p style="margin:4px 0 0; font-size:12px; color:#94a3b8;">
+                <p class="emergency-subtitle">
                     Instantly alerts clinic staff to prepare operations &amp; response
                 </p>
             </div>
@@ -258,11 +314,26 @@ textarea.emergency-control {
         <div class="form-group">
             <label>Quick Campus Area / Outdoor Zone</label>
             <div class="quick-zone-pills">
-                <button type="button" class="quick-zone-btn" onclick="setArea('Campus Gymnasium', this)">🏀 Gymnasium</button>
-                <button type="button" class="quick-zone-btn" onclick="setArea('Athletic Field / Grandstand', this)">🏃 Athletic Field</button>
-                <button type="button" class="quick-zone-btn" onclick="setArea('Student Canteen', this)">🍽 Canteen</button>
-                <button type="button" class="quick-zone-btn" onclick="setArea('University Library', this)">📚 Library</button>
-                <button type="button" class="quick-zone-btn" onclick="setArea('Admin Grounds / Hallway', this)">🏫 Admin Grounds</button>
+                <button type="button" class="quick-zone-btn" data-area="Campus Gymnasium" onclick="setArea(this.dataset.area, this)">
+                    <i class="fa-solid fa-basketball" aria-hidden="true"></i>
+                    <span>Gymnasium</span>
+                </button>
+                <button type="button" class="quick-zone-btn" data-area="Athletic Field / Grandstand" onclick="setArea(this.dataset.area, this)">
+                    <i class="fa-solid fa-running" aria-hidden="true"></i>
+                    <span>Athletic Field</span>
+                </button>
+                <button type="button" class="quick-zone-btn" data-area="Student Canteen" onclick="setArea(this.dataset.area, this)">
+                    <i class="fa-solid fa-utensils" aria-hidden="true"></i>
+                    <span>Canteen</span>
+                </button>
+                <button type="button" class="quick-zone-btn" data-area="University Library" onclick="setArea(this.dataset.area, this)">
+                    <i class="fa-solid fa-book" aria-hidden="true"></i>
+                    <span>Library</span>
+                </button>
+                <button type="button" class="quick-zone-btn" data-area="Admin Grounds / Hallway" onclick="setArea(this.dataset.area, this)">
+                    <i class="fa-solid fa-building-columns" aria-hidden="true"></i>
+                    <span>Admin Grounds</span>
+                </button>
             </div>
             <div class="location-help">Select a campus area if the incident happened outside a specific room.</div>
         </div>
@@ -276,7 +347,8 @@ textarea.emergency-control {
         </div>
 
         <button type="submit" class="btn-submit-emergency">
-            🚨 DISPATCH EMERGENCY REFERRAL TO CLINIC NOW
+            <i class="fa-solid fa-tower-broadcast" aria-hidden="true"></i>
+            <span>DISPATCH EMERGENCY REFERRAL TO CLINIC NOW</span>
         </button>
     </form>
 </div>
@@ -284,16 +356,25 @@ textarea.emergency-control {
 <script>
 function setArea(areaName, button) {
     const locationInput = document.getElementById("id_location");
+    const buildingSelect = document.getElementById("id_building");
+    const floorSelect = document.getElementById("id_floor");
+    const roomSelect = document.getElementById("id_room");
 
     if (locationInput) {
         locationInput.value = areaName;
     }
 
+    if (buildingSelect) buildingSelect.value = "";
+    if (floorSelect) floorSelect.innerHTML = '<option value="">Select Floor</option>';
+    if (roomSelect) roomSelect.innerHTML = '<option value="">Select Room</option>';
+
     document.querySelectorAll(".quick-zone-btn").forEach(btn => {
         btn.classList.remove("active");
     });
 
-    button.classList.add("active");
+    if (button) {
+        button.classList.add("active");
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -301,9 +382,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (locationInput && locationInput.value) {
         document.querySelectorAll(".quick-zone-btn").forEach(button => {
-            const match = button.getAttribute("onclick");
-
-            if (match && match.includes(locationInput.value)) {
+            if (button.dataset.area === locationInput.value) {
                 button.classList.add("active");
             }
         });
@@ -431,6 +510,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     buildingSelect.addEventListener("change", function () {
+        document.querySelectorAll(".quick-zone-btn").forEach(btn => btn.classList.remove("active"));
         loadFloors(false);
     });
 

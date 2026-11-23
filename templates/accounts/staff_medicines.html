@@ -1,10 +1,11 @@
+
 {% extends 'base.html' %}
 
 {% block title %}Clinic Medicines | Clinic Connect{% endblock %}
 
 {% block content %}
 <style>
-  .med-wrapper {
+.med-wrapper {
     --med-panel: #111827;
     --med-panel-hover: #162033;
     --med-surface: #0d1524;
@@ -22,539 +23,909 @@
     padding: 2px 0 24px;
     color: var(--med-text);
     font-family: inherit;
-  }
+}
 
-  .med-wrapper *,
-  .med-wrapper *::before,
-  .med-wrapper *::after {
+.med-wrapper *,
+.med-wrapper *::before,
+.med-wrapper *::after {
     box-sizing: border-box;
-  }
+}
 
-  .med-top-header {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-
-  @media (min-width: 640px) {
-    .med-top-header {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-    }
-  }
-
-  .med-title-group {
+.med-top-header {
     display: flex;
     align-items: center;
     gap: 12px;
-  }
+    margin-bottom: 14px;
+}
 
-  .med-icon-badge {
+.med-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.med-icon-badge {
     width: 40px;
     height: 40px;
-    border-radius: 10px;
-    background: rgba(34, 197, 94, 0.14);
-    border: 1px solid rgba(74, 222, 128, 0.25);
-    color: var(--med-green);
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 10px;
+    background: rgba(34, 197, 94, .14);
+    border: 1px solid rgba(74, 222, 128, .25);
+    color: var(--med-green);
     font-size: 16px;
-    flex-shrink: 0;
-  }
+}
 
-  .med-main-title {
+.med-main-title {
+    color: #fff;
     font-size: 24px;
     font-weight: 800;
-    letter-spacing: -0.45px;
-    color: #ffffff;
+    letter-spacing: -.45px;
     line-height: 1.2;
     margin: 0;
-  }
+}
 
-  .med-main-sub {
-    font-size: 12px;
+.med-main-sub {
     color: var(--med-muted);
+    font-size: 12px;
     margin: 3px 0 0;
-  }
+}
 
-  .med-stats-grid {
+.med-stats-grid {
     display: grid;
     grid-template-columns: repeat(1, minmax(0, 1fr));
     gap: 10px;
     margin-bottom: 14px;
-  }
+}
 
-  @media (min-width: 640px) {
-    .med-stats-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
-  .med-stat-card {
-    background: var(--med-panel);
-    border: 1px solid var(--med-border);
-    border-radius: 12px;
-    padding: 14px 16px;
+.med-stat-card {
     display: flex;
     align-items: center;
     gap: 14px;
-  }
+    padding: 14px 16px;
+    background: var(--med-panel);
+    border: 1px solid var(--med-border);
+    border-radius: 12px;
+}
 
-  .med-stat-icon {
+.med-stat-icon {
     width: 38px;
     height: 38px;
-    border-radius: 10px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 10px;
     font-size: 15px;
-    flex-shrink: 0;
-  }
+}
 
-  .med-stat-num {
+.med-stat-num {
+    color: #fff;
     font-size: 24px;
     font-weight: 800;
-    color: #ffffff;
     line-height: 1.15;
     font-variant-numeric: tabular-nums;
-  }
+}
 
-  .med-stat-label {
-    font-size: 11px;
+.med-stat-label {
     color: var(--med-muted);
+    font-size: 11px;
     font-weight: 650;
     margin-bottom: 2px;
-  }
+}
 
-  .med-main-grid {
+.med-main-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 14px;
     align-items: start;
-  }
+}
 
-  @media (min-width: 1024px) {
-    .med-main-grid {
-      grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
-    }
-  }
-
-  .med-card {
+.med-card {
+    min-width: 0;
+    padding: 18px 20px;
     background: var(--med-panel);
     border: 1px solid var(--med-border);
     border-radius: 14px;
-    padding: 18px 20px;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
-  }
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .16);
+}
 
-  .med-card-title {
+.med-card-title {
+    color: #fff;
     font-size: 15px;
     font-weight: 800;
-    color: #ffffff;
     margin: 0 0 3px;
-  }
+}
 
-  .med-card-desc {
-    font-size: 11.5px;
+.med-card-desc {
     color: var(--med-muted);
+    font-size: 11.5px;
     margin: 0 0 14px;
-  }
+}
 
-  .med-form-group {
+.med-form-group {
     margin-bottom: 11px;
-  }
+}
 
-  .med-form-group label {
+.med-form-group > label {
     display: block;
+    color: #cbd5e1;
     font-size: 11.5px;
     font-weight: 700;
-    color: #cbd5e1;
-    margin-bottom: 4px;
-  }
+    margin-bottom: 5px;
+}
 
-  .med-input {
+.med-input {
     width: 100%;
-    height: 36px;
+    height: 38px;
     padding: 0 11px;
     background: var(--med-header);
     border: 1px solid var(--med-border-strong);
     border-radius: 8px;
     color: var(--med-text);
+    font-family: inherit;
     font-size: 12px;
     outline: none;
-  }
+}
 
-  .med-input:focus {
+.med-input:focus {
     border-color: #22c55e;
-  }
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, .08);
+}
 
-  .med-two-col {
+.med-input::placeholder {
+    color: #64748b;
+}
+
+.med-two-col {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-  }
+}
 
-  .med-check-row {
+.med-check-row {
     display: flex;
     align-items: center;
     gap: 8px;
     margin: 10px 0 14px;
-    font-size: 12px;
     color: #cbd5e1;
-  }
+    font-size: 12px;
+    cursor: pointer;
+}
 
-  .med-btn-primary {
+.med-check-row input {
+    width: 14px;
+    height: 14px;
+    accent-color: #22c55e;
+}
+
+.med-btn-primary {
     width: 100%;
     padding: 10px 14px;
-    background: linear-gradient(135deg, #22c55e, #16a34a);
     border: 1px solid #4ade80;
     border-radius: 9px;
-    color: #ffffff;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #fff;
     font-size: 12.5px;
     font-weight: 800;
     cursor: pointer;
-    transition: transform 0.15s ease, background 0.15s ease;
-  }
+    transition: transform .15s ease, background .15s ease;
+}
 
-  .med-btn-primary:hover {
+.med-btn-primary:hover {
     background: linear-gradient(135deg, #16a34a, #15803d);
     transform: translateY(-1px);
-  }
+}
 
-  .med-filter-row {
+.med-filter-row {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-bottom: 14px;
-  }
+}
 
-  @media (min-width: 768px) {
-    .med-filter-row {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-    }
-  }
-
-  .med-pills {
+.med-pills {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-  }
+}
 
-  .med-pill {
+.med-pill {
     padding: 6px 12px;
-    background: var(--med-surface);
     border: 1px solid #263449;
     border-radius: 8px;
+    background: var(--med-surface);
     color: var(--med-muted);
     font-size: 11.5px;
     font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
-  }
+    transition: .15s ease;
+}
 
-  .med-pill:hover {
+.med-pill:hover {
     background: var(--med-panel-hover);
     color: var(--med-text);
-  }
+}
 
-  .med-pill.active {
-    background: #052e16;
+.med-pill.active {
     border-color: #22c55e;
+    background: #052e16;
     color: #86efac;
-  }
+}
 
-  .med-table-wrap {
+.med-search-form {
+    display: flex;
+    width: 100%;
+    max-width: 260px;
+    margin: 0;
+}
+
+.med-search-form .med-input {
+    width: 100%;
+}
+
+.med-table-wrap {
     width: 100%;
     overflow-x: auto;
     border: 1px solid var(--med-border);
     border-radius: 10px;
     background: var(--med-surface);
-  }
+}
 
-  .med-table {
+.med-table {
     width: 100%;
     min-width: 620px;
     border-collapse: collapse;
     font-size: 12.5px;
-  }
+}
 
-  .med-table th {
-    text-align: left;
-    padding: 10px 12px;
-    color: #8fa1ba;
+.med-table th {
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--med-border);
     background: var(--med-header);
+    color: #8fa1ba;
     font-size: 10px;
     font-weight: 800;
+    text-align: left;
     text-transform: uppercase;
-    letter-spacing: 0.45px;
-    border-bottom: 1px solid var(--med-border);
+    letter-spacing: .45px;
     white-space: nowrap;
-  }
+}
 
-  .med-table td {
-    padding: 11px 12px;
+.med-table td {
+    padding: 12px;
     border-bottom: 1px solid #192232;
     color: #e2e8f0;
     vertical-align: middle;
-  }
+}
 
-  .med-table tbody tr:hover {
+.med-table tbody tr {
+    transition: background .15s ease;
+}
+
+.med-table tbody tr:hover {
     background: #131d2f;
-  }
+}
 
-  .med-table tr:last-child td {
+.med-table tr:last-child td {
     border-bottom: none;
-  }
+}
 
-  .med-status-badge {
+.med-product {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 175px;
+}
+
+.med-product-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(74, 222, 128, .24);
+    border-radius: 11px;
+    background: linear-gradient(145deg, rgba(34, 197, 94, .16), rgba(34, 197, 94, .06));
+    color: #86efac;
+    font-size: 18px;
+    transition: transform .2s ease, background .2s ease, border-color .2s ease;
+}
+
+.med-table tbody tr:hover .med-product-icon {
+    transform: scale(1.06);
+    border-color: rgba(74, 222, 128, .5);
+    background: rgba(34, 197, 94, .2);
+}
+
+.med-product-info {
+    min-width: 0;
+}
+
+.med-product-name {
+    color: #f8fafc;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.med-product-dosage {
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 10.5px;
+    line-height: 1.4;
+}
+
+.med-inactive-label {
+    color: #fbbf24;
+}
+
+.med-stock-value {
+    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.med-stock-unit {
+    display: block;
+    margin-top: 2px;
+    color: var(--med-subtle);
+    font-size: 9px;
+}
+
+.med-status-badge {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 4px 9px;
+    gap: 6px;
+    padding: 5px 9px;
     border-radius: 6px;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 750;
     white-space: nowrap;
-  }
+}
 
-  .med-status-in {
-    background: rgba(34, 197, 94, 0.14);
+.med-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.med-status-in {
+    border: 1px solid rgba(34, 197, 94, .28);
+    background: rgba(34, 197, 94, .14);
     color: var(--med-green);
-    border: 1px solid rgba(34, 197, 94, 0.28);
-  }
+}
 
-  .med-status-low {
-    background: rgba(251, 191, 36, 0.14);
+.med-status-low {
+    border: 1px solid rgba(251, 191, 36, .28);
+    background: rgba(251, 191, 36, .14);
     color: var(--med-amber);
-    border: 1px solid rgba(251, 191, 36, 0.28);
-  }
+}
 
-  .med-status-out {
-    background: rgba(248, 113, 113, 0.14);
+.med-status-out {
+    border: 1px solid rgba(248, 113, 113, .28);
+    background: rgba(248, 113, 113, .14);
     color: var(--med-red);
-    border: 1px solid rgba(248, 113, 113, 0.28);
-  }
+}
 
-  .med-actions-cell {
+.med-actions-cell {
     display: flex;
     align-items: center;
     gap: 6px;
     flex-wrap: nowrap;
-  }
+}
 
-  .med-mini-btn {
-    padding: 5px 9px;
-    border-radius: 6px;
+.med-actions-cell form {
+    margin: 0;
+}
+
+.med-mini-btn {
+    min-width: 32px;
+    padding: 6px 9px;
     border: 1px solid #2b3b52;
+    border-radius: 6px;
     background: var(--med-header);
     color: #f8fafc;
     font-size: 11px;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
-  }
+    transition: background .15s ease, border-color .15s ease;
+}
 
-  .med-mini-btn:hover {
-    background: #1f2937;
+.med-mini-btn:hover {
     border-color: #475569;
-  }
+    background: #1f2937;
+}
 
-  .med-empty {
-    text-align: center;
+.med-mini-btn:active {
+    transform: scale(.97);
+}
+
+.med-mini-btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+.med-disable-btn {
+    border-color: rgba(248, 113, 113, .25);
+    color: #fca5a5;
+}
+
+.med-disable-btn:hover {
+    border-color: rgba(248, 113, 113, .45);
+    background: rgba(127, 29, 29, .25);
+    color: #fecaca;
+}
+
+.med-enable-btn {
+    border-color: rgba(74, 222, 128, .25);
+    color: #86efac;
+}
+
+.med-enable-btn:hover {
+    border-color: rgba(74, 222, 128, .45);
+    background: rgba(21, 128, 61, .18);
+}
+
+.med-empty {
     padding: 34px 18px;
     border: 1px dashed var(--med-border-strong);
     border-radius: 10px;
     color: var(--med-muted);
     font-size: 12px;
-  }
+    text-align: center;
+}
+
+.med-empty-icon {
+    display: block;
+    margin-bottom: 9px;
+    color: #64748b;
+    font-size: 27px;
+}
+
+.med-highlight-row {
+    animation: med-row-highlight 2.5s ease;
+}
+
+@keyframes med-row-highlight {
+    0%, 100% {
+        background: transparent;
+    }
+    15%, 65% {
+        background: rgba(34, 197, 94, .13);
+    }
+}
+
+@media (min-width: 640px) {
+    .med-stats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 768px) {
+    .med-filter-row {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+@media (min-width: 1024px) {
+    .med-main-grid {
+        grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 1023px) {
+    .med-main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 767px) {
+    .med-search-form {
+        max-width: none;
+    }
+
+    .med-card {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 420px) {
+    .med-main-title {
+        font-size: 21px;
+    }
+
+    .med-card {
+        padding: 13px;
+    }
+
+    .med-pill {
+        padding: 6px 9px;
+        font-size: 10.5px;
+    }
+
+    .med-stat-card {
+        padding: 12px;
+    }
+}
 </style>
 
 <div class="med-wrapper">
-  <div class="med-top-header">
-    <div class="med-title-group">
-      <div class="med-icon-badge" aria-hidden="true">
-        <i class="fa-solid fa-pills"></i>
-      </div>
-      <div>
-        <h1 class="med-main-title">Clinic Medicines</h1>
-        <p class="med-main-sub">Track available clinic medicines and stock levels for student care.</p>
-      </div>
-    </div>
-  </div>
 
-  <div class="med-stats-grid">
-    <div class="med-stat-card">
-      <div class="med-stat-icon" style="background: rgba(34, 197, 94, 0.14); color: #4ade80;" aria-hidden="true">
-        <i class="fa-solid fa-check"></i>
-      </div>
-      <div>
-        <div class="med-stat-label">In Stock</div>
-        <div class="med-stat-num">{{ in_stock_count|default:0 }}</div>
-      </div>
+    <div class="med-top-header">
+        <div class="med-title-group">
+            <div class="med-icon-badge" aria-hidden="true">
+                <i class="fa-solid fa-pills"></i>
+            </div>
+
+            <div>
+                <h1 class="med-main-title">Clinic Medicines</h1>
+                <p class="med-main-sub">
+                    Track available clinic medicines and stock levels for student care.
+                </p>
+            </div>
+        </div>
     </div>
 
-    <div class="med-stat-card">
-      <div class="med-stat-icon" style="background: rgba(251, 191, 36, 0.14); color: #fbbf24;" aria-hidden="true">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-      </div>
-      <div>
-        <div class="med-stat-label">Low Stock</div>
-        <div class="med-stat-num">{{ low_stock_count|default:0 }}</div>
-      </div>
-    </div>
+    <div class="med-stats-grid">
 
-    <div class="med-stat-card">
-      <div class="med-stat-icon" style="background: rgba(248, 113, 113, 0.14); color: #f87171;" aria-hidden="true">
-        <i class="fa-solid fa-box-open"></i>
-      </div>
-      <div>
-        <div class="med-stat-label">Out of Stock</div>
-        <div class="med-stat-num">{{ out_of_stock_count|default:0 }}</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="med-main-grid">
-    <div class="med-card">
-      <h2 class="med-card-title">Add Medicine</h2>
-      <p class="med-card-desc">Register a medicine item in clinic stock.</p>
-
-      <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="add">
-
-        <div class="med-form-group">
-          <label for="id_med_name">Medicine Name</label>
-          <input id="id_med_name" type="text" name="name" class="med-input" placeholder="e.g., Paracetamol" required>
+        <div class="med-stat-card">
+            <div class="med-stat-icon" style="background: rgba(34, 197, 94, .14); color: #4ade80;" aria-hidden="true">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <div>
+                <div class="med-stat-label">In Stock</div>
+                <div class="med-stat-num">{{ in_stock_count|default:0 }}</div>
+            </div>
         </div>
 
-        <div class="med-form-group">
-          <label for="id_med_dosage">Dosage / Form</label>
-          <input id="id_med_dosage" type="text" name="dosage_form" class="med-input" placeholder="e.g., 500mg Tablet">
+        <div class="med-stat-card">
+            <div class="med-stat-icon" style="background: rgba(251, 191, 36, .14); color: #fbbf24;" aria-hidden="true">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <div class="med-stat-label">Low Stock</div>
+                <div class="med-stat-num">{{ low_stock_count|default:0 }}</div>
+            </div>
         </div>
 
-        <div class="med-two-col">
-          <div class="med-form-group">
-            <label for="id_med_stock">Initial Stock</label>
-            <input id="id_med_stock" type="number" name="stock_quantity" min="0" value="0" class="med-input">
-          </div>
-
-          <div class="med-form-group">
-            <label for="id_med_reorder">Low Stock Alert</label>
-            <input id="id_med_reorder" type="number" name="reorder_level" min="0" value="5" class="med-input">
-          </div>
+        <div class="med-stat-card">
+            <div class="med-stat-icon" style="background: rgba(248, 113, 113, .14); color: #f87171;" aria-hidden="true">
+                <i class="fa-solid fa-box-open"></i>
+            </div>
+            <div>
+                <div class="med-stat-label">Out of Stock</div>
+                <div class="med-stat-num">{{ out_of_stock_count|default:0 }}</div>
+            </div>
         </div>
 
-        <label class="med-check-row">
-          <input type="checkbox" name="is_active" checked>
-          <span>Active for clinic use</span>
-        </label>
-
-        <button type="submit" class="med-btn-primary">
-          + Add Medicine
-        </button>
-      </form>
     </div>
 
-    <div class="med-card">
-      <h2 class="med-card-title">Medicine Inventory</h2>
-      <p class="med-card-desc">Adjust stock quantities or availability status.</p>
+    <div class="med-main-grid">
 
-      <div class="med-filter-row">
-        <div class="med-pills">
-          <a href="?status=" class="med-pill {% if not current_status %}active{% endif %}">All</a>
-          <a href="?status=in_stock" class="med-pill {% if current_status == 'in_stock' %}active{% endif %}">In Stock</a>
-          <a href="?status=low_stock" class="med-pill {% if current_status == 'low_stock' %}active{% endif %}">Low Stock</a>
-          <a href="?status=out_of_stock" class="med-pill {% if current_status == 'out_of_stock' %}active{% endif %}">Out of Stock</a>
-        </div>
+        <div class="med-card">
 
-        <form method="get" style="margin: 0;">
-          {% if current_status %}<input type="hidden" name="status" value="{{ current_status }}">{% endif %}
-          <input
-            type="text"
-            name="q"
-            value="{{ query_str|default:'' }}"
-            class="med-input"
-            style="min-width: 210px;"
-            placeholder="Search medicine or dosage..."
-          >
-        </form>
-      </div>
+            <h2 class="med-card-title">Add Medicine</h2>
+            <p class="med-card-desc">Register a medicine item in clinic stock.</p>
 
-      {% if medicines %}
-        <div class="med-table-wrap">
-          <table class="med-table">
-            <thead>
-              <tr>
-                <th scope="col">Medicine</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Status</th>
-                <th scope="col">Quick Adjust</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for med in medicines %}
-                <tr>
-                  <td>
-                    <div style="font-weight: 700; color: #f8fafc;">{{ med.name }}</div>
-                    <div style="font-size: 11px; color: #94a3b8;">
-                      {{ med.dosage_form|default:"General supply" }}{% if not med.is_active %} · Inactive{% endif %}
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add">
+                <input type="hidden" name="icon" id="id_med_icon" value="other">
+
+                <div class="med-form-group">
+                    <label for="id_med_name">Medicine Name</label>
+                    <input
+                        id="id_med_name"
+                        type="text"
+                        name="name"
+                        class="med-input"
+                        placeholder="e.g., Paracetamol"
+                        required
+                    >
+                </div>
+
+                <div class="med-form-group">
+                    <label for="id_med_dosage">Dosage / Form</label>
+                    <input
+                        id="id_med_dosage"
+                        type="text"
+                        name="dosage_form"
+                        class="med-input"
+                        placeholder="e.g., 500mg Tablet"
+                    >
+                </div>
+
+                <div class="med-two-col">
+
+                    <div class="med-form-group">
+                        <label for="id_med_stock">Initial Stock</label>
+                        <input
+                            id="id_med_stock"
+                            type="number"
+                            name="stock_quantity"
+                            min="0"
+                            value="0"
+                            class="med-input"
+                        >
                     </div>
-                  </td>
-                  <td style="font-weight: 800; font-variant-numeric: tabular-nums;">{{ med.stock_quantity }}</td>
-                  <td>
-                    {% if med.stock_status == "In Stock" %}
-                      <span class="med-status-badge med-status-in">In Stock</span>
-                    {% elif med.stock_status == "Low Stock" %}
-                      <span class="med-status-badge med-status-low">Low Stock</span>
-                    {% else %}
-                      <span class="med-status-badge med-status-out">Out of Stock</span>
+
+                    <div class="med-form-group">
+                        <label for="id_med_reorder">Low Stock Alert</label>
+                        <input
+                            id="id_med_reorder"
+                            type="number"
+                            name="reorder_level"
+                            min="0"
+                            value="5"
+                            class="med-input"
+                        >
+                    </div>
+
+                </div>
+
+                <label class="med-check-row">
+                    <input type="checkbox" name="is_active" checked>
+                    <span>Active for clinic use</span>
+                </label>
+
+                <button type="submit" class="med-btn-primary">
+                    <i class="fa-solid fa-plus"></i>
+                    Add Medicine
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="med-card">
+
+            <h2 class="med-card-title">Medicine Inventory</h2>
+            <p class="med-card-desc">Adjust stock quantities or availability status.</p>
+
+            <div class="med-filter-row">
+
+                <div class="med-pills">
+                    <a href="?status=" class="med-pill {% if not current_status %}active{% endif %}">All</a>
+                    <a href="?status=in_stock" class="med-pill {% if current_status == 'in_stock' %}active{% endif %}">In Stock</a>
+                    <a href="?status=low_stock" class="med-pill {% if current_status == 'low_stock' %}active{% endif %}">Low Stock</a>
+                    <a href="?status=out_of_stock" class="med-pill {% if current_status == 'out_of_stock' %}active{% endif %}">Out of Stock</a>
+                </div>
+
+                <form method="get" class="med-search-form">
+                    {% if current_status %}
+                        <input type="hidden" name="status" value="{{ current_status }}">
                     {% endif %}
-                  </td>
-                  <td>
-                    <div class="med-actions-cell">
-                      <form method="post" style="display: inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="adjust">
-                        <input type="hidden" name="medicine_id" value="{{ med.pk }}">
-                        <input type="hidden" name="delta" value="-1">
-                        <button type="submit" class="med-mini-btn">-1</button>
-                      </form>
 
-                      <form method="post" style="display: inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="adjust">
-                        <input type="hidden" name="medicine_id" value="{{ med.pk }}">
-                        <input type="hidden" name="delta" value="1">
-                        <button type="submit" class="med-mini-btn">+1</button>
-                      </form>
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ query_str|default:'' }}"
+                        class="med-input"
+                        placeholder="Search medicine or dosage..."
+                        aria-label="Search medicine inventory"
+                    >
+                </form>
 
-                      <form method="post" style="display: inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="toggle_active">
-                        <input type="hidden" name="medicine_id" value="{{ med.pk }}">
-                        <button type="submit" class="med-mini-btn">
-                          {% if med.is_active %}Disable{% else %}Enable{% endif %}
-                        </button>
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+            </div>
+
+            {% if medicines %}
+
+                <div class="med-table-wrap">
+
+                    <table class="med-table">
+
+                        <thead>
+                            <tr>
+                                <th scope="col">Medicine</th>
+                                <th scope="col">Stock</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Quick Adjust</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for med in medicines %}
+
+                                <tr id="medicine-{{ med.pk }}" data-medicine-row="{{ med.pk }}">
+
+                                    <td>
+                                        <div class="med-product">
+
+                                            <div class="med-product-icon" aria-hidden="true">
+                                                <i class="{{ med.icon_class }}"></i>
+                                            </div>
+
+                                            <div class="med-product-info">
+                                                <div class="med-product-name">{{ med.name }}</div>
+
+                                                <div class="med-product-dosage">
+                                                    {{ med.dosage_form|default:"General supply" }}
+
+                                                    {% if not med.is_active %}
+                                                        <span class="med-inactive-label">· Inactive</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <span class="med-stock-value">{{ med.stock_quantity }}</span>
+                                        <span class="med-stock-unit">Units</span>
+                                    </td>
+
+                                    <td>
+                                        {% if med.stock_status == "In Stock" %}
+                                            <span class="med-status-badge med-status-in">
+                                                <span class="med-status-dot"></span>
+                                                In Stock
+                                            </span>
+                                        {% elif med.stock_status == "Low Stock" %}
+                                            <span class="med-status-badge med-status-low">
+                                                <span class="med-status-dot"></span>
+                                                Low Stock
+                                            </span>
+                                        {% else %}
+                                            <span class="med-status-badge med-status-out">
+                                                <span class="med-status-dot"></span>
+                                                Out of Stock
+                                            </span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        <div class="med-actions-cell">
+
+                                            <form method="post" class="med-action-form">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="adjust">
+                                                <input type="hidden" name="medicine_id" value="{{ med.pk }}">
+                                                <input type="hidden" name="delta" value="-1">
+
+                                                <button
+                                                    type="submit"
+                                                    class="med-mini-btn"
+                                                    {% if med.stock_quantity <= 0 %}disabled{% endif %}
+                                                    aria-label="Decrease {{ med.name }} stock by one"
+                                                    title="Decrease stock by one"
+                                                >
+                                                    −1
+                                                </button>
+                                            </form>
+
+                                            <form method="post" class="med-action-form">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="adjust">
+                                                <input type="hidden" name="medicine_id" value="{{ med.pk }}">
+                                                <input type="hidden" name="delta" value="1">
+
+                                                <button
+                                                    type="submit"
+                                                    class="med-mini-btn"
+                                                    aria-label="Increase {{ med.name }} stock by one"
+                                                    title="Increase stock by one"
+                                                >
+                                                    +1
+                                                </button>
+                                            </form>
+
+                                            <form method="post" class="med-action-form">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="toggle_active">
+                                                <input type="hidden" name="medicine_id" value="{{ med.pk }}">
+
+                                                <button
+                                                    type="submit"
+                                                    class="med-mini-btn {% if med.is_active %}med-disable-btn{% else %}med-enable-btn{% endif %}"
+                                                >
+                                                    {% if med.is_active %}Disable{% else %}Enable{% endif %}
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="med-empty">
+                    <span class="med-empty-icon" aria-hidden="true">
+                        <i class="fa-solid fa-box-open"></i>
+                    </span>
+                    No medicines found matching your current filter.
+                </div>
+
+            {% endif %}
+
         </div>
-      {% else %}
-        <div class="med-empty">
-          No medicines found matching your current filter.
-        </div>
-      {% endif %}
+
     </div>
-  </div>
+
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const dosageInput = document.getElementById("id_med_dosage");
+    const iconInput = document.getElementById("id_med_icon");
+
+    function detectMedicineIcon(value) {
+        const form = (value || "").trim().toLowerCase();
+
+        if (/\b(tablet|tablets|tab)\b/.test(form)) {
+            return "tablet";
+        }
+
+        if (/\b(capsule|capsules|cap)\b/.test(form)) {
+            return "capsule";
+        }
+
+        if (/\b(syrup|liquid|suspension|elixir|oral drops)\b/.test(form)) {
+            return "liquid";
+        }
+
+        if (/\b(solution|drops|eye drops|ear drops|injection)\b/.test(form)) {
+            return "solution";
+        }
+
+        if (/\b(powder|granules|sachet)\b/.test(form)) {
+            return "powder";
+        }
+
+        if (/\b(cream|ointment|gel|lotion)\b/.test(form)) {
+            return "cream";
+        }
+
+        return "other";
+    }
+
+    function updateMedicineIcon() {
+        iconInput.value = detectMedicineIcon(dosageInput.value);
+    }
+
+    dosageInput.addEventListener("input", updateMedicineIcon);
+    dosageInput.addEventListener("change", updateMedicineIcon);
+
+    updateMedicineIcon();
+
+    const params = new URLSearchParams(window.location.search);
+    const medicineId = params.get("return_to_medicine");
+    const row = medicineId
+        ? document.getElementById("medicine-" + medicineId)
+        : null;
+
+    if (row) {
+        requestAnimationFrame(function () {
+            row.scrollIntoView({
+                behavior: "instant",
+                block: "center"
+            });
+
+            row.classList.add("med-highlight-row");
+        });
+    }
+});
+</script>
+
 {% endblock %}

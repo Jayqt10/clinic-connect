@@ -1,270 +1,514 @@
 {% extends 'base.html' %}
 
-{% block title %}Departments | Clinic Connect{% endblock %}
+{% block title %}Sick Notes{% endblock %}
 
 {% block content %}
+
 <style>
-  .dept-grid-wrapper {
-    --brand-emerald: #22c55e;
-    --brand-sky: #38bdf8;
-    --brand-purple: #c084fc;
-    --brand-amber: #fbbf24;
-    --brand-teal: #2dd4bf;
-    color: #f8fafc;
-  }
-
-  .dept-header-container {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    border-bottom: 1px solid rgba(51, 65, 85, 0.8);
-    padding-bottom: 24px;
-    margin-bottom: 24px;
-  }
-
-  @media (min-width: 640px) {
-    .dept-header-container {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
+    .sick-notes-page {
+        max-width: 1300px;
+        margin: 0 auto;
+        color: #e5e7eb;
     }
-  }
 
-  .dept-main-title {
-    font-size: 28px;
-    font-weight: 800;
-    color: #ffffff;
-    margin: 0;
-    line-height: 1.2;
-  }
-
-  .dept-subtitle {
-    font-size: 14px;
-    color: #94a3b8;
-    margin-top: 4px;
-    margin-bottom: 0;
-  }
-
-  .dept-search-box {
-    position: relative;
-    width: 100%;
-  }
-
-  @media (min-width: 640px) {
-    .dept-search-box {
-      width: 280px;
+    .sick-notes-page *,
+    .sick-notes-page *::before,
+    .sick-notes-page *::after {
+        box-sizing: border-box;
     }
-  }
 
-  .dept-search-icon-svg {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    color: #64748b;
-    pointer-events: none;
-  }
-
-  .dept-search-input-field {
-    width: 100%;
-    padding: 10px 14px 10px 40px;
-    background-color: rgba(15, 23, 42, 0.9);
-    border: 1px solid #334155;
-    border-radius: 12px;
-    color: #f1f5f9;
-    font-size: 13px;
-    outline: none;
-    box-sizing: border-box;
-    transition: all 0.2s ease;
-  }
-
-  .dept-search-input-field:focus {
-    border-color: rgba(34, 197, 94, 0.6);
-    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
-  }
-
-  .dept-cards-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  @media (min-width: 768px) {
-    .dept-cards-grid {
-      grid-template-columns: repeat(2, 1fr);
+    .page-header {
+        margin-bottom: 20px;
     }
-  }
 
-  @media (min-width: 1024px) {
-    .dept-cards-grid {
-      grid-template-columns: repeat(3, 1fr);
+    .page-header h1 {
+        margin: 0;
+        color: #f8fafc;
+        font-size: 24px;
+        font-weight: 600;
     }
-  }
 
-  .dept-card-item {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 24px;
-    background-color: rgba(15, 23, 42, 0.75);
-    border: 1px solid rgba(51, 65, 85, 0.8);
-    border-radius: 18px;
-    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
-    overflow: hidden;
-  }
+    .page-header p {
+        margin: 7px 0 0;
+        color: #94a3b8;
+        font-size: 13px;
+        line-height: 1.45;
+    }
 
-  .dept-card-item:hover {
-    transform: translateY(-4px);
-    background-color: rgba(15, 23, 42, 0.95);
-    box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
-  }
+    .notes-card {
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 10px;
+        overflow: hidden;
+    }
 
-  .dept-card-top-bar {
-    position: absolute;
-    top: 0;
-    left: 24px;
-    right: 24px;
-    height: 2px;
-    opacity: 0.8;
-  }
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 18px 20px;
+        border-bottom: 1px solid #1f2937;
+    }
 
-  .dept-card-header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
+    .card-header > div {
+        min-width: 0;
+    }
 
-  .dept-icon-badge {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid transparent;
-  }
+    .card-header h2 {
+        margin: 0 0 5px;
+        color: #f8fafc;
+        font-size: 16px;
+        font-weight: 600;
+    }
 
-  .dept-code-pill {
-    padding: 4px 10px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.8px;
-    border: 1px solid transparent;
-  }
+    .card-header p {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 12px;
+        line-height: 1.45;
+    }
 
-  .dept-card-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #f1f5f9;
-    margin: 0;
-    line-height: 1.35;
-  }
+    .note-count {
+        color: #4ade80;
+        background: #052e16;
+        border: 1px solid #14532d;
+        padding: 7px 11px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
 
-  .dept-card-stats-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-top: 16px;
-    font-size: 12px;
-    color: #94a3b8;
-  }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
 
-  .dept-stat-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
+    table {
+        width: 100%;
+        min-width: 820px;
+        border-collapse: collapse;
+    }
 
-  .dept-stat-item svg {
-    width: 14px;
-    height: 14px;
-    color: #64748b;
-  }
+    th {
+        padding: 13px 16px;
+        text-align: left;
+        color: #94a3b8;
+        background: #0b1120;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        white-space: nowrap;
+    }
 
-  .dept-card-footer-row {
-    margin-top: 24px;
-    padding-top: 16px;
-    border-top: 1px solid rgba(51, 65, 85, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+    td {
+        padding: 14px 16px;
+        color: #cbd5e1;
+        font-size: 12px;
+        border-top: 1px solid #1f2937;
+        vertical-align: middle;
+    }
 
-  .dept-footer-caption {
-    font-size: 12px;
-    color: #64748b;
-  }
+    tbody tr {
+        transition: background 0.2s;
+    }
 
-  .dept-action-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: transform 0.2s ease, color 0.2s ease;
-  }
+    tbody tr:hover {
+        background: #0f172a;
+    }
 
-  .dept-action-link:hover {
-    transform: translateX(3px);
-  }
+    .date {
+        color: #94a3b8;
+        white-space: nowrap;
+    }
 
-  .dept-theme-cs .dept-card-top-bar { background: linear-gradient(90deg, #22c55e, transparent); }
-  .dept-theme-cs .dept-icon-badge { background: rgba(34, 197, 94, 0.1); color: #4ade80; border-color: rgba(34, 197, 94, 0.25); }
-  .dept-theme-cs .dept-code-pill { background: rgba(34, 197, 94, 0.1); color: #4ade80; border-color: rgba(34, 197, 94, 0.25); }
-  .dept-theme-cs .dept-action-link { color: #4ade80; }
-  .dept-theme-cs:hover { border-color: rgba(34, 197, 94, 0.4); }
+    .symptoms {
+        color: #f8fafc;
+        font-weight: 500;
+        max-width: 280px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
 
-  .dept-theme-dit .dept-card-top-bar { background: linear-gradient(90deg, #38bdf8, transparent); }
-  .dept-theme-dit .dept-icon-badge { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border-color: rgba(56, 189, 248, 0.25); }
-  .dept-theme-dit .dept-code-pill { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border-color: rgba(56, 189, 248, 0.25); }
-  .dept-theme-dit .dept-action-link { color: #38bdf8; }
-  .dept-theme-dit:hover { border-color: rgba(56, 189, 248, 0.4); }
+    .days {
+        color: #4ade80;
+        font-weight: 700;
+        white-space: nowrap;
+    }
 
-  .dept-theme-dbm .dept-card-top-bar { background: linear-gradient(90deg, #c084fc, transparent); }
-  .dept-theme-dbm .dept-icon-badge { background: rgba(192, 132, 252, 0.1); color: #c084fc; border-color: rgba(192, 132, 252, 0.25); }
-  .dept-theme-dbm .dept-code-pill { background: rgba(192, 132, 252, 0.1); color: #c084fc; border-color: rgba(192, 132, 252, 0.25); }
-  .dept-theme-dbm .dept-action-link { color: #c084fc; }
-  .dept-theme-dbm:hover { border-color: rgba(192, 132, 252, 0.4); }
+    .issued-by {
+        color: #cbd5e1;
+        white-space: nowrap;
+    }
 
-  .dept-theme-dgtt .dept-card-top-bar { background: linear-gradient(90deg, #fbbf24, transparent); }
-  .dept-theme-dgtt .dept-icon-badge { background: rgba(251, 191, 36, 0.1); color: #fbbf24; border-color: rgba(251, 191, 36, 0.25); }
-  .dept-theme-dgtt .dept-code-pill { background: rgba(251, 191, 36, 0.1); color: #fbbf24; border-color: rgba(251, 191, 36, 0.25); }
-  .dept-theme-dgtt .dept-action-link { color: #fbbf24; }
-  .dept-theme-dgtt:hover { border-color: rgba(251, 191, 36, 0.4); }
+    .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
 
-  .dept-theme-ccje .dept-card-top-bar { background: linear-gradient(90deg, #2dd4bf, transparent); }
-  .dept-theme-ccje .dept-icon-badge { background: rgba(45, 212, 191, 0.1); color: #2dd4bf; border-color: rgba(45, 212, 191, 0.25); }
-  .dept-theme-ccje .dept-code-pill { background: rgba(45, 212, 191, 0.1); color: #2dd4bf; border-color: rgba(45, 212, 191, 0.25); }
-  .dept-theme-ccje .dept-action-link { color: #2dd4bf; }
-  .dept-theme-ccje:hover { border-color: rgba(45, 212, 191, 0.4); }
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        padding: 7px 11px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 10.5px;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: 0.2s;
+    }
 
-  .dept-hidden {
-    display: none !important;
-  }
+    .view-btn {
+        background: #172554;
+        border: 1px solid #1e3a8a;
+        color: #93c5fd;
+    }
+
+    .view-btn:hover {
+        background: #1e3a8a;
+        color: #dbeafe;
+    }
+
+    .download-btn {
+        background: #14532d;
+        border: 1px solid #166534;
+        color: #bbf7d0;
+    }
+
+    .download-btn:hover {
+        background: #166534;
+        color: #dcfce7;
+    }
+
+    .email-btn {
+        background: #1f2937;
+        border: 1px solid #374151;
+        color: #cbd5e1;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .email-btn:hover {
+        background: #374151;
+        color: #f8fafc;
+    }
+
+    .email-form {
+        display: inline;
+        margin: 0;
+        padding: 0;
+    }
+
+    .mobile-note-list {
+        display: none;
+    }
+
+    .mobile-note-item {
+        padding: 13px;
+        background: #0b1120;
+        border: 1px solid #263449;
+        border-radius: 9px;
+    }
+
+    .mobile-note-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 9px;
+    }
+
+    .mobile-note-meta {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 11px;
+        font-size: 11px;
+    }
+
+    .mobile-note-label {
+        color: #94a3b8;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .mobile-note-value {
+        color: #f8fafc;
+        overflow-wrap: anywhere;
+        line-height: 1.45;
+    }
+
+    .empty-state {
+        padding: 50px 18px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 14px;
+        border-radius: 50%;
+        background: #1f2937;
+        color: #94a3b8;
+        font-size: 22px;
+    }
+
+    .empty-state h3 {
+        color: #f8fafc;
+        font-size: 16px;
+        margin: 0 0 7px;
+    }
+
+    .empty-state p {
+        color: #94a3b8;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    @media (max-width: 720px) {
+        .card-header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 15px;
+        }
+
+        .page-header h1 {
+            font-size: 21px;
+        }
+
+        .table-wrapper {
+            display: none;
+        }
+
+        .mobile-note-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 13px;
+        }
+
+        .actions {
+            width: 100%;
+        }
+
+        .action-btn,
+        .email-form {
+            flex: 1 1 auto;
+        }
+
+        .email-form .action-btn {
+            width: 100%;
+        }
+    }
 </style>
 
-<div class="dept-grid-wrapper">
-  <div class="dept-header-container">
-    <div>
-      <h1 class="dept-main-title">Departments</h1>
-      <p class="dept-subtitle">North Eastern Mindanao State University — Cantilan Campus</p>
+<div class="sick-notes-page">
+
+    <div class="page-header">
+        <h1>Sick Notes</h1>
+        <p>View and download your official sick notes issued by the school clinic.</p>
     </div>
 
-    <div class="dept-search-box">
-      <svg class="dept-search-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-      </svg>
-      <input id="deptSearch" type="search" placeholder="Search departments..." aria-label="Search departments" class="dept-search-input-field">
-    </div>
-  </div>
+    <div class="notes-card">
 
+        <div class="card-header">
+
+            <div>
+                <h2>My Sick Notes</h2>
+                <p>Official sick notes issued after completed clinic appointments.</p>
+            </div>
+
+            <div class="note-count">
+                {{ sick_notes|length }}
+                note{{ sick_notes|length|pluralize }}
+            </div>
+
+        </div>
+
+        {% if sick_notes %}
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Date Issued</th>
+                            <th>Symptoms</th>
+                            <th>Recommended Rest</th>
+                            <th>Issued By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for sick_note in sick_notes %}
+
+                        <tr>
+
+                            <td class="date">
+                                {{ sick_note.issued_at|date:"M d, Y" }}
+                            </td>
+
+                            <td class="symptoms">
+                                {% if sick_note.appointment.health_record.symptoms %}
+                                    {{ sick_note.appointment.health_record.symptoms|truncatechars:100 }}
+                                {% else %}
+                                    <span style="color: #64748b;">
+                                        No symptoms recorded
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="days">
+                                {{ sick_note.days_recommended }}
+                                day{{ sick_note.days_recommended|pluralize }}
+                            </td>
+
+                            <td class="issued-by">
+                                {{ sick_note.issued_by.get_full_name|default:sick_note.issued_by.username }}
+                            </td>
+
+                            <td>
+
+                                <div class="actions">
+
+                                    <a
+                                        href="{% url 'accounts:view_sick_note' sick_note.id %}"
+                                        class="action-btn view-btn">
+                                        View
+                                    </a>
+
+                                    <a
+                                        href="{% url 'accounts:download_sick_note' sick_note.id %}"
+                                        class="action-btn download-btn">
+                                        Download
+                                    </a>
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'accounts:email_sick_note' sick_note.id %}"
+                                        class="email-form">
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="action-btn email-btn">
+                                            Email
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="mobile-note-list">
+                {% for sick_note in sick_notes %}
+                    <div class="mobile-note-item">
+                        <div class="mobile-note-top">
+                            <span class="date">{{ sick_note.issued_at|date:"M d, Y" }}</span>
+                            <span class="days">
+                                {{ sick_note.days_recommended }}
+                                day{{ sick_note.days_recommended|pluralize }}
+                            </span>
+                        </div>
+
+                        <div class="mobile-note-meta">
+                            <div>
+                                <span class="mobile-note-label">Symptoms</span>
+                                <div class="mobile-note-value">
+                                    {% if sick_note.appointment.health_record.symptoms %}
+                                        {{ sick_note.appointment.health_record.symptoms|truncatechars:100 }}
+                                    {% else %}
+                                        <span style="color: #64748b;">No symptoms recorded</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div>
+                                <span class="mobile-note-label">Issued By</span>
+                                <div class="mobile-note-value">
+                                    {{ sick_note.issued_by.get_full_name|default:sick_note.issued_by.username }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <a
+                                href="{% url 'accounts:view_sick_note' sick_note.id %}"
+                                class="action-btn view-btn">
+                                View
+                            </a>
+
+                            <a
+                                href="{% url 'accounts:download_sick_note' sick_note.id %}"
+                                class="action-btn download-btn">
+                                Download
+                            </a>
+
+                            <form
+                                method="post"
+                                action="{% url 'accounts:email_sick_note' sick_note.id %}"
+                                class="email-form">
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="action-btn email-btn">
+                                    Email
+                                </button>
+
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <div class="empty-icon">□</div>
+
+                <h3>No Sick Notes</h3>
+
+                <p>
+                    You don't have any issued sick notes yet.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+<<<<<<< HEAD
   <div style="display: flex; justify-content: space-between; font-size: 12px; color: #94a3b8; margin-bottom: 16px; padding: 0 4px;">
     <span>Overview of active academic units</span>
     <span>
@@ -482,30 +726,8 @@
 
     {% endif %}
   </div>
+=======
+>>>>>>> 5569bfb (Add Digital Asset Links endpoint for Android TWA)
 </div>
 
-<script>
-(function () {
-  const search = document.getElementById('deptSearch');
-  const grid = document.getElementById('deptGrid');
-  if (!search || !grid) return;
-
-  const cards = Array.from(grid.querySelectorAll('.dept-card-item'));
-  const visibleCount = document.getElementById('deptVisibleCount');
-
-  search.addEventListener('input', function () {
-    const query = search.value.trim().toLowerCase();
-    let visible = 0;
-
-    cards.forEach(card => {
-      const text = card.dataset.search || card.innerText.toLowerCase();
-      const matches = text.includes(query);
-      card.classList.toggle('dept-hidden', !matches);
-      if (matches) visible++;
-    });
-
-    if (visibleCount) visibleCount.textContent = visible;
-  });
-})();
-</script>
 {% endblock %}

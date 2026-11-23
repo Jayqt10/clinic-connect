@@ -49,6 +49,11 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    min-width: 0;
+  }
+
+  .ref-title-group > div:last-child {
+    min-width: 0;
   }
 
   .ref-icon-badge {
@@ -66,18 +71,20 @@
   }
 
   .ref-main-title {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 800;
     letter-spacing: -0.45px;
     color: #ffffff;
     line-height: 1.2;
     margin: 0;
+    overflow-wrap: anywhere;
   }
 
   .ref-main-sub {
     font-size: 12px;
     color: var(--ref-muted);
     margin: 3px 0 0;
+    line-height: 1.45;
   }
 
   .btn-create-referral {
@@ -85,6 +92,7 @@
     align-items: center;
     justify-content: center;
     gap: 7px;
+    min-height: 40px;
     padding: 10px 16px;
     background: linear-gradient(135deg, #22c55e, #16a34a);
     border: 1px solid #4ade80;
@@ -94,6 +102,7 @@
     border-radius: 10px;
     text-decoration: none;
     white-space: nowrap;
+    flex-shrink: 0;
     box-shadow: 0 6px 18px rgba(34, 197, 94, 0.22);
     transition: transform 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
   }
@@ -125,13 +134,14 @@
   }
 
   .stat-box-card {
+    min-width: 0;
     background: var(--ref-panel);
     border: 1px solid var(--ref-border);
     border-radius: 12px;
-    padding: 14px 16px;
+    padding: 14px 15px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 13px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
     transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
   }
@@ -154,7 +164,7 @@
   }
 
   .stat-val-num {
-    font-size: 24px;
+    font-size: 23px;
     font-weight: 800;
     color: #ffffff;
     line-height: 1.15;
@@ -169,10 +179,11 @@
   }
 
   .ref-panel-card {
+    min-width: 0;
     background: var(--ref-panel);
     border: 1px solid var(--ref-border);
     border-radius: 14px;
-    padding: 18px 20px;
+    padding: 16px;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
   }
 
@@ -183,6 +194,10 @@
     margin-bottom: 14px;
     padding-bottom: 12px;
     border-bottom: 1px solid var(--ref-border);
+  }
+
+  .panel-top-bar > div:first-child {
+    min-width: 0;
   }
 
   @media (min-width: 768px) {
@@ -246,7 +261,10 @@
   }
 
   .filter-pill-btn {
-    padding: 7px 13px;
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 7px 12px;
     background: var(--ref-surface);
     border: 1px solid #263449;
     border-radius: 8px;
@@ -277,7 +295,8 @@
 
   @media (min-width: 768px) {
     .search-box-form {
-      width: auto;
+      width: 260px;
+      flex-shrink: 0;
     }
   }
 
@@ -285,6 +304,7 @@
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
   }
 
   .search-box-icon {
@@ -296,7 +316,7 @@
   }
 
   .search-box-input {
-    height: 35px;
+    height: 38px;
     padding: 0 12px 0 32px;
     background: var(--ref-header);
     border: 1px solid var(--ref-border-strong);
@@ -304,7 +324,6 @@
     color: var(--ref-text);
     font-size: 12px;
     outline: none;
-    min-width: 240px;
     width: 100%;
     transition: border-color 0.15s ease, background 0.15s ease;
   }
@@ -330,7 +349,7 @@
 
   .ref-data-table {
     width: 100%;
-    min-width: 680px;
+    min-width: 660px;
     border-collapse: collapse;
     font-size: 12.5px;
   }
@@ -371,7 +390,11 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    min-width: 165px;
+    min-width: 0;
+  }
+
+  .student-cell-flex > div:last-child {
+    min-width: 0;
   }
 
   .student-avatar-photo {
@@ -403,6 +426,7 @@
     font-weight: 700;
     color: #f1f5f9;
     line-height: 1.3;
+    overflow-wrap: anywhere;
   }
 
   .student-sub-text {
@@ -420,12 +444,11 @@
   .location-text {
     color: var(--ref-sky);
     font-weight: 650;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
   }
 
   .time-text {
     color: #cbd5e1;
-    white-space: nowrap;
     font-variant-numeric: tabular-nums;
   }
 
@@ -466,13 +489,67 @@
     border: 1px solid rgba(34, 197, 94, 0.28);
   }
 
+  .mobile-ref-list {
+    display: none;
+  }
+
+  .mobile-ref-card {
+    padding: 13px;
+    background: var(--ref-surface);
+    border: 1px solid #23324a;
+    border-radius: 10px;
+  }
+
+  .mobile-ref-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .mobile-ref-grid {
+    display: grid;
+    gap: 8px;
+    font-size: 11.5px;
+  }
+
+  .mobile-ref-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--ref-muted);
+    margin-bottom: 2px;
+  }
+
   .empty-referrals-box {
     text-align: center;
-    padding: 36px 20px;
+    padding: 32px 16px;
     border: 1px dashed var(--ref-border-strong);
     border-radius: 12px;
     margin-top: 6px;
     background: var(--ref-surface);
+  }
+
+  @media (max-width: 720px) {
+    .ref-table-wrap {
+      display: none;
+    }
+
+    .mobile-ref-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .btn-create-referral {
+      width: 100%;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -622,6 +699,63 @@
             {% endfor %}
           </tbody>
         </table>
+      </div>
+
+      <div class="mobile-ref-list">
+        {% for ref in referrals %}
+          <div class="mobile-ref-card">
+            <div class="mobile-ref-top">
+              <div class="student-cell-flex">
+                {% if ref.matched_student and ref.matched_student.profile_picture %}
+                  <img
+                    src="{{ ref.matched_student.profile_picture.url }}"
+                    alt="{{ ref.student_name|default:'Student' }}"
+                    class="student-avatar-photo"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                  >
+                  <div class="student-avatar-badge" style="display: none;" aria-hidden="true">
+                    {{ ref.student_name|default:"S"|first|upper }}
+                  </div>
+                {% else %}
+                  <div class="student-avatar-badge" aria-hidden="true">
+                    {{ ref.student_name|default:"S"|first|upper }}
+                  </div>
+                {% endif %}
+                <div>
+                  <div class="student-name-text">{{ ref.student_name|default:"Unidentified Student" }}</div>
+                  <div class="student-sub-text">Student referral</div>
+                </div>
+              </div>
+
+              {% if ref.status == 'completed' or ref.status == 'Completed' %}
+                <span class="status-tag status-completed">Completed</span>
+              {% elif ref.status == 'received' or ref.status == 'Received' %}
+                <span class="status-tag status-received">Received by Staff</span>
+              {% else %}
+                <span class="status-tag status-sent">Sent (Immediate)</span>
+              {% endif %}
+            </div>
+
+            <div class="mobile-ref-grid">
+              <div>
+                <span class="mobile-ref-label">Reason / Symptoms</span>
+                <span class="concern-text" style="display:block;max-width:none;">
+                  {{ ref.symptoms|default:ref.concern|default:"Immediate medical checkup" }}
+                </span>
+              </div>
+
+              <div>
+                <span class="mobile-ref-label">Location Dispatched</span>
+                <span class="location-text">{{ ref.where|default:ref.location|default:"Classroom" }}</span>
+              </div>
+
+              <div>
+                <span class="mobile-ref-label">Dispatched Time</span>
+                <span class="time-text">{{ ref.created_at|date:"M d, Y · h:i A"|default:"Just now" }}</span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
       </div>
     {% else %}
       <div class="empty-referrals-box">

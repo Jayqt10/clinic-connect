@@ -10,29 +10,40 @@
     color: #e5e7eb;
   }
 
+  .appointments-wrapper *,
+  .appointments-wrapper *::before,
+  .appointments-wrapper *::after {
+    box-sizing: border-box;
+  }
+
   .appointments-header-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
-    padding: 20px 24px;
-    margin-bottom: 18px;
+    gap: 16px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
     background: #111827;
     border: 1px solid #1f2937;
     border-radius: 14px;
   }
 
+  .appointments-header-card > div {
+    min-width: 0;
+  }
+
   .appointments-title {
     color: #f8fafc;
-    font-size: 23px;
+    font-size: 22px;
     font-weight: 800;
     margin: 0 0 5px;
     letter-spacing: -0.5px;
+    overflow-wrap: anywhere;
   }
 
   .appointments-subtitle {
     color: #94a3b8;
-    font-size: 12.5px;
+    font-size: 12px;
     margin: 0;
     line-height: 1.5;
   }
@@ -42,7 +53,8 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 10px 16px;
+    min-height: 38px;
+    padding: 10px 15px;
     border-radius: 9px;
     background: #16a34a;
     color: #fff;
@@ -52,6 +64,7 @@
     white-space: nowrap;
     border: 1px solid #22c55e;
     transition: 0.2s ease;
+    flex-shrink: 0;
   }
 
   .btn-primary-cta:hover {
@@ -63,14 +76,15 @@
   .metrics-grid-5 {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
-    margin-bottom: 18px;
+    gap: 11px;
+    margin-bottom: 16px;
   }
 
   .metric-card-item {
     position: relative;
+    min-width: 0;
     overflow: hidden;
-    padding: 15px 16px;
+    padding: 14px 15px;
     background: #111827;
     border: 1px solid #1f2937;
     border-radius: 12px;
@@ -100,6 +114,7 @@
   .metric-card-icon {
     width: 30px;
     height: 30px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -110,13 +125,14 @@
   .metric-card-value {
     margin-top: 9px;
     color: #f8fafc;
-    font-size: 25px;
+    font-size: 24px;
     font-weight: 800;
     line-height: 1;
+    font-variant-numeric: tabular-nums;
   }
 
   .appointments-panel {
-    padding: 20px;
+    padding: 18px;
     background: #111827;
     border: 1px solid #1f2937;
     border-radius: 14px;
@@ -126,7 +142,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
+    flex-wrap: wrap;
     padding-bottom: 14px;
     margin-bottom: 14px;
     border-bottom: 1px solid #1f2937;
@@ -160,8 +177,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
-    padding: 18px;
+    gap: 20px;
+    padding: 16px;
     background: #0b1220;
     border: 1px solid #263449;
     border-radius: 11px;
@@ -182,12 +199,12 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 17px;
+    margin-bottom: 14px;
   }
 
   .appt-icon {
-    width: 35px;
-    height: 35px;
+    width: 34px;
+    height: 34px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -196,7 +213,7 @@
     background: rgba(34, 197, 94, 0.1);
     border: 1px solid rgba(34, 197, 94, 0.2);
     border-radius: 9px;
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .appt-title {
@@ -209,7 +226,7 @@
   .appt-details {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
+    gap: 14px;
     padding-left: 2px;
   }
 
@@ -217,14 +234,14 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 7px;
+    gap: 6px;
     min-width: 0;
   }
 
   .appt-detail-heading {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
     color: #94a3b8;
     font-size: 11px;
     font-weight: 600;
@@ -232,21 +249,21 @@
   }
 
   .appt-detail-icon {
-    width: 17px;
+    width: 16px;
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: #64748b;
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .appt-detail-value {
-    padding-left: 24px;
+    padding-left: 22px;
     color: #e5e7eb;
     font-size: 12px;
     font-weight: 700;
-    line-height: 1.5;
+    line-height: 1.45;
     overflow-wrap: anywhere;
   }
 
@@ -307,7 +324,7 @@
   }
 
   .empty-state-container {
-    padding: 45px 20px;
+    padding: 40px 18px;
     text-align: center;
     background: #0b1220;
     border: 1px dashed #334155;
@@ -318,14 +335,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px;
-    height: 50px;
-    margin: 0 auto 13px;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 12px;
     color: #4ade80;
     background: rgba(34, 197, 94, 0.1);
     border: 1px solid rgba(34, 197, 94, 0.2);
     border-radius: 50%;
-    font-size: 21px;
+    font-size: 20px;
   }
 
   .empty-state-title {
@@ -336,7 +353,7 @@
   }
 
   .empty-state-desc {
-    margin-bottom: 17px;
+    margin-bottom: 16px;
     color: #94a3b8;
     font-size: 12px;
   }
@@ -347,11 +364,11 @@
     }
 
     .appt-row-item {
-      gap: 16px;
+      gap: 14px;
     }
 
     .appt-details {
-      gap: 14px;
+      gap: 12px;
     }
   }
 
@@ -359,7 +376,7 @@
     .appointments-header-card {
       align-items: flex-start;
       flex-direction: column;
-      padding: 17px;
+      padding: 15px;
     }
 
     .appointments-title {
@@ -380,11 +397,11 @@
     }
 
     .metric-card-value {
-      font-size: 22px;
+      font-size: 21px;
     }
 
     .appointments-panel {
-      padding: 14px;
+      padding: 13px;
     }
 
     .panel-heading-title {
@@ -392,17 +409,23 @@
     }
 
     .appt-row-item {
+      flex-direction: column;
       align-items: flex-start;
-      gap: 14px;
-      padding: 14px;
+      gap: 12px;
+      padding: 13px;
+    }
+
+    .appt-main-info {
+      width: 100%;
     }
 
     .appt-title-row {
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
 
     .appt-details {
-      gap: 12px 8px;
+      grid-template-columns: 1fr;
+      gap: 10px;
     }
 
     .appt-detail-heading {
@@ -410,8 +433,8 @@
     }
 
     .appt-detail-value {
-      font-size: 11px;
-      padding-left: 22px;
+      font-size: 11.5px;
+      padding-left: 20px;
     }
 
     .appt-status-section {
@@ -419,37 +442,9 @@
     }
   }
 
-  @media (max-width: 420px) {
-    .appt-row-item {
-      flex-direction: column;
-    }
-
-    .appt-main-info {
-      width: 100%;
-    }
-
-    .appt-details {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px 5px;
-    }
-
-    .appt-detail-heading {
-      gap: 4px;
-      font-size: 9px;
-    }
-
-    .appt-detail-icon {
-      width: 14px;
-      font-size: 11px;
-    }
-
-    .appt-detail-value {
-      padding-left: 18px;
-      font-size: 10px;
-    }
-
-    .appt-status-section {
-      align-self: flex-start;
+  @media (max-width: 520px) {
+    .metrics-grid-5 {
+      grid-template-columns: 1fr;
     }
   }
 </style>

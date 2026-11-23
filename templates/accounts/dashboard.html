@@ -4,514 +4,1113 @@
 
 {% block content %}
 <style>
-    .student-dashboard {
-        max-width: 1400px;
-        margin: 0 auto;
-        color: #e5e7eb;
-    }
+.student-dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+    color: #e5e7eb;
+    --dash-bg: #0b1120;
+    --dash-panel: #111827;
+    --dash-border: #1f2937;
+    --dash-muted: #94a3b8;
+    --dash-green: #54dc47;
+    --dash-green-soft: #103326;
+}
 
+.student-dashboard *,
+.student-dashboard *::before,
+.student-dashboard *::after {
+    box-sizing: border-box;
+}
+
+.dashboard-welcome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    border: 1px solid #244334;
+    border-radius: 13px;
+    background: linear-gradient(115deg, #102b20 0%, #111827 72%);
+}
+
+.dashboard-welcome > div {
+    min-width: 0;
+}
+
+.dashboard-welcome h1 {
+    color: #f8fafc;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    margin: 0 0 5px;
+    overflow-wrap: anywhere;
+}
+
+.dashboard-welcome p {
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.welcome-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #31583b;
+    border-radius: 12px;
+    background: #0b3515;
+    color: #86efac;
+    font-size: 19px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 11px;
+    margin-bottom: 14px;
+}
+
+.stat-card {
+    min-width: 0;
+    padding: 13px 14px;
+    border: 1px solid #1f2937;
+    border-radius: 11px;
+    background: #111827;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.stat-card:hover {
+    border-color: #31583b;
+    transform: translateY(-2px);
+}
+
+.stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.stat-icon {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(74, 222, 128, 0.16);
+    border-radius: 8px;
+    background: #0b3515;
+    color: #54dc47;
+    font-size: 14px;
+}
+
+.stat-number {
+    color: #f8fafc;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-description {
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.4;
+    margin-top: 6px;
+}
+
+.dashboard-main-grid,
+.dashboard-bottom-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    align-items: stretch;
+}
+
+.dashboard-bottom-grid {
+    margin-top: 14px;
+}
+
+.dashboard-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    background: #111827;
+}
+
+.dashboard-card-header {
+    min-height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 13px 14px;
+    border-bottom: 1px solid #1f2937;
+}
+
+.dashboard-card-header > div {
+    min-width: 0;
+}
+
+.dashboard-card-header h2 {
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 800;
+    margin: 0 0 3px;
+    overflow-wrap: anywhere;
+}
+
+.dashboard-card-header p {
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.view-all {
+    flex-shrink: 0;
+    padding: 7px 9px;
+    border-radius: 7px;
+    color: #54dc47;
+    font-size: 10px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+}
+
+.view-all:hover {
+    background: #0b3515;
+}
+
+.calendar-container {
+    padding: 12px 14px 14px;
+}
+
+.calendar-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.calendar-navigation h3 {
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.calendar-nav-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+.calendar-nav-buttons button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #263449;
+    border-radius: 8px;
+    background: #172235;
+    color: #cbd5e1;
+    cursor: pointer;
+    font-size: 17px;
+    transition: 0.2s ease;
+}
+
+.calendar-nav-buttons button:hover {
+    border-color: #31583b;
+    background: #0b3515;
+    color: #86efac;
+}
+
+.calendar-weekdays,
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.calendar-weekdays {
+    margin-bottom: 6px;
+}
+
+.calendar-weekdays div {
+    padding: 4px 0;
+    color: #64748b;
+    font-size: 9px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.calendar-day {
+    position: relative;
+    min-width: 0;
+    min-height: 36px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: #172235;
+    color: #cbd5e1;
+    cursor: pointer;
+    font-size: 11px;
+    transition: 0.15s ease;
+}
+
+.calendar-day:hover {
+    border-color: #54dc47;
+    background: #1b3026;
+}
+
+.calendar-day.other-month {
+    background: #101827;
+    color: #475569;
+}
+
+.calendar-day.today {
+    border-color: #54dc47;
+    color: #86efac;
+    font-weight: 800;
+}
+
+.calendar-day.selected {
+    border-color: #54dc47;
+    background: #0b3515;
+    color: #bbf7d0;
+    font-weight: 800;
+}
+
+.calendar-day.has-appointment::after {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #54dc47;
+    content: "";
+    transform: translateX(-50%);
+}
+
+.calendar-legend {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 10px;
+    color: #64748b;
+    font-size: 10px;
+}
+
+.legend-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #54dc47;
+}
+
+.calendar-selection {
+    min-height: 55px;
+    margin-top: 10px;
+    padding: 9px 11px;
+    border: 1px solid #1f2937;
+    border-radius: 8px;
+    background: #0d1620;
+}
+
+.calendar-selection h4 {
+    color: #e5e7eb;
+    font-size: 11px;
+    font-weight: 800;
+    margin: 0 0 4px;
+}
+
+.calendar-selection p {
+    color: #94a3b8;
+    font-size: 10px;
+    margin: 0;
+}
+
+.calendar-event-list {
+    display: grid;
+    gap: 5px;
+    margin-top: 6px;
+}
+
+.calendar-event {
+    color: #86efac;
+    font-size: 10px;
+    overflow-wrap: anywhere;
+}
+
+.calendar-data {
+    display: none;
+}
+
+.announcement-card-header {
+    min-height: 62px;
+}
+
+.announcement-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.announcement-heading > div {
+    min-width: 0;
+}
+
+.announcement-heading-icon,
+.announcement-icon {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #17633c;
+    border-radius: 9px;
+    background: #103326;
+    color: #43df88;
+    font-size: 16px;
+}
+
+.announcement-heading h2 {
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 800;
+    margin: 0 0 3px;
+}
+
+.announcement-heading p {
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.announcement-list {
+    display: grid;
+    gap: 8px;
+    padding: 11px;
+}
+
+.announcement-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid #263449;
+    border-radius: 9px;
+    background: linear-gradient(115deg, #101d2b, #0d1624);
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.announcement-item:hover {
+    border-color: #31583b;
+    background: linear-gradient(115deg, #132b27, #0d1624);
+}
+
+.announcement-item .announcement-icon {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+    font-size: 15px;
+}
+
+.announcement-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.announcement-title {
+    color: #f8fafc;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.4;
+    margin: 0 0 4px;
+    overflow-wrap: anywhere;
+}
+
+.announcement-preview {
+    display: -webkit-box;
+    overflow: hidden;
+    color: #94a3b8;
+    font-size: 10px;
+    line-height: 1.5;
+    margin: 0 0 7px;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.announcement-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px 8px;
+}
+
+.announcement-time {
+    color: #43df88;
+    font-size: 9px;
+}
+
+.announcement-type,
+.announcement-audience {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 6px;
+    border-radius: 5px;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.announcement-type {
+    border: 1px solid #17633c;
+    background: #103326;
+    color: #86efac;
+}
+
+.announcement-audience {
+    border: 1px solid #51417d;
+    background: #282044;
+    color: #c4b5fd;
+}
+
+.announcement-view-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-height: 32px;
+    padding: 7px 9px;
+    border: 1px solid #17633c;
+    border-radius: 7px;
+    background: #102b25;
+    color: #69efa5;
+    font-size: 9.5px;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.2s ease;
+}
+
+.announcement-view-btn:hover {
+    border-color: #35d879;
+    background: #14532d;
+}
+
+.announcement-empty {
+    margin: 11px;
+    padding: 22px 14px;
+    border: 1px dashed #34445a;
+    border-radius: 9px;
+    background: #0d1624;
+    text-align: center;
+}
+
+.announcement-empty-icon {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    border: 1px solid #17633c;
+    border-radius: 9px;
+    background: #103326;
+    color: #43df88;
+    font-size: 16px;
+}
+
+.announcement-empty h3 {
+    color: #e5e7eb;
+    font-size: 11px;
+    margin: 0 0 4px;
+}
+
+.announcement-empty p {
+    color: #64748b;
+    font-size: 10px;
+    margin: 0;
+}
+
+.appointment-list {
+    width: 100%;
+}
+
+.appointment-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 14px;
+    border-bottom: 1px solid #1f2937;
+    transition: background 0.15s ease;
+}
+
+.appointment-item:hover {
+    background: #131e30;
+}
+
+.appointment-item:last-child {
+    border-bottom: none;
+}
+
+.appointment-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.appointment-info h3 {
+    color: #e5e7eb;
+    font-size: 11px;
+    font-weight: 800;
+    margin: 0 0 4px;
+    overflow-wrap: anywhere;
+}
+
+.appointment-info p {
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.appointment-status {
+    flex-shrink: 0;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.status-pending {
+    background: #422006;
+    color: #fbbf24;
+}
+
+.status-approved {
+    background: #14532d;
+    color: #86efac;
+}
+
+.status-rescheduled {
+    background: #172c3a;
+    color: #7dd3fc;
+}
+
+.status-completed {
+    background: #1e3a8a;
+    color: #93c5fd;
+}
+
+.status-rejected {
+    background: #450a0a;
+    color: #fca5a5;
+}
+
+.medicine-list {
+    padding: 5px 14px 8px;
+}
+
+.medicine-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid #1f2937;
+}
+
+.medicine-item:last-child {
+    border-bottom: none;
+}
+
+.medicine-item-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex: 1;
+}
+
+.medicine-icon {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(74, 222, 128, 0.22);
+    border-radius: 9px;
+    background: rgba(34, 197, 94, 0.10);
+    color: #86efac;
+    font-size: 13px;
+}
+
+.medicine-item-info > div:last-child {
+    min-width: 0;
+}
+
+.medicine-name {
+    color: #f8fafc;
+    font-size: 11px;
+    font-weight: 800;
+    margin: 0 0 3px;
+    overflow-wrap: anywhere;
+}
+
+.medicine-dosage {
+    color: #64748b;
+    font-size: 10px;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.medicine-badge {
+    flex-shrink: 0;
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: #14532d;
+    color: #86efac;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.medicine-note {
+    padding: 9px 14px 12px;
+    border-top: 1px solid #1f2937;
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.empty-state {
+    padding: 24px 14px;
+    text-align: center;
+}
+
+.empty-state-icon {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 9px;
+    border-radius: 10px;
+    background: #0b3515;
+    color: #54dc47;
+    font-size: 17px;
+}
+
+.empty-state h3 {
+    color: #e5e7eb;
+    font-size: 11px;
+    margin: 0 0 5px;
+}
+
+.empty-state p {
+    color: #64748b;
+    font-size: 10px;
+    margin: 0;
+}
+
+.announcement-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(2, 6, 14, 0.86);
+    backdrop-filter: blur(7px);
+}
+
+.announcement-modal.active {
+    display: flex;
+}
+
+.announcement-modal-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 760px;
+    max-height: min(88vh, 760px);
+    overflow: hidden;
+    border: 1px solid #34445a;
+    border-radius: 17px;
+    background: #111827;
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.58);
+    animation: announcementModalIn 0.22s ease;
+}
+
+@keyframes announcementModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.99);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.announcement-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 20px;
+    border-bottom: 1px solid #263449;
+    background: linear-gradient(110deg, #102d25 0%, #111827 70%);
+}
+
+.announcement-modal-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+}
+
+.announcement-modal-heading > div {
+    min-width: 0;
+}
+
+.announcement-modal-icon {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+    border-radius: 12px;
+    font-size: 19px;
+}
+
+.announcement-modal-eyebrow {
+    color: #86efac;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin: 2px 0 5px;
+}
+
+.announcement-modal-header h2 {
+    color: #f8fafc;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1.35;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.announcement-modal-close {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    border: 1px solid #39485d;
+    border-radius: 9px;
+    background: #172235;
+    color: #dbeafe;
+    font-size: 22px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.announcement-modal-close:hover {
+    border-color: #64748b;
+    background: #263449;
+    color: #fff;
+}
+
+.announcement-modal-body {
+    padding: 18px 20px 12px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: #475569 #111827;
+    scrollbar-width: thin;
+}
+
+.announcement-modal-message-wrap {
+    margin-top: 14px;
+    padding: 15px 16px;
+    border: 1px solid #2b3b51;
+    border-left: 3px solid #22c55e;
+    border-radius: 11px;
+    background: #0b1423;
+}
+
+.announcement-message-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    color: #e5e7eb;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+}
+
+.announcement-modal-message {
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1.75;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.announcement-modal-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    margin: 15px 0 7px;
+}
+
+.announcement-modal-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid #2b3b51;
+    border-radius: 10px;
+    background: #0e1727;
+    color: #e2e8f0;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.announcement-detail-icon {
+    color: #86efac;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.announcement-detail-label {
+    display: block;
+    color: #94a3b8;
+    font-size: 10px;
+    margin-bottom: 3px;
+}
+
+.announcement-detail-value {
+    display: block;
+    color: #f1f5f9;
+    font-size: 11px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.announcement-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 20px;
+    border-top: 1px solid #263449;
+    background: #0e1727;
+}
+
+.announcement-modal-done {
+    min-width: 115px;
+    min-height: 36px;
+    padding: 9px 15px;
+    border: 1px solid #17633c;
+    border-radius: 8px;
+    background: #14532d;
+    color: #f0fdf4;
+    font-size: 11px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.announcement-modal-done:hover {
+    border-color: #22c55e;
+    background: #166534;
+}
+
+@media (max-width: 950px) {
+    .dashboard-main-grid,
+    .dashboard-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
     .dashboard-welcome {
-        background: linear-gradient(120deg, #102b20, #111827 75%);
-        border: 1px solid #1f2937;
-        border-radius: 13px;
-        padding: 22px 25px;
-        margin-bottom: 18px;
+        padding: 14px;
     }
 
     .dashboard-welcome h1 {
-        color: #f8fafc;
-        font-size: 25px;
-        font-weight: 800;
-        margin: 0 0 6px;
-    }
-
-    .dashboard-welcome p {
-        color: #94a3b8;
-        font-size: 13px;
-        margin: 0;
+        font-size: 18px;
     }
 
     .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 13px;
-        margin-bottom: 18px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
     }
 
     .stat-card {
-        background: #111827;
-        border: 1px solid #1f2937;
-        border-radius: 11px;
-        padding: 15px 17px;
-        transition: 0.2s ease;
-    }
-
-    .stat-card:hover {
-        border-color: #31583b;
-        transform: translateY(-2px);
-    }
-
-    .stat-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 11px;
-    }
-
-    .stat-label {
-        color: #94a3b8;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .stat-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: #0b3515;
-        color: #54dc47;
-        font-size: 15px;
+        padding: 11px;
     }
 
     .stat-number {
-        color: #f8fafc;
-        font-size: 27px;
-        line-height: 1;
-        font-weight: 800;
-    }
-
-    .stat-description {
-        color: #64748b;
-        font-size: 11px;
-        margin-top: 6px;
-    }
-
-    .dashboard-main-grid {
-        display: grid;
-        grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-        gap: 16px;
-        align-items: start;
-    }
-
-    .dashboard-side-stack {
-        display: grid;
-        gap: 16px;
-        min-width: 0;
-    }
-
-    .dashboard-card {
-        background: #111827;
-        border: 1px solid #1f2937;
-        border-radius: 12px;
-        overflow: hidden;
-        min-width: 0;
+        font-size: 22px;
     }
 
     .dashboard-card-header {
-        padding: 16px 18px;
-        border-bottom: 1px solid #1f2937;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .dashboard-card-header h2 {
-        color: #f8fafc;
-        font-size: 16px;
-        font-weight: 800;
-        margin: 0 0 4px;
-    }
-
-    .dashboard-card-header p {
-        color: #64748b;
-        font-size: 11px;
-        margin: 0;
-    }
-
-    .view-all {
-        color: #54dc47;
-        text-decoration: none;
-        font-size: 12px;
-        font-weight: 700;
-        white-space: nowrap;
-        padding: 7px 9px;
-        border-radius: 7px;
-    }
-
-    .view-all:hover {
-        background: #0b3515;
+        padding: 12px;
     }
 
     .calendar-container {
-        padding: 15px 17px 17px;
-    }
-
-    .calendar-navigation {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-
-    .calendar-navigation h3 {
-        color: #f8fafc;
-        font-size: 15px;
-        font-weight: 800;
-        margin: 0;
-    }
-
-    .calendar-nav-buttons {
-        display: flex;
-        gap: 6px;
-    }
-
-    .calendar-nav-buttons button {
-        width: 30px;
-        height: 30px;
-        border: 1px solid #263449;
-        border-radius: 7px;
-        background: #172235;
-        color: #cbd5e1;
-        cursor: pointer;
-        font-size: 17px;
-    }
-
-    .calendar-nav-buttons button:hover {
-        background: #0b3515;
-        border-color: #31583b;
-        color: #54dc47;
-    }
-
-    .calendar-weekdays,
-    .calendar-days {
-        display: grid;
-        grid-template-columns: repeat(7, minmax(0, 1fr));
-        gap: 5px;
-    }
-
-    .calendar-weekdays {
-        margin-bottom: 7px;
-    }
-
-    .calendar-weekdays div {
-        color: #64748b;
-        text-align: center;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 5px 0;
+        padding: 11px 12px 12px;
     }
 
     .calendar-day {
-        position: relative;
-        min-height: 39px;
-        border: 1px solid transparent;
-        border-radius: 7px;
-        background: #172235;
-        color: #cbd5e1;
-        cursor: pointer;
+        min-height: 36px;
+    }
+
+    .announcement-item {
+        padding: 9px;
+        gap: 8px;
+    }
+
+    .announcement-view-btn {
+        padding: 7px 8px;
+        font-size: 9px;
+    }
+
+    .announcement-modal {
+        padding: 9px;
+    }
+
+    .announcement-modal-header {
+        padding: 15px;
+    }
+
+    .announcement-modal-header h2 {
+        font-size: 16px;
+    }
+
+    .announcement-modal-body {
+        padding: 15px 14px 9px;
+    }
+
+    .announcement-modal-message {
         font-size: 12px;
-        transition: 0.15s ease;
     }
 
-    .calendar-day:hover {
-        border-color: #54dc47;
-        background: #1b3026;
+    .announcement-modal-details {
+        grid-template-columns: 1fr;
     }
 
-    .calendar-day.other-month {
-        color: #475569;
-        background: #101827;
+    .announcement-modal-footer {
+        padding: 12px 14px;
+    }
+}
+
+@media (max-width: 520px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
     }
 
-    .calendar-day.today {
-        border-color: #54dc47;
-        color: #86efac;
-        font-weight: 800;
+    .dashboard-card-header {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 430px) {
+    .dashboard-welcome {
+        gap: 8px;
     }
 
-    .calendar-day.selected {
-        background: #0b3515;
-        border-color: #54dc47;
-        color: #bbf7d0;
+    .welcome-icon {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
     }
 
-    .calendar-day.has-appointment::after {
-        content: "";
-        position: absolute;
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background: #54dc47;
-        bottom: 4px;
-        left: 50%;
-        transform: translateX(-50%);
+    .announcement-item {
+        flex-wrap: wrap;
     }
 
-    .calendar-legend {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        color: #64748b;
-        font-size: 10px;
-        margin-top: 12px;
+    .announcement-view-btn {
+        margin-left: auto;
     }
 
-    .legend-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: #54dc47;
+    .appointment-item,
+    .medicine-item {
+        flex-wrap: wrap;
     }
 
-    .calendar-selection {
-        margin-top: 13px;
-        padding: 10px 12px;
-        background: #0d1620;
-        border: 1px solid #1f2937;
-        border-radius: 8px;
+    .appointment-status,
+    .medicine-badge {
+        margin-left: auto;
     }
 
-    .calendar-selection h4 {
-        color: #e5e7eb;
-        font-size: 12px;
-        font-weight: 700;
-        margin: 0 0 5px;
+    .announcement-modal-heading {
+        gap: 9px;
     }
 
-    .calendar-selection p {
-        color: #94a3b8;
-        font-size: 11px;
-        margin: 0;
+    .announcement-modal-icon {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
     }
 
-    .appointment-list {
-        width: 100%;
+    .announcement-modal-eyebrow {
+        font-size: 8px;
     }
 
     .appointment-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 17px;
-        border-bottom: 1px solid #1f2937;
-    }
-
-    .appointment-item:last-child {
-        border-bottom: none;
-    }
-
-    .appointment-info {
-        min-width: 0;
-    }
-
-    .appointment-info h3 {
-        color: #e5e7eb;
-        font-size: 13px;
-        font-weight: 700;
-        margin: 0 0 5px;
-        overflow-wrap: anywhere;
-    }
-
-    .appointment-info p {
-        color: #64748b;
-        font-size: 11px;
-        margin: 0;
-        line-height: 1.6;
-    }
-
-    .appointment-status {
-        flex-shrink: 0;
-        padding: 6px 9px;
-        border-radius: 6px;
-        font-size: 10px;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    .status-pending {
-        background: #422006;
-        color: #fbbf24;
-    }
-
-    .status-approved {
-        background: #14532d;
-        color: #86efac;
-    }
-
-    .status-rescheduled {
-        background: #172c3a;
-        color: #7dd3fc;
-    }
-
-    .status-completed {
-        background: #1e3a8a;
-        color: #93c5fd;
-    }
-
-    .status-rejected {
-        background: #450a0a;
-        color: #fca5a5;
+        padding: 10px 12px;
     }
 
     .medicine-list {
-        padding: 8px 17px 14px;
+        padding-right: 12px;
+        padding-left: 12px;
     }
+}
 
-    .medicine-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 0;
-        border-bottom: 1px solid #1f2937;
+@media (prefers-reduced-motion: reduce) {
+    .student-dashboard *,
+    .announcement-modal-card {
+        animation: none !important;
+        transition: none !important;
     }
-
-    .medicine-item:last-child {
-        border-bottom: none;
-    }
-
-    .medicine-name {
-        color: #f8fafc;
-        font-size: 13px;
-        font-weight: 700;
-        margin: 0 0 2px;
-    }
-
-    .medicine-dosage {
-        color: #64748b;
-        font-size: 11px;
-        margin: 0;
-    }
-
-    .medicine-badge {
-        flex-shrink: 0;
-        padding: 5px 8px;
-        border-radius: 6px;
-        font-size: 10px;
-        font-weight: 700;
-        background: #14532d;
-        color: #86efac;
-        white-space: nowrap;
-    }
-
-    .medicine-note {
-        padding: 10px 17px 15px;
-        color: #64748b;
-        font-size: 11px;
-        line-height: 1.5;
-    }
-
-    .empty-state {
-        padding: 35px 18px;
-        text-align: center;
-    }
-
-    .empty-state-icon {
-        width: 38px;
-        height: 38px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0 auto 10px;
-        border-radius: 50%;
-        background: #0b3515;
-        color: #54dc47;
-        font-size: 19px;
-    }
-
-    .empty-state h3 {
-        color: #e5e7eb;
-        font-size: 13px;
-        margin: 0 0 5px;
-    }
-
-    .empty-state p {
-        color: #64748b;
-        font-size: 11px;
-        margin: 0;
-    }
-
-    .calendar-event-list {
-        display: grid;
-        gap: 5px;
-        margin-top: 7px;
-    }
-
-    .calendar-event {
-        color: #86efac;
-        font-size: 11px;
-        overflow-wrap: anywhere;
-    }
-
-    .calendar-data {
-        display: none;
-    }
-
-    @media (max-width: 950px) {
-        .dashboard-main-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 650px) {
-        .dashboard-welcome {
-            padding: 18px;
-        }
-
-        .dashboard-welcome h1 {
-            font-size: 21px;
-        }
-
-        .stats-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 9px;
-        }
-
-        .stat-card {
-            padding: 13px;
-        }
-
-        .stat-number {
-            font-size: 24px;
-        }
-
-        .dashboard-card-header {
-            padding: 14px;
-        }
-
-        .calendar-container {
-            padding: 13px;
-        }
-
-        .calendar-day {
-            min-height: 36px;
-        }
-
-        .appointment-item {
-            padding: 13px;
-        }
-    }
-
-    @media (max-width: 380px) {
-        .appointment-item {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-    }
+}
 </style>
 
 <div class="student-dashboard">
 
     <div class="dashboard-welcome">
-        <h1>Welcome back, {{ user.first_name|default:user.username }} 👋</h1>
-        <p>Here's an overview of your clinic activities and appointments.</p>
+        <div>
+            <h1>Welcome back, {{ user.first_name|default:user.username }}</h1>
+            <p>Here's an overview of your clinic activities and appointments.</p>
+        </div>
+        <div class="welcome-icon" aria-hidden="true">+</div>
     </div>
 
     <div class="stats-grid">
@@ -593,7 +1192,7 @@
                     Scheduled appointment
                 </div>
 
-                <div class="calendar-selection" id="calendar-selection">
+                <div class="calendar-selection">
                     <h4 id="selected-date-title">Select a date</h4>
                     <p id="selected-date-description">Choose a calendar date to view its appointments.</p>
                     <div class="calendar-event-list" id="calendar-event-list"></div>
@@ -603,110 +1202,224 @@
 
         </section>
 
-        <div class="dashboard-side-stack">
+        <section class="dashboard-card">
 
-            <section class="dashboard-card">
-
-                <div class="dashboard-card-header">
+            <div class="dashboard-card-header announcement-card-header">
+                <div class="announcement-heading">
+                    <div class="announcement-heading-icon">!</div>
                     <div>
-                        <h2>Recent Appointments</h2>
-                        <p>Your latest clinic requests and records.</p>
+                        <h2>Clinic Notices &amp; Upcoming Activities</h2>
+                        <p>Stay informed about clinic advisories, health programs, and scheduled campus activities.</p>
                     </div>
-
-                    <a href="{% url 'accounts:student_appointments' %}" class="view-all">
-                        View all →
-                    </a>
                 </div>
+            </div>
 
-                <div class="appointment-list">
+            {% if clinic_announcements %}
 
-                    {% for appointment in recent_appointments %}
+                <div class="announcement-list">
 
-                        <div class="appointment-item">
+                    {% for item in clinic_announcements|slice:":3" %}
 
-                            <div class="appointment-info">
-                                <h3>{{ appointment.concern }}</h3>
+                        <article class="announcement-item">
 
-                                <p>
-                                    {% if appointment.scheduled_date %}
-                                        {{ appointment.scheduled_date|date:"M. d, Y" }}
-                                    {% else %}
-                                        {{ appointment.preferred_date|date:"M. d, Y" }}
-                                    {% endif %}
+                            <div class="announcement-icon">!</div>
 
-                                    {% if appointment.scheduled_time %}
-                                        at {{ appointment.scheduled_time|time:"g:i A" }}
-                                    {% elif appointment.preferred_time %}
-                                        at {{ appointment.preferred_time|time:"g:i A" }}
-                                    {% endif %}
+                            <div class="announcement-info">
+
+                                <h3 class="announcement-title">{{ item.title }}</h3>
+
+                                <p class="announcement-preview">
+                                    {{ item.message|default:"No additional details provided."|truncatewords:22 }}
                                 </p>
+
+                                <div class="announcement-meta">
+
+                                    {% if item.start_time %}
+                                        <span class="announcement-time">
+                                            {{ item.start_time|time:"g:i A" }}{% if item.end_time %} – {{ item.end_time|time:"g:i A" }}{% endif %}
+                                        </span>
+                                    {% endif %}
+
+                                    <span class="announcement-type">
+                                        {% if item.event_date %}Scheduled Activity{% else %}General Notice{% endif %}
+                                    </span>
+
+                                    <span class="announcement-audience">
+                                        {% if item.audience == "all" %}
+                                            All Users
+                                        {% elif item.audience == "student" %}
+                                            Students
+                                        {% elif item.audience == "teacher" %}
+                                            Teachers
+                                        {% elif item.audience == "department" %}
+                                            Department
+                                        {% else %}
+                                            Clinic Notice
+                                        {% endif %}
+                                    </span>
+
+                                </div>
+
                             </div>
 
-                            {% if appointment.status == "Pending" %}
-                                <span class="appointment-status status-pending">Pending</span>
-                            {% elif appointment.status == "Approved" %}
-                                <span class="appointment-status status-approved">Approved</span>
-                            {% elif appointment.status == "Rescheduled" %}
-                                <span class="appointment-status status-rescheduled">Rescheduled</span>
-                            {% elif appointment.status == "Completed" %}
-                                <span class="appointment-status status-completed">Completed</span>
-                            {% elif appointment.status == "Rejected" %}
-                                <span class="appointment-status status-rejected">Rejected</span>
-                            {% else %}
-                                <span class="appointment-status status-pending">{{ appointment.status }}</span>
-                            {% endif %}
+                            <button
+                                type="button"
+                                class="announcement-view-btn"
+                                data-announcement-title="{{ item.title }}"
+                                data-announcement-message="{{ item.message|default:'No additional details provided.' }}"
+                                data-announcement-date="{% if item.event_date %}{{ item.event_date|date:'M d, Y' }}{% else %}Not specified{% endif %}"
+                                data-announcement-start="{% if item.start_time %}{{ item.start_time|time:'g:i A' }}{% endif %}"
+                                data-announcement-end="{% if item.end_time %}{{ item.end_time|time:'g:i A' }}{% endif %}"
+                                data-announcement-type="{% if item.event_date %}Scheduled Activity{% else %}General Notice{% endif %}"
+                                data-announcement-audience="{% if item.audience == 'all' %}All Users{% elif item.audience == 'student' %}Students{% elif item.audience == 'teacher' %}Teachers{% elif item.audience == 'department' %}Department{% else %}Clinic Notice{% endif %}"
+                            >
+                                View
+                            </button>
 
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="announcement-empty">
+                    <div class="announcement-empty-icon">!</div>
+                    <h3>No clinic announcements right now</h3>
+                    <p>Clinic notices and scheduled activities will appear here.</p>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+
+    <div class="dashboard-bottom-grid">
+
+        <section class="dashboard-card">
+
+            <div class="dashboard-card-header">
+                <div>
+                    <h2>Recent Appointments</h2>
+                    <p>Your latest clinic requests and records.</p>
+                </div>
+
+                <a href="{% url 'accounts:student_appointments' %}" class="view-all">
+                    View all →
+                </a>
+            </div>
+
+            <div class="appointment-list">
+
+                {% for appointment in recent_appointments %}
+
+                    <div class="appointment-item">
+
+                        <div class="appointment-info">
+                            <h3>{{ appointment.concern }}</h3>
+
+                            <p>
+                                {% if appointment.scheduled_date %}
+                                    {{ appointment.scheduled_date|date:"M. d, Y" }}
+                                {% else %}
+                                    {{ appointment.preferred_date|date:"M. d, Y" }}
+                                {% endif %}
+
+                                {% if appointment.scheduled_time %}
+                                    at {{ appointment.scheduled_time|time:"g:i A" }}
+                                {% elif appointment.preferred_time %}
+                                    at {{ appointment.preferred_time|time:"g:i A" }}
+                                {% endif %}
+                            </p>
                         </div>
 
-                    {% empty %}
+                        {% if appointment.status == "Pending" %}
+                            <span class="appointment-status status-pending">Pending</span>
+                        {% elif appointment.status == "Approved" %}
+                            <span class="appointment-status status-approved">Approved</span>
+                        {% elif appointment.status == "Rescheduled" %}
+                            <span class="appointment-status status-rescheduled">Rescheduled</span>
+                        {% elif appointment.status == "Completed" %}
+                            <span class="appointment-status status-completed">Completed</span>
+                        {% elif appointment.status == "Rejected" %}
+                            <span class="appointment-status status-rejected">Rejected</span>
+                        {% else %}
+                            <span class="appointment-status status-pending">{{ appointment.status }}</span>
+                        {% endif %}
 
-                        <div class="empty-state">
-                            <div class="empty-state-icon">+</div>
-                            <h3>No appointments yet</h3>
-                            <p>You have not submitted a clinic checkup request yet.</p>
+                    </div>
+
+                {% empty %}
+
+                    <div class="empty-state">
+                        <div class="empty-state-icon">+</div>
+                        <h3>No appointments yet</h3>
+                        <p>You have not submitted a clinic checkup request yet.</p>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        <section class="dashboard-card">
+
+            <div class="dashboard-card-header">
+                <div>
+                    <h2>Available Clinic Medicines</h2>
+                    <p>Active medicines currently available at the school clinic.</p>
+                </div>
+            </div>
+
+            {% if available_medicines %}
+
+                <div class="medicine-list">
+
+                    {% for med in available_medicines %}
+
+                        <div class="medicine-item">
+
+                            <div class="medicine-item-info">
+
+                                <div class="medicine-icon" aria-hidden="true">
+                                    <i class="{{ med.icon_class }}"></i>
+                                </div>
+
+                                <div>
+                                    <h3 class="medicine-name">{{ med.name }}</h3>
+                                    <p class="medicine-dosage">
+                                        {{ med.dosage_form|default:"Clinic supply" }}
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <span class="medicine-badge">Available</span>
+
                         </div>
 
                     {% endfor %}
 
                 </div>
 
-            </section>
-
-            <section class="dashboard-card">
-
-                <div class="dashboard-card-header">
-                    <div>
-                        <h2>Available Clinic Medicines</h2>
-                        <p>Active medicines currently available at the school clinic.</p>
-                    </div>
+                <div class="medicine-note">
+                    Medicines are dispensed only after evaluation by clinic staff.
                 </div>
 
-                {% if available_medicines %}
-                    <div class="medicine-list">
-                        {% for med in available_medicines %}
-                            <div class="medicine-item">
-                                <div>
-                                    <h3 class="medicine-name">{{ med.name }}</h3>
-                                    <p class="medicine-dosage">{{ med.dosage_form|default:"Clinic supply" }}</p>
-                                </div>
-                                <span class="medicine-badge">Available</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <div class="medicine-note">
-                        Medicines are dispensed only after evaluation by clinic staff.
-                    </div>
-                {% else %}
-                    <div class="empty-state">
-                        <div class="empty-state-icon">+</div>
-                        <h3>No medicines available right now</h3>
-                        <p>Check back later or consult clinic staff during a visit.</p>
-                    </div>
-                {% endif %}
+            {% else %}
 
-            </section>
+                <div class="empty-state">
+                    <div class="empty-state-icon">+</div>
+                    <h3>No medicines available right now</h3>
+                    <p>Check back later or consult clinic staff during a visit.</p>
+                </div>
 
-        </div>
+            {% endif %}
+
+        </section>
 
     </div>
 
@@ -725,8 +1438,69 @@
 
 </div>
 
+<div class="announcement-modal" id="announcement-modal" aria-hidden="true">
+
+    <div
+        class="announcement-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="announcement-modal-title"
+    >
+
+        <div class="announcement-modal-header">
+
+            <div class="announcement-modal-heading">
+
+                <div class="announcement-modal-icon announcement-heading-icon">!</div>
+
+                <div>
+                    <p class="announcement-modal-eyebrow">CLINIC CONNECT ANNOUNCEMENT</p>
+                    <h2 id="announcement-modal-title">Announcement title</h2>
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="announcement-modal-close"
+                id="announcement-modal-close"
+                aria-label="Close"
+            >×</button>
+
+        </div>
+
+        <div class="announcement-modal-body">
+
+            <span class="announcement-type" id="announcement-modal-type">General Notice</span>
+
+            <div class="announcement-modal-message-wrap">
+
+                <div class="announcement-message-heading">
+                    <span>▤</span>
+                    ANNOUNCEMENT MESSAGE
+                </div>
+
+                <div class="announcement-modal-message" id="announcement-modal-message"></div>
+
+            </div>
+
+            <div class="announcement-modal-details" id="announcement-modal-details"></div>
+
+        </div>
+
+        <div class="announcement-modal-footer">
+            <button type="button" class="announcement-modal-done" id="announcement-modal-done">
+                Close Details
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+
     const calendarDays = document.getElementById("calendar-days");
     const monthLabel = document.getElementById("calendar-month");
     const previousButton = document.getElementById("calendar-prev");
@@ -735,154 +1509,341 @@ document.addEventListener("DOMContentLoaded", function () {
     const selectedDateDescription = document.getElementById("selected-date-description");
     const eventList = document.getElementById("calendar-event-list");
 
-    if (!calendarDays || !monthLabel) return;
+    if (
+        calendarDays &&
+        monthLabel &&
+        previousButton &&
+        nextButton
+    ) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    let displayedMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    let selectedDate = new Date(today);
-
-    const appointments = {};
-
-    document.querySelectorAll(".calendar-appointment").forEach(function (item) {
-        const date = item.dataset.date;
-
-        if (!date) return;
-
-        if (!appointments[date]) {
-            appointments[date] = [];
-        }
-
-        appointments[date].push({
-            concern: item.dataset.concern || "Clinic appointment",
-            time: item.dataset.time || "Time not specified"
-        });
-    });
-
-    function formatDate(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-
-        return `${year}-${month}-${day}`;
-    }
-
-    function renderSelectedDate() {
-        const dateKey = formatDate(selectedDate);
-        const selectedAppointments = appointments[dateKey] || [];
-
-        selectedDateTitle.textContent = selectedDate.toLocaleDateString(
-            "en-US",
-            {
-                month: "long",
-                day: "numeric",
-                year: "numeric"
-            }
+        let displayedMonth = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            1
         );
 
-        eventList.replaceChildren();
+        let selectedDate = new Date(today);
+        const appointments = {};
 
-        if (selectedAppointments.length === 0) {
-            selectedDateDescription.textContent = "No scheduled appointments for this date.";
-            return;
+        document.querySelectorAll(".calendar-appointment").forEach(function (item) {
+            const date = item.dataset.date;
+
+            if (!date) return;
+
+            if (!appointments[date]) {
+                appointments[date] = [];
+            }
+
+            appointments[date].push({
+                concern: item.dataset.concern || "Clinic appointment",
+                time: item.dataset.time || "Time not specified"
+            });
+        });
+
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+
+            return `${year}-${month}-${day}`;
         }
 
-        selectedDateDescription.textContent =
-            selectedAppointments.length +
-            (selectedAppointments.length === 1
-                ? " scheduled appointment:"
-                : " scheduled appointments:");
+        function renderSelectedDate() {
+            const dateKey = formatDate(selectedDate);
+            const selectedAppointments = appointments[dateKey] || [];
 
-        selectedAppointments.forEach(function (appointment) {
-            const event = document.createElement("div");
-            event.className = "calendar-event";
-            event.textContent = appointment.time + " · " + appointment.concern;
-            eventList.appendChild(event);
+            selectedDateTitle.textContent = selectedDate.toLocaleDateString(
+                "en-US",
+                {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric"
+                }
+            );
+
+            eventList.replaceChildren();
+
+            if (selectedAppointments.length === 0) {
+                selectedDateDescription.textContent =
+                    "No scheduled appointments for this date.";
+                return;
+            }
+
+            selectedDateDescription.textContent =
+                selectedAppointments.length +
+                (selectedAppointments.length === 1
+                    ? " scheduled appointment:"
+                    : " scheduled appointments:");
+
+            selectedAppointments.forEach(function (appointment) {
+                const event = document.createElement("div");
+                event.className = "calendar-event";
+                event.textContent =
+                    appointment.time + " · " + appointment.concern;
+
+                eventList.appendChild(event);
+            });
+        }
+
+        function renderCalendar() {
+            calendarDays.replaceChildren();
+
+            monthLabel.textContent = displayedMonth.toLocaleDateString(
+                "en-US",
+                {
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+            const year = displayedMonth.getFullYear();
+            const month = displayedMonth.getMonth();
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const previousMonthDays = new Date(year, month, 0).getDate();
+
+            const totalCells = Math.ceil(
+                (firstDay + daysInMonth) / 7
+            ) * 7;
+
+            for (let i = 0; i < totalCells; i++) {
+                let date;
+                let isCurrentMonth = true;
+
+                if (i < firstDay) {
+                    date = new Date(
+                        year,
+                        month - 1,
+                        previousMonthDays - firstDay + i + 1
+                    );
+
+                    isCurrentMonth = false;
+
+                } else if (i >= firstDay + daysInMonth) {
+                    date = new Date(
+                        year,
+                        month + 1,
+                        i - firstDay - daysInMonth + 1
+                    );
+
+                    isCurrentMonth = false;
+
+                } else {
+                    date = new Date(
+                        year,
+                        month,
+                        i - firstDay + 1
+                    );
+                }
+
+                const dateKey = formatDate(date);
+                const button = document.createElement("button");
+
+                button.type = "button";
+                button.className = "calendar-day";
+                button.textContent = date.getDate();
+                button.setAttribute(
+                    "aria-label",
+                    date.toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric"
+                    })
+                );
+
+                if (!isCurrentMonth) {
+                    button.classList.add("other-month");
+                }
+
+                if (dateKey === formatDate(today)) {
+                    button.classList.add("today");
+                }
+
+                if (dateKey === formatDate(selectedDate)) {
+                    button.classList.add("selected");
+                    button.setAttribute("aria-pressed", "true");
+                } else {
+                    button.setAttribute("aria-pressed", "false");
+                }
+
+                if (
+                    appointments[dateKey] &&
+                    appointments[dateKey].length > 0
+                ) {
+                    button.classList.add("has-appointment");
+                    button.title =
+                        appointments[dateKey].length +
+                        " scheduled appointment(s)";
+                }
+
+                button.addEventListener("click", function () {
+                    selectedDate = new Date(date);
+
+                    displayedMonth = new Date(
+                        date.getFullYear(),
+                        date.getMonth(),
+                        1
+                    );
+
+                    renderCalendar();
+                    renderSelectedDate();
+                });
+
+                calendarDays.appendChild(button);
+            }
+        }
+
+        previousButton.addEventListener("click", function () {
+            displayedMonth = new Date(
+                displayedMonth.getFullYear(),
+                displayedMonth.getMonth() - 1,
+                1
+            );
+
+            renderCalendar();
         });
+
+        nextButton.addEventListener("click", function () {
+            displayedMonth = new Date(
+                displayedMonth.getFullYear(),
+                displayedMonth.getMonth() + 1,
+                1
+            );
+
+            renderCalendar();
+        });
+
+        renderCalendar();
+        renderSelectedDate();
     }
 
-    function renderCalendar() {
-        calendarDays.replaceChildren();
+    const announcementModal = document.getElementById("announcement-modal");
+    const modalTitle = document.getElementById("announcement-modal-title");
+    const modalMessage = document.getElementById("announcement-modal-message");
+    const modalType = document.getElementById("announcement-modal-type");
+    const modalDetails = document.getElementById("announcement-modal-details");
+    const modalClose = document.getElementById("announcement-modal-close");
+    const modalDone = document.getElementById("announcement-modal-done");
 
-        monthLabel.textContent = displayedMonth.toLocaleDateString(
-            "en-US",
-            {
-                month: "long",
-                year: "numeric"
+    if (
+        announcementModal &&
+        modalTitle &&
+        modalMessage &&
+        modalType &&
+        modalDetails &&
+        modalClose &&
+        modalDone
+    ) {
+        let lastAnnouncementTrigger = null;
+
+        function closeAnnouncementModal() {
+            announcementModal.classList.remove("active");
+            announcementModal.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+
+            if (lastAnnouncementTrigger) {
+                lastAnnouncementTrigger.focus();
             }
-        );
+        }
 
-        const year = displayedMonth.getFullYear();
-        const month = displayedMonth.getMonth();
+        function addDetail(icon, label, value) {
+            const detail = document.createElement("div");
+            detail.className = "announcement-modal-detail";
 
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const previousMonthDays = new Date(year, month, 0).getDate();
+            const detailIcon = document.createElement("span");
+            detailIcon.className = "announcement-detail-icon";
+            detailIcon.textContent = icon;
 
-        const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+            const detailContent = document.createElement("span");
 
-        for (let i = 0; i < totalCells; i++) {
-            let date;
-            let isCurrentMonth = true;
+            const detailLabel = document.createElement("span");
+            detailLabel.className = "announcement-detail-label";
+            detailLabel.textContent = label;
 
-            if (i < firstDay) {
-                date = new Date(year, month - 1, previousMonthDays - firstDay + i + 1);
-                isCurrentMonth = false;
-            } else if (i >= firstDay + daysInMonth) {
-                date = new Date(year, month + 1, i - firstDay - daysInMonth + 1);
-                isCurrentMonth = false;
-            } else {
-                date = new Date(year, month, i - firstDay + 1);
-            }
+            const detailValue = document.createElement("strong");
+            detailValue.className = "announcement-detail-value";
+            detailValue.textContent = value;
 
-            const dateKey = formatDate(date);
-            const button = document.createElement("button");
+            detailContent.append(detailLabel, detailValue);
+            detail.append(detailIcon, detailContent);
 
-            button.type = "button";
-            button.className = "calendar-day";
-            button.textContent = date.getDate();
+            modalDetails.appendChild(detail);
+        }
 
-            if (!isCurrentMonth) {
-                button.classList.add("other-month");
-            }
-
-            if (dateKey === formatDate(today)) {
-                button.classList.add("today");
-            }
-
-            if (dateKey === formatDate(selectedDate)) {
-                button.classList.add("selected");
-            }
-
-            if (appointments[dateKey] && appointments[dateKey].length > 0) {
-                button.classList.add("has-appointment");
-                button.title = appointments[dateKey].length + " scheduled appointment(s)";
-            }
+        document.querySelectorAll(".announcement-view-btn").forEach(function (button) {
 
             button.addEventListener("click", function () {
-                selectedDate = new Date(date);
-                displayedMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-                renderCalendar();
-                renderSelectedDate();
+
+                const data = button.dataset;
+                lastAnnouncementTrigger = button;
+
+                modalTitle.textContent =
+                    data.announcementTitle || "Clinic Announcement";
+
+                modalMessage.textContent =
+                    data.announcementMessage || "No additional details provided.";
+
+                modalType.textContent =
+                    data.announcementType || "General Notice";
+
+                modalDetails.replaceChildren();
+
+                addDetail(
+                    "▣",
+                    "Activity Date",
+                    data.announcementDate || "Not specified"
+                );
+
+                let schedule = "Not specified";
+
+                if (data.announcementStart) {
+                    schedule = data.announcementStart;
+
+                    if (data.announcementEnd) {
+                        schedule += " – " + data.announcementEnd;
+                    }
+                }
+
+                addDetail("◷", "Schedule", schedule);
+
+                addDetail(
+                    "◉",
+                    "Audience",
+                    data.announcementAudience || "Clinic Notice"
+                );
+
+                announcementModal.classList.add("active");
+                announcementModal.setAttribute("aria-hidden", "false");
+
+                document.body.style.overflow = "hidden";
+
+                modalClose.focus();
             });
 
-            calendarDays.appendChild(button);
-        }
+        });
+
+        modalClose.addEventListener("click", closeAnnouncementModal);
+        modalDone.addEventListener("click", closeAnnouncementModal);
+
+        announcementModal.addEventListener("click", function (event) {
+            if (event.target === announcementModal) {
+                closeAnnouncementModal();
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (
+                event.key === "Escape" &&
+                announcementModal.classList.contains("active")
+            ) {
+                closeAnnouncementModal();
+            }
+        });
     }
 
-    previousButton.addEventListener("click", function () {
-        displayedMonth.setMonth(displayedMonth.getMonth() - 1);
-        renderCalendar();
-    });
-
-    nextButton.addEventListener("click", function () {
-        displayedMonth.setMonth(displayedMonth.getMonth() + 1);
-        renderCalendar();
-    });
-
-    renderCalendar();
-    renderSelectedDate();
 });
 </script>
 

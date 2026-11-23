@@ -18,6 +18,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.http import JsonResponse
+from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_GET, require_POST
 
 from .models import ClinicAnnouncement
@@ -720,6 +722,7 @@ def student_home(request):
     return render(request, "accounts/student_home.html", context)
 
 
+
 @login_required
 def dashboard_view(request):
     role = get_role(request.user)
@@ -736,8 +739,18 @@ def dashboard_view(request):
         context = get_student_dashboard_context(request.user)
         context["student_page"] = "home"
         context["clinic_status"] = get_clinic_status()
+
         context["clinic_announcements"] = list(
-            get_announcements_for_user(request.user)[:6]
+            ClinicAnnouncement.objects.filter(
+                is_active=True,
+                audience__in=["all", "student"],
+            ).select_related(
+                "department",
+                "created_by",
+            ).order_by(
+                "event_date",
+                "-created_at",
+            )[:6]
         )
 
         return render(
@@ -771,11 +784,14 @@ def dashboard_view(request):
         referral_counts = get_status_counts(referrals)
 
         student_by_name = {}
+
         for student in students:
             full_name_key = (student.get_full_name() or "").strip().casefold()
             username_key = (student.username or "").strip().casefold()
+
             if full_name_key and full_name_key not in student_by_name:
                 student_by_name[full_name_key] = student
+
             if username_key and username_key not in student_by_name:
                 student_by_name[username_key] = student
 
@@ -832,6 +848,7 @@ def dashboard_view(request):
         )
 
         recent_referrals = list(referrals[:5])
+
         for referral in recent_referrals:
             name_key = (referral.student_name or "").strip().casefold()
             referral.matched_student = student_by_name.get(name_key)
@@ -1009,8 +1026,14 @@ def dashboard_view(request):
             get_announcements_for_user(request.user)[:6]
         )
 
-        active_departments = Department.objects.filter(is_active=True).order_by("name")
-        all_announcements = ClinicAnnouncement.objects.select_related("department", "created_by")[:10]
+        active_departments = Department.objects.filter(
+            is_active=True
+        ).order_by("name")
+
+        all_announcements = ClinicAnnouncement.objects.select_related(
+            "department",
+            "created_by",
+        )[:10]
 
         context = {
             "appointments": appointments,
@@ -1202,6 +1225,8 @@ def teacher_required(view_func):
     return wrapper
 
 
+
+@teacher_required
 def teacher_department(request):
     dept_id = request.GET.get("department")
 
@@ -1250,14 +1275,21 @@ def teacher_department(request):
         dept_code = (department.code or "").strip()
         dept_name = department.name.strip()
 
+        department_filter = (
+            Q(department__iexact=dept_code)
+            | Q(department__iexact=dept_name)
+            | Q(department__icontains=dept_name)
+        )
+
         department_students = User.objects.filter(
             role="student",
             verification_status="verified",
         ).filter(
-            Q(department__iexact=dept_code)
-            | Q(department__iexact=dept_name)
-            | Q(department__icontains=dept_name)
-        ).distinct().order_by("last_name", "first_name")
+            department_filter
+        ).distinct().order_by(
+            "last_name",
+            "first_name"
+        )
 
         search = request.GET.get("search", "").strip()
         selected_course = request.GET.get("course", "").strip()
@@ -1324,18 +1356,80 @@ def teacher_department(request):
                 for building in buildings
             )
 
-        faculty_count = User.objects.filter(
+        faculty_list = User.objects.filter(
             role="teacher",
         ).filter(
-            Q(department__iexact=dept_code)
-            | Q(department__iexact=dept_name)
-            | Q(department__icontains=dept_name)
-        ).count()
+            department_filter
+        ).order_by(
+            "last_name",
+            "first_name"
+        )
+
+        faculty_count = faculty_list.count()
+
+        recent_incidents = Referral.objects.filter(
+            department=department
+        ).select_related(
+            "teacher"
+        ).order_by(
+            "-created_at"
+        )[:5]
 
         active_referral_count = Referral.objects.filter(
             department=department,
-            status__iexact="Approved",
+            status__in=["Approved", "Received"],
         ).count()
+
+        today = date.today()
+
+        try:
+            calendar_year = int(
+                request.GET.get("calendar_year", today.year)
+            )
+            calendar_month = int(
+                request.GET.get("calendar_month", today.month)
+            )
+
+            if calendar_month < 1 or calendar_month > 12:
+                raise ValueError
+
+            if calendar_year < 1900 or calendar_year > 9999:
+                raise ValueError
+
+        except (TypeError, ValueError):
+            calendar_year = today.year
+            calendar_month = today.month
+
+        calendar_obj = calendar.Calendar(firstweekday=6)
+
+        calendar_weeks = calendar_obj.monthdatescalendar(
+            calendar_year,
+            calendar_month,
+        )
+
+        previous_month = (
+            calendar_year - 1 if calendar_month == 1 else calendar_year,
+            12 if calendar_month == 1 else calendar_month - 1,
+        )
+
+        next_month = (
+            calendar_year + 1 if calendar_month == 12 else calendar_year,
+            1 if calendar_month == 12 else calendar_month + 1,
+        )
+
+        clinic_announcements = ClinicAnnouncement.objects.filter(
+            is_active=True,
+            audience="department",
+            department=department,
+            event_date__gte=today,
+        ).select_related(
+            "department",
+            "created_by",
+        ).order_by(
+            "event_date",
+            "start_time",
+            "-created_at",
+        )
 
         return render(
             request,
@@ -1343,18 +1437,35 @@ def teacher_department(request):
             {
                 "current": "teacher_department",
                 "department": department,
+
                 "students": department_students,
                 "total_students": total_students,
+                "filtered_student_count": department_students.count(),
                 "courses": courses,
                 "year_options": year_options,
                 "search": search,
                 "selected_course": selected_course,
                 "selected_year": selected_year,
+
                 "buildings": buildings,
                 "building_count": building_count,
                 "room_count": room_count,
+
                 "faculty_count": faculty_count,
+                "faculty_list": faculty_list,
+
                 "active_referral_count": active_referral_count,
+                "recent_incidents": recent_incidents,
+
+                "clinic_announcements": clinic_announcements,
+
+                "today": today,
+                "calendar_year": calendar_year,
+                "calendar_month": calendar_month,
+                "calendar_month_name": calendar.month_name[calendar_month],
+                "calendar_weeks": calendar_weeks,
+                "previous_month": previous_month,
+                "next_month": next_month,
             },
         )
 
@@ -1416,12 +1527,14 @@ def teacher_department(request):
     )
 
 
+
+
 @teacher_required
 def teacher_department_detail(request, pk):
     department = get_object_or_404(
         Department,
         pk=pk,
-        is_active=True
+        is_active=True,
     )
 
     department_filter = (
@@ -1442,7 +1555,7 @@ def teacher_department_detail(request, pk):
     ).order_by(
         "last_name",
         "first_name",
-        "username"
+        "username",
     )
 
     total_students = all_students.count()
@@ -1499,12 +1612,12 @@ def teacher_department_detail(request, pk):
         )
 
     faculty_list = User.objects.filter(
-        role="teacher"
+        role="teacher",
     ).filter(
         faculty_filter
     ).order_by(
         "last_name",
-        "first_name"
+        "first_name",
     )
 
     recent_incidents = Referral.objects.filter(
@@ -1517,7 +1630,7 @@ def teacher_department_detail(request, pk):
 
     active_referral_count = Referral.objects.filter(
         department=department,
-        status__in=["Approved", "Received"]
+        status__in=["Approved", "Received"],
     ).count()
 
     today = date.today()
@@ -1544,21 +1657,31 @@ def teacher_department_detail(request, pk):
 
     calendar_weeks = calendar_obj.monthdatescalendar(
         calendar_year,
-        calendar_month
-    )
-
-    clinic_announcements = list(
-        get_announcements_for_user(request.user, department=department)
+        calendar_month,
     )
 
     previous_month = (
         calendar_year - 1 if calendar_month == 1 else calendar_year,
-        12 if calendar_month == 1 else calendar_month - 1
+        12 if calendar_month == 1 else calendar_month - 1,
     )
 
     next_month = (
         calendar_year + 1 if calendar_month == 12 else calendar_year,
-        1 if calendar_month == 12 else calendar_month + 1
+        1 if calendar_month == 12 else calendar_month + 1,
+    )
+
+    clinic_announcements = ClinicAnnouncement.objects.filter(
+        is_active=True,
+        audience="department",
+        department=department,
+        event_date__gte=today,
+    ).select_related(
+        "department",
+        "created_by",
+    ).order_by(
+        "event_date",
+        "start_time",
+        "-created_at",
     )
 
     return render(
@@ -1585,6 +1708,8 @@ def teacher_department_detail(request, pk):
             "active_referral_count": active_referral_count,
             "recent_incidents": recent_incidents,
 
+            "clinic_announcements": clinic_announcements,
+
             "today": today,
             "calendar_year": calendar_year,
             "calendar_month": calendar_month,
@@ -1594,6 +1719,7 @@ def teacher_department_detail(request, pk):
             "next_month": next_month,
         },
     )
+
 
 
 @admin_required
@@ -3663,25 +3789,65 @@ def toggle_user_status(request, user_id):
     return redirect("accounts:admin_user_management")
 
 
+
+def get_medicine_icon(dosage_form):
+    form = (dosage_form or "").strip().lower()
+
+    if "tablet" in form:
+        return "tablet"
+
+    if "capsule" in form:
+        return "capsule"
+
+    if any(word in form for word in ("syrup", "liquid", "suspension")):
+        return "liquid"
+
+    if "solution" in form:
+        return "solution"
+
+    if "powder" in form:
+        return "powder"
+
+    if "cream" in form:
+        return "cream"
+
+    return "other"
+
+
 @staff_position_required("admin", "nurse")
 def staff_medicines(request):
     search_query = (request.GET.get("q") or "").strip()
     status_filter = (request.GET.get("status") or "").strip().lower()
+
+    valid_statuses = {"", "in_stock", "low_stock", "out_of_stock"}
+
+    if status_filter not in valid_statuses:
+        status_filter = ""
 
     if request.method == "POST":
         action = (request.POST.get("action") or "").strip()
 
         if action == "add":
             name = " ".join((request.POST.get("name") or "").split())
-            dosage_form = " ".join((request.POST.get("dosage_form") or "").split())
+            dosage_form = " ".join(
+                (request.POST.get("dosage_form") or "").split()
+            )
+
+            selected_icon = get_medicine_icon(dosage_form)
 
             try:
-                stock_quantity = max(0, int(request.POST.get("stock_quantity") or 0))
+                stock_quantity = max(
+                    0,
+                    int(request.POST.get("stock_quantity") or 0)
+                )
             except (TypeError, ValueError):
                 stock_quantity = 0
 
             try:
-                reorder_level = max(0, int(request.POST.get("reorder_level") or 5))
+                reorder_level = max(
+                    0,
+                    int(request.POST.get("reorder_level") or 5)
+                )
             except (TypeError, ValueError):
                 reorder_level = 5
 
@@ -3689,18 +3855,25 @@ def staff_medicines(request):
 
             if not name:
                 messages.error(request, "Medicine name is required.")
-            else:
-                Medicine.objects.create(
-                    name=name,
-                    dosage_form=dosage_form,
-                    stock_quantity=stock_quantity,
-                    reorder_level=reorder_level,
-                    is_active=is_active,
-                )
-                messages.success(request, f"{name} has been added to clinic inventory.")
+                return redirect("accounts:staff_medicines")
+
+            Medicine.objects.create(
+                name=name,
+                dosage_form=dosage_form,
+                icon=selected_icon,
+                stock_quantity=stock_quantity,
+                reorder_level=reorder_level,
+                is_active=is_active,
+            )
+
+            messages.success(
+                request,
+                f"{name} has been added to clinic inventory."
+            )
+
             return redirect("accounts:staff_medicines")
 
-        if action == "adjust":
+        elif action == "adjust":
             medicine_id = request.POST.get("medicine_id")
             medicine = get_object_or_404(Medicine, pk=medicine_id)
 
@@ -3709,29 +3882,53 @@ def staff_medicines(request):
             except (TypeError, ValueError):
                 delta = 0
 
-            new_quantity = max(0, medicine.stock_quantity + delta)
+            new_quantity = max(
+                0,
+                medicine.stock_quantity + delta
+            )
+
             medicine.stock_quantity = new_quantity
-            medicine.save(update_fields=["stock_quantity", "updated_at"])
+            medicine.save(
+                update_fields=["stock_quantity", "updated_at"]
+            )
+
             messages.success(
                 request,
-                f"Updated {medicine.name} stock to {medicine.stock_quantity}.",
+                f"Updated {medicine.name} stock to {medicine.stock_quantity}."
             )
-            return redirect("accounts:staff_medicines")
 
-        if action == "toggle_active":
+            return redirect(
+                f"{reverse('accounts:staff_medicines')}?return_to_medicine={medicine.pk}"
+            )
+
+        elif action == "toggle_active":
             medicine_id = request.POST.get("medicine_id")
             medicine = get_object_or_404(Medicine, pk=medicine_id)
+
             medicine.is_active = not medicine.is_active
-            medicine.save(update_fields=["is_active", "updated_at"])
+            medicine.save(
+                update_fields=["is_active", "updated_at"]
+            )
+
             state_label = "active" if medicine.is_active else "inactive"
-            messages.success(request, f"{medicine.name} is now marked as {state_label}.")
-            return redirect("accounts:staff_medicines")
+
+            messages.success(
+                request,
+                f"{medicine.name} is now marked as {state_label}."
+            )
+
+            return redirect(
+                f"{reverse('accounts:staff_medicines')}?return_to_medicine={medicine.pk}"
+            )
+
+        return redirect("accounts:staff_medicines")
 
     all_medicines = list(Medicine.objects.all())
     medicines = all_medicines
 
     if search_query:
         q_lower = search_query.casefold()
+
         medicines = [
             med for med in medicines
             if q_lower in (med.name or "").casefold()
@@ -3739,15 +3936,37 @@ def staff_medicines(request):
         ]
 
     if status_filter == "in_stock":
-        medicines = [med for med in medicines if med.stock_status == "In Stock"]
-    elif status_filter == "low_stock":
-        medicines = [med for med in medicines if med.stock_status == "Low Stock"]
-    elif status_filter == "out_of_stock":
-        medicines = [med for med in medicines if med.stock_status == "Out of Stock"]
+        medicines = [
+            med for med in medicines
+            if med.stock_status == "In Stock"
+        ]
 
-    in_stock_count = sum(1 for med in all_medicines if med.stock_status == "In Stock")
-    low_stock_count = sum(1 for med in all_medicines if med.stock_status == "Low Stock")
-    out_of_stock_count = sum(1 for med in all_medicines if med.stock_status == "Out of Stock")
+    elif status_filter == "low_stock":
+        medicines = [
+            med for med in medicines
+            if med.stock_status == "Low Stock"
+        ]
+
+    elif status_filter == "out_of_stock":
+        medicines = [
+            med for med in medicines
+            if med.stock_status == "Out of Stock"
+        ]
+
+    in_stock_count = sum(
+        1 for med in all_medicines
+        if med.stock_status == "In Stock"
+    )
+
+    low_stock_count = sum(
+        1 for med in all_medicines
+        if med.stock_status == "Low Stock"
+    )
+
+    out_of_stock_count = sum(
+        1 for med in all_medicines
+        if med.stock_status == "Out of Stock"
+    )
 
     return render(
         request,
@@ -3763,21 +3982,38 @@ def staff_medicines(request):
     )
 
 
+
+
 def get_announcements_for_user(user, department=None):
-    target_dept = department or getattr(user, 'department_obj', None)
-    audience_filter = Q(audience='all')
+    role = (getattr(user, "role", "") or "").strip().lower()
 
-    if getattr(user, 'role', None) == 'student':
-        audience_filter |= Q(audience='student')
-    elif getattr(user, 'role', None) == 'teacher':
-        audience_filter |= Q(audience='teacher')
-    elif getattr(user, 'role', None) == 'staff':
-        audience_filter |= Q(audience='all') | Q(audience='student') | Q(audience='teacher') | Q(audience='department')
+    audience_filter = Q(audience="all")
 
-    if target_dept is not None:
-        audience_filter |= Q(audience='department', department=target_dept)
+    if role == "student":
+        audience_filter |= Q(audience="student")
 
-    return ClinicAnnouncement.objects.filter(is_active=True).filter(audience_filter).select_related('department')
+    elif role == "teacher":
+        audience_filter |= Q(audience="teacher")
+
+    elif role == "staff":
+        audience_filter |= Q(
+            audience__in=["student", "teacher"]
+        )
+
+    if department is not None:
+        audience_filter |= Q(
+            audience="department",
+            department=department,
+        )
+
+    return (
+        ClinicAnnouncement.objects
+        .filter(is_active=True)
+        .filter(audience_filter)
+        .select_related("department", "created_by")
+        .distinct()
+        .order_by("event_date", "-created_at")
+    )
 
 
 @staff_position_required("admin", "nurse", "receptionist")
@@ -3883,3 +4119,20 @@ def delete_clinic_announcement(request, announcement_id):
 
     messages.success(request, "Announcement deleted.")
     return redirect("accounts:staff_announcements")
+
+@require_GET
+@cache_control(max_age=3600, public=True)
+def assetlinks_json(request):
+    data = [
+        {
+            "relation": ["delegate_permission/common.handle_all_urls"],
+            "target": {
+                "namespace": "android_app",
+                "package_name": "com.nemsu.clinicconnect",
+                "sha256_cert_fingerprints": [
+                    "PASTE_YOUR_SHA256_FINGERPRINT_HERE"
+                ],
+            },
+        }
+    ]
+    return JsonResponse(data, safe=False)

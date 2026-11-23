@@ -530,8 +530,23 @@ class Course(models.Model):
 
 
 class Medicine(models.Model):
+    ICON_CHOICES = (
+        ("tablet", "Tablet"),
+        ("capsule", "Capsule"),
+        ("liquid", "Liquid / Syrup"),
+        ("solution", "Solution"),
+        ("powder", "Powder"),
+        ("cream", "Cream"),
+        ("other", "Other"),
+    )
+
     name = models.CharField(max_length=150)
     dosage_form = models.CharField(max_length=100, blank=True)
+    icon = models.CharField(
+        max_length=20,
+        choices=ICON_CHOICES,
+        default="other",
+    )
     stock_quantity = models.PositiveIntegerField(default=0)
     reorder_level = models.PositiveIntegerField(default=5)
     is_active = models.BooleanField(default=True)
@@ -557,6 +572,19 @@ class Medicine(models.Model):
         if self.stock_quantity <= self.reorder_level:
             return "Low Stock"
         return "In Stock"
+
+    @property
+    def icon_class(self):
+        icon_map = {
+            "tablet": "fa-solid fa-tablets",
+            "capsule": "fa-solid fa-capsules",
+            "liquid": "fa-solid fa-prescription-bottle",
+            "solution": "fa-solid fa-prescription-bottle-medical",
+            "powder": "fa-solid fa-mortar-pestle",
+            "cream": "fa-solid fa-jar",
+            "other": "fa-solid fa-prescription-bottle-medical",
+        }
+        return icon_map.get(self.icon, icon_map["other"])
 
 
 class ClinicAnnouncement(models.Model):

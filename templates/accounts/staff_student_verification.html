@@ -1309,10 +1309,14 @@
 
                                         <td>
                                             <span class="year-block-pill">
-                                                {% if student.year_block %}
+                                                {% if student.year_block and student.block %}
+                                                    {{ student.year_block }} / {{ student.block}}
+                                                {% elif student.year_block %}
                                                     {{ student.year_block }}
+                                                {% elif student.block %}
+                                                    {{ student.block }}
                                                 {% else %}
-                                                    —
+                                                    -
                                                 {% endif %}
                                             </span>
                                         </td>

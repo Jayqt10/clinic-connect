@@ -8,7 +8,7 @@
     color: #f8fafc;
     max-width: 1440px;
     margin: 0 auto;
-    padding: 8px 0 36px;
+    padding: 6px 0 32px;
   }
 
   .dept-view-wrap *,
@@ -27,9 +27,10 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
+    min-height: 36px;
     padding: 7px 12px;
     border-radius: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     transition: background 0.16s, border-color 0.16s, color 0.16s;
   }
 
@@ -41,48 +42,48 @@
 
   .dept-header-card,
   .panel-box-container {
+    min-width: 0;
     background: #111827;
     border: 1px solid #1f2937;
     border-radius: 16px;
-    padding: 22px;
-    margin-bottom: 20px;
+    padding: 18px;
+    margin-bottom: 16px;
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
   }
 
-  .dept-pill-active {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: #052e16;
-    border: 1px solid #166534;
-    color: #86efac;
-    padding: 4px 11px;
-    border-radius: 999px;
-    font-size: 10.5px;
-    font-weight: 800;
-    letter-spacing: 0.6px;
-    margin-bottom: 10px;
-  }
-
+  .dept-pill-active,
   .dept-pill-inactive {
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    background: #2a1215;
-    border: 1px solid #7f1d1d;
-    color: #fca5a5;
     padding: 4px 11px;
     border-radius: 999px;
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.6px;
     margin-bottom: 10px;
+  }
+
+  .dept-pill-active {
+    background: #052e16;
+    border: 1px solid #166534;
+    color: #86efac;
+  }
+
+  .dept-pill-inactive {
+    background: #2a1215;
+    border: 1px solid #7f1d1d;
+    color: #fca5a5;
   }
 
   .dept-header-top {
     display: flex;
     flex-direction: column;
     gap: 14px;
+  }
+
+  .dept-header-top > div:first-child {
+    min-width: 0;
   }
 
   @media (min-width: 640px) {
@@ -94,17 +95,19 @@
   }
 
   .dept-title-h1 {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 800;
     letter-spacing: -0.35px;
     color: #ffffff;
     margin: 0;
+    overflow-wrap: anywhere;
   }
 
   .dept-sub-txt {
-    font-size: 12.5px;
+    font-size: 12px;
     color: #94a3b8;
     margin: 4px 0 0;
+    line-height: 1.45;
   }
 
   .btn-emergency-dispatch {
@@ -113,13 +116,16 @@
     color: #fff;
     font-size: 12.5px;
     font-weight: 800;
-    padding: 11px 18px;
+    min-height: 40px;
+    padding: 10px 16px;
     border-radius: 10px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     white-space: nowrap;
+    flex-shrink: 0;
     box-shadow: 0 6px 18px rgba(239, 68, 68, 0.25);
     transition: transform 0.16s, background 0.16s;
   }
@@ -132,13 +138,14 @@
   .dept-metrics-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    margin-top: 20px;
+    gap: 10px;
+    margin-top: 18px;
   }
 
   @media (min-width: 768px) {
     .dept-metrics-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
     }
   }
 
@@ -149,40 +156,49 @@
   }
 
   .metric-card {
+    min-width: 0;
     background: #0d1524;
     border: 1px solid #23324a;
     border-radius: 11px;
-    padding: 14px 15px;
+    padding: 13px 14px;
   }
 
   .metric-lbl {
     font-size: 11px;
     color: #94a3b8;
     font-weight: 650;
+    line-height: 1.35;
   }
 
   .metric-val {
-    font-size: 23px;
+    font-size: 22px;
     font-weight: 800;
     color: #fff;
     margin-top: 5px;
+    font-variant-numeric: tabular-nums;
   }
 
   .app-dashboard-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 20px;
+    gap: 16px;
     align-items: start;
+  }
+
+  .app-dashboard-layout > div,
+  .app-dashboard-layout > aside {
+    min-width: 0;
   }
 
   @media (min-width: 1024px) {
     .app-dashboard-layout {
       grid-template-columns: minmax(0, 1.75fr) minmax(310px, 1fr);
+      gap: 20px;
     }
   }
 
   .panel-h2-title {
-    font-size: 15.5px;
+    font-size: 15px;
     font-weight: 800;
     color: #fff;
     margin: 0 0 14px;
@@ -233,7 +249,7 @@
   }
 
   .select-dropdown-filter {
-    min-width: 130px;
+    min-width: 120px;
     cursor: pointer;
   }
 
@@ -249,6 +265,7 @@
 
   .student-directory-tbl {
     width: 100%;
+    min-width: 440px;
     border-collapse: collapse;
     font-size: 12.5px;
     margin-top: 6px;
@@ -356,7 +373,7 @@
 
   .building-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 14px;
   }
 
@@ -374,24 +391,24 @@
   }
 
   .building-card-header {
-    padding: 14px 16px;
+    padding: 13px 15px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
     border-bottom: 1px solid #1f2d42;
   }
 
   .building-title-group {
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 10px;
     min-width: 0;
   }
 
   .building-icon {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -406,7 +423,7 @@
   .building-name {
     font-weight: 800;
     color: #fff;
-    font-size: 13.5px;
+    font-size: 13px;
     overflow-wrap: anywhere;
   }
 
@@ -429,12 +446,12 @@
   }
 
   .building-card-body {
-    padding: 13px 15px 15px;
+    padding: 13px 14px 14px;
   }
 
   .floor-group + .floor-group {
-    margin-top: 13px;
-    padding-top: 12px;
+    margin-top: 12px;
+    padding-top: 11px;
     border-top: 1px solid #1c283b;
   }
 
@@ -443,7 +460,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    margin-bottom: 9px;
+    margin-bottom: 8px;
   }
 
   .floor-title {
@@ -459,7 +476,7 @@
 
   .room-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 8px;
   }
 
@@ -521,7 +538,7 @@
 
   .empty-state {
     text-align: center;
-    padding: 20px;
+    padding: 18px;
     color: #94a3b8;
     font-size: 12.5px;
     background: #0d1524;
@@ -533,7 +550,7 @@
     background: #0d1524;
     border: 1px solid #23324a;
     border-radius: 12px;
-    padding: 13px;
+    padding: 12px;
   }
 
   .calendar-navigation {
@@ -551,8 +568,8 @@
     text-decoration: none;
     font-size: 12px;
     font-weight: 800;
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -608,16 +625,61 @@
     padding: 12px;
   }
 
-  .incident-item {
-    border-color: #3b1c24;
-  }
-
   .schedule-list,
   .faculty-list,
   .incident-list {
     display: flex;
     flex-direction: column;
     gap: 9px;
+  }
+
+  .schedule-open-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition: border-color 0.16s, background 0.16s, transform 0.16s;
+  }
+
+  .schedule-open-btn:hover {
+    background: #131e33;
+    border-color: #22c55e;
+    transform: translateY(-1px);
+  }
+
+  .schedule-open-btn:focus-visible {
+    outline: 2px solid #4ade80;
+    outline-offset: 3px;
+  }
+
+  .schedule-open-btn .schedule-arrow {
+    color: #86efac;
+    flex-shrink: 0;
+    font-size: 13px;
+  }
+
+  .schedule-date-label {
+    color: #94a3b8;
+    font-size: 11.5px;
+    margin-top: 5px;
+    line-height: 1.45;
+  }
+
+  .schedule-dept-label {
+    display: inline-block;
+    margin-top: 7px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: #86efac;
+    font-size: 10px;
+    font-weight: 750;
   }
 
   .status-label {
@@ -632,16 +694,196 @@
   .muted-text {
     font-size: 11.5px;
     color: #94a3b8;
+    line-height: 1.45;
+  }
+
+  .incident-item {
+    border-color: #3b1c24;
+  }
+
+  .announcement-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(2, 6, 23, 0.82);
+    backdrop-filter: blur(5px);
+  }
+
+  .announcement-modal.show {
+    display: flex;
+  }
+
+  .announcement-modal-card {
+    width: 100%;
+    max-width: 560px;
+    max-height: min(85vh, 720px);
+    overflow-y: auto;
+    background: #111827;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+    animation: announcementModalIn 0.18s ease-out;
+  }
+
+  @keyframes announcementModalIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .announcement-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px;
+    border-bottom: 1px solid #263449;
+  }
+
+  .announcement-modal-title {
+    color: #fff;
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: 800;
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .announcement-modal-subtitle {
+    color: #86efac;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .announcement-modal-close {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #cbd5e1;
+    cursor: pointer;
+  }
+
+  .announcement-modal-close:hover {
+    color: #fff;
+    background: #334155;
+  }
+
+  .announcement-modal-body {
+    padding: 18px;
+  }
+
+  .announcement-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .announcement-info-box {
+    padding: 11px;
+    background: #0b1120;
+    border: 1px solid #263449;
+    border-radius: 9px;
+    min-width: 0;
+  }
+
+  .announcement-info-label {
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 750;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .announcement-info-value {
+    color: #f8fafc;
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 5px;
+    overflow-wrap: anywhere;
+  }
+
+  .announcement-message-heading {
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 9px;
+  }
+
+  .announcement-full-message {
+    color: #cbd5e1;
+    background: #0b1120;
+    border: 1px solid #263449;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 12.5px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    min-height: 70px;
+  }
+
+  .announcement-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 13px 18px;
+    border-top: 1px solid #263449;
+  }
+
+  .announcement-close-action {
+    background: #172238;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+    border-radius: 8px;
+    min-height: 36px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 750;
+    cursor: pointer;
+  }
+
+  .announcement-close-action:hover {
+    background: #263449;
+    color: #fff;
+  }
+
+  @media (max-width: 639px) {
+    .btn-emergency-dispatch {
+      width: 100%;
+    }
   }
 
   @media (max-width: 480px) {
     .dept-header-card,
     .panel-box-container {
-      padding: 16px;
+      padding: 15px;
+      border-radius: 13px;
     }
 
     .dept-title-h1 {
-      font-size: 22px;
+      font-size: 21px;
+    }
+
+    .dept-metrics-grid {
+      grid-template-columns: 1fr;
     }
 
     .metric-val {
@@ -652,13 +894,23 @@
       width: 100%;
     }
 
+    .building-grid,
+    .room-list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
     .building-card-header,
     .building-card-body {
       padding: 12px;
     }
 
-    .room-list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .announcement-info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .announcement-modal-header,
+    .announcement-modal-body {
+      padding: 15px;
     }
   }
 </style>
@@ -980,50 +1232,82 @@
       </section>
 
       <section class="panel-box-container">
-        <h2 class="panel-h2-title">
-          <span class="panel-title-icon" aria-hidden="true">
-            <i class="fa-solid fa-clipboard-list"></i>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+          <h2 class="panel-h2-title" style="margin:0;">
+            <span class="panel-title-icon" aria-hidden="true">
+              <i class="fa-solid fa-clipboard-list"></i>
+            </span>
+            <span>Upcoming Department Schedules</span>
+          </h2>
+
+          <span class="status-label" style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.28);color:#86efac;">
+            {{ clinic_announcements|length }} Schedule{{ clinic_announcements|length|pluralize }}
           </span>
-          <span>Upcoming Department Schedules</span>
-        </h2>
-
-        <div class="schedule-list">
-          <div class="schedule-item" style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
-            <div>
-              <div style="font-weight:700;color:#fff;font-size:13px;">
-                <i class="fa-solid fa-stethoscope" style="color:#4ade80;margin-right:6px;"></i>
-                Routine Student Health Clearances
-              </div>
-              <div class="muted-text" style="margin-top:4px;">
-                October 27, 2026 · 09:00 AM–02:00 PM
-              </div>
-            </div>
-
-            <span class="status-label" style="background:rgba(56,189,248,.15);border:1px solid rgba(56,189,248,.3);color:#38bdf8;">
-              Sample
-            </span>
-          </div>
-
-          <div class="schedule-item" style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
-            <div>
-              <div style="font-weight:700;color:#fff;font-size:13px;">
-                <i class="fa-solid fa-kit-medical" style="color:#fbbf24;margin-right:6px;"></i>
-                Lab First-Aid Kit Refill &amp; Safety Audit
-              </div>
-              <div class="muted-text" style="margin-top:4px;">
-                November 3, 2026 · 10:00 AM–12:00 PM
-              </div>
-            </div>
-
-            <span class="status-label" style="background:rgba(250,204,21,.15);border:1px solid rgba(250,204,21,.3);color:#facc15;">
-              Sample
-            </span>
-          </div>
         </div>
 
-        <p class="muted-text" style="margin:12px 0 0;">
-          These are sample schedule entries and are not retrieved from a scheduling model.
-        </p>
+        {% if clinic_announcements %}
+          <div class="schedule-list">
+            {% for announcement in clinic_announcements %}
+              <button
+                type="button"
+                class="schedule-item schedule-open-btn"
+                data-announcement-title="{{ announcement.title }}"
+                data-announcement-message="{{ announcement.message }}"
+                data-announcement-date="{{ announcement.event_date|date:'F d, Y' }}"
+                data-announcement-time="{% if announcement.start_time %}{{ announcement.start_time|time:'h:i A' }}{% else %}Time not specified{% endif %}{% if announcement.end_time %} – {{ announcement.end_time|time:'h:i A' }}{% endif %}"
+                data-announcement-department="{{ announcement.department.name|default:department.name }}"
+                aria-label="View announcement: {{ announcement.title }}"
+              >
+                <span style="display:flex;align-items:flex-start;gap:11px;min-width:0;">
+                  <span class="panel-title-icon" style="width:34px;height:34px;flex-shrink:0;">
+                    <i class="fa-solid fa-calendar-check"></i>
+                  </span>
+
+                  <span style="display:block;min-width:0;">
+                    <span style="display:block;font-weight:750;color:#fff;font-size:13px;overflow-wrap:anywhere;">
+                      {{ announcement.title }}
+                    </span>
+
+                    <span class="schedule-date-label" style="display:block;">
+                      <i class="fa-regular fa-calendar" style="margin-right:4px;"></i>
+                      {{ announcement.event_date|date:"F d, Y" }}
+
+                      <span style="margin:0 4px;">·</span>
+
+                      <i class="fa-regular fa-clock" style="margin-right:3px;"></i>
+                      {% if announcement.start_time %}
+                        {{ announcement.start_time|time:"h:i A" }}
+                        {% if announcement.end_time %}
+                          – {{ announcement.end_time|time:"h:i A" }}
+                        {% endif %}
+                      {% else %}
+                        Time not specified
+                      {% endif %}
+                    </span>
+
+                    <span class="schedule-dept-label">
+                      {{ announcement.department.name|default:department.name }}
+                    </span>
+                  </span>
+                </span>
+
+                <span class="schedule-arrow" aria-hidden="true">
+                  <i class="fa-solid fa-chevron-right"></i>
+                </span>
+              </button>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state">
+            <div style="font-size:22px;color:#64748b;margin-bottom:9px;">
+              <i class="fa-regular fa-calendar-xmark"></i>
+            </div>
+            <strong style="color:#e2e8f0;">No upcoming department schedules</strong>
+            <div style="margin-top:6px;">
+              There are currently no active announcements scheduled for {{ department.name }}.
+            </div>
+          </div>
+        {% endif %}
       </section>
 
     </div>
@@ -1075,7 +1359,7 @@
         </div>
 
         <p class="muted-text" style="margin:12px 0 0;">
-          The calendar displays the current date and month. Event markers will be connected when a scheduling model is available.
+          The calendar displays the current date and month. Department schedules are listed in the Upcoming Department Schedules section.
         </p>
       </section>
 
@@ -1110,7 +1394,7 @@
                 {% endif %}
 
                 <div style="min-width:0;">
-                  <div style="font-weight:700;color:#fff;font-size:13px;">
+                  <div style="font-weight:700;color:#fff;font-size:13px;overflow-wrap:anywhere;">
                     {{ teacher.get_full_name|default:teacher.username }}
                   </div>
                   <div class="muted-text">
@@ -1139,11 +1423,11 @@
           <div class="incident-list">
             {% for incident in recent_incidents %}
               <div class="incident-item">
-                <div style="font-weight:700;color:#f87171;font-size:12px;">
+                <div style="font-weight:700;color:#f87171;font-size:12px;overflow-wrap:anywhere;">
                   {{ incident.student_name|default:"Student Referral" }}
                 </div>
 
-                <div style="font-size:11.5px;color:#e2e8f0;margin-top:4px;">
+                <div style="font-size:11.5px;color:#e2e8f0;margin-top:4px;overflow-wrap:anywhere;">
                   {{ incident.symptoms|default:incident.concern|default:"No incident details provided." }}
                 </div>
 
@@ -1164,4 +1448,162 @@
 
   </div>
 </div>
+
+<div
+  class="announcement-modal"
+  id="departmentAnnouncementModal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="announcementModalTitle"
+  aria-hidden="true"
+>
+  <div class="announcement-modal-card">
+
+    <div class="announcement-modal-header">
+      <div style="min-width:0;">
+        <div class="announcement-modal-subtitle">
+          <i class="fa-solid fa-bullhorn" style="margin-right:5px;"></i>
+          Department Announcement
+        </div>
+        <h2 class="announcement-modal-title" id="announcementModalTitle">
+          Announcement Details
+        </h2>
+      </div>
+
+      <button
+        type="button"
+        class="announcement-modal-close"
+        id="closeAnnouncementModal"
+        aria-label="Close announcement"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="announcement-modal-body">
+      <div class="announcement-info-grid">
+        <div class="announcement-info-box">
+          <div class="announcement-info-label">
+            <i class="fa-regular fa-calendar" style="margin-right:4px;"></i>
+            Event Date
+          </div>
+          <div class="announcement-info-value" id="announcementModalDate">
+            Not specified
+          </div>
+        </div>
+
+        <div class="announcement-info-box">
+          <div class="announcement-info-label">
+            <i class="fa-regular fa-clock" style="margin-right:4px;"></i>
+            Schedule
+          </div>
+          <div class="announcement-info-value" id="announcementModalTime">
+            Not specified
+          </div>
+        </div>
+
+        <div class="announcement-info-box" style="grid-column:1/-1;">
+          <div class="announcement-info-label">
+            <i class="fa-solid fa-building" style="margin-right:4px;"></i>
+            Department
+          </div>
+          <div class="announcement-info-value" id="announcementModalDepartment">
+            Not specified
+          </div>
+        </div>
+      </div>
+
+      <h3 class="announcement-message-heading">
+        Announcement Details
+      </h3>
+
+      <div class="announcement-full-message" id="announcementModalMessage">
+        No additional details provided.
+      </div>
+    </div>
+
+    <div class="announcement-modal-footer">
+      <button
+        type="button"
+        class="announcement-close-action"
+        id="closeAnnouncementModalAction"
+      >
+        Close
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("departmentAnnouncementModal");
+    const titleElement = document.getElementById("announcementModalTitle");
+    const dateElement = document.getElementById("announcementModalDate");
+    const timeElement = document.getElementById("announcementModalTime");
+    const departmentElement = document.getElementById("announcementModalDepartment");
+    const messageElement = document.getElementById("announcementModalMessage");
+
+    const closeButton = document.getElementById("closeAnnouncementModal");
+    const closeAction = document.getElementById("closeAnnouncementModalAction");
+
+    let previousFocus = null;
+
+    function openAnnouncement(button) {
+        previousFocus = button;
+
+        titleElement.textContent =
+            button.dataset.announcementTitle || "Announcement Details";
+
+        dateElement.textContent =
+            button.dataset.announcementDate || "Not specified";
+
+        timeElement.textContent =
+            button.dataset.announcementTime || "Time not specified";
+
+        departmentElement.textContent =
+            button.dataset.announcementDepartment || "Not specified";
+
+        messageElement.textContent =
+            button.dataset.announcementMessage || "No additional details provided.";
+
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+
+        closeButton.focus();
+    }
+
+    function closeAnnouncement() {
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+
+        if (previousFocus) {
+            previousFocus.focus();
+        }
+    }
+
+    document.querySelectorAll(".schedule-open-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            openAnnouncement(button);
+        });
+    });
+
+    closeButton.addEventListener("click", closeAnnouncement);
+    closeAction.addEventListener("click", closeAnnouncement);
+
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            closeAnnouncement();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && modal.classList.contains("show")) {
+            closeAnnouncement();
+        }
+    });
+});
+</script>
 {% endblock %}

@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 
 {% block title %}Update Health Record | Clinic Connect{% endblock %}
@@ -16,7 +17,7 @@
     --green: #4ade80;
     max-width: 1080px;
     margin: 0 auto;
-    padding: 4px 0 22px;
+    padding: 4px 0 24px;
     color: var(--text);
   }
 
@@ -29,7 +30,7 @@
     display: flex;
     align-items: center;
     gap: 7px;
-    margin-bottom: 9px;
+    margin-bottom: 10px;
     color: var(--subtle);
     font-size: 11px;
     font-weight: 600;
@@ -49,7 +50,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
     flex-wrap: wrap;
   }
 
@@ -60,8 +61,8 @@
   }
 
   .ehr-heading-icon {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     display: grid;
     place-items: center;
     flex-shrink: 0;
@@ -77,7 +78,7 @@
     color: #fff;
     font-size: 20px;
     font-weight: 800;
-    letter-spacing: -.35px;
+    letter-spacing: -.4px;
   }
 
   .ehr-subtitle {
@@ -87,7 +88,7 @@
   }
 
   .ehr-workspace {
-    padding: 7px 11px;
+    padding: 8px 12px;
     border: 1px solid var(--border-strong);
     border-radius: 7px;
     color: #cbd5e1;
@@ -106,7 +107,7 @@
     overflow: hidden;
     background: var(--panel);
     border: 1px solid var(--border);
-    border-radius: 11px;
+    border-radius: 12px;
   }
 
   .ehr-card-header {
@@ -114,7 +115,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    padding: 12px 17px;
+    padding: 13px 18px;
     border-bottom: 1px solid var(--border);
   }
 
@@ -125,15 +126,15 @@
   }
 
   .ehr-card-icon {
-    width: 31px;
-    height: 31px;
+    width: 33px;
+    height: 33px;
     display: grid;
     place-items: center;
     flex-shrink: 0;
     border-radius: 8px;
     color: var(--green);
     background: rgba(34, 197, 94, .12);
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .ehr-card-heading h2 {
@@ -144,7 +145,7 @@
   }
 
   .ehr-card-heading p {
-    margin: 2px 0 0;
+    margin: 3px 0 0;
     color: var(--muted);
     font-size: 10.5px;
   }
@@ -153,6 +154,7 @@
     color: var(--muted);
     font-size: 10px;
     text-align: right;
+    line-height: 1.6;
   }
 
   .ehr-updated strong {
@@ -160,34 +162,77 @@
   }
 
   .ehr-content {
-    padding: 15px 17px;
+    padding: 17px 18px;
   }
 
-  .ehr-student {
-    padding: 0 0 13px;
-    margin-bottom: 14px;
-    border-bottom: 1px solid var(--border);
+  /* Student information card */
+
+  .ehr-student-card {
+    padding: 15px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #142235 0%, #101b2d 100%);
+    border: 1px solid #2b4058;
+    border-radius: 11px;
   }
 
-  .ehr-student-heading {
+  .ehr-student-card-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 13px;
+  }
+
+  .ehr-student-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #e2e8f0;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .55px;
+    text-transform: uppercase;
+  }
+
+  .ehr-student-card-title span {
+    color: var(--green);
+    font-size: 15px;
+  }
+
+  .ehr-student-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 9px;
+    color: #86efac;
+    background: rgba(34, 197, 94, .11);
+    border: 1px solid rgba(74, 222, 128, .22);
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .3px;
+  }
+
+  .ehr-student-profile {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 0 0 14px;
+    border-bottom: 1px solid rgba(148, 163, 184, .15);
   }
 
   .ehr-avatar {
-    width: 36px;
-    height: 36px;
+    width: 65px;
+    height: 65px;
     overflow: hidden;
     display: grid;
     place-items: center;
     flex-shrink: 0;
-    border-radius: 50%;
+    border-radius: 12px;
     color: var(--green);
-    background: rgba(34, 197, 94, .14);
-    border: 1px solid rgba(74, 222, 128, .25);
-    font-size: 13px;
+    background: #1e3348;
+    border: 1px solid #3a526b;
+    font-size: 23px;
     font-weight: 800;
   }
 
@@ -197,67 +242,87 @@
     object-fit: cover;
   }
 
-  .ehr-student-label {
-    color: var(--subtle);
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: .5px;
-    text-transform: uppercase;
+  .ehr-profile-info {
+    min-width: 0;
   }
 
   .ehr-student-name {
-    margin-top: 1px;
+    margin: 0;
     color: #fff;
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 800;
+    letter-spacing: -.2px;
+    overflow-wrap: anywhere;
   }
 
   .ehr-student-username {
-    color: var(--muted);
-    font-size: 10px;
+    margin-top: 4px;
+    color: #94a3b8;
+    font-size: 11px;
   }
 
   .ehr-student-details {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px;
+    gap: 9px;
+    padding-top: 13px;
   }
 
   .ehr-detail {
     min-width: 0;
-    padding: 7px 9px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 7px;
+    padding: 10px 11px;
+    background: rgba(11, 17, 32, .55);
+    border: 1px solid rgba(71, 85, 105, .45);
+    border-radius: 8px;
+    transition: border-color .15s ease, background .15s ease;
+  }
+
+  .ehr-detail:hover {
+    background: rgba(11, 17, 32, .85);
+    border-color: #3b526d;
   }
 
   .ehr-detail-label {
-    margin-bottom: 3px;
-    color: var(--subtle);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 6px;
+    color: #94a3b8;
     font-size: 9px;
     font-weight: 800;
-    letter-spacing: .35px;
+    letter-spacing: .45px;
     text-transform: uppercase;
   }
 
   .ehr-detail-value {
+    color: #f8fafc;
+    font-size: 12px;
+    font-weight: 750;
     overflow-wrap: anywhere;
-    color: #f1f5f9;
-    font-size: 11px;
-    font-weight: 700;
+    line-height: 1.4;
   }
 
+  /* Medical information */
+
   .ehr-section-heading {
-    margin: 0 0 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 4px;
     color: #fff;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 800;
   }
 
+  .ehr-section-heading span {
+    color: var(--green);
+  }
+
   .ehr-section-description {
-    margin: 0 0 12px;
+    margin: 0 0 14px;
     color: var(--muted);
     font-size: 10.5px;
+    line-height: 1.5;
   }
 
   .ehr-form-grid {
@@ -268,12 +333,12 @@
 
   .ehr-field {
     min-width: 0;
-    margin-bottom: 12px;
+    margin-bottom: 13px;
   }
 
   .ehr-field label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     color: #e2e8f0;
     font-size: 11px;
     font-weight: 750;
@@ -285,18 +350,18 @@
     display: block;
     width: 100%;
     min-width: 0;
-    padding: 9px 11px;
+    padding: 10px 11px;
     color: var(--text);
     background: var(--header);
     border: 1px solid var(--border-strong);
     border-radius: 7px;
     font-family: inherit;
     font-size: 12px;
-    transition: border-color .15s ease;
+    transition: border-color .15s ease, box-shadow .15s ease;
   }
 
   .ehr-field textarea {
-    min-height: 76px;
+    min-height: 85px;
     resize: vertical;
     line-height: 1.5;
   }
@@ -306,6 +371,7 @@
   .ehr-field select:focus {
     outline: none;
     border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, .08);
   }
 
   .ehr-field select option {
@@ -314,13 +380,14 @@
   }
 
   .ehr-help {
-    margin-top: 4px;
+    margin-top: 5px;
     color: var(--subtle);
     font-size: 10px;
+    line-height: 1.5;
   }
 
   .ehr-error {
-    margin-top: 4px;
+    margin-top: 5px;
     color: #f87171;
     font-size: 10.5px;
     font-weight: 650;
@@ -331,24 +398,73 @@
     padding-left: 17px;
   }
 
+  /* Previously dispensed medicine */
+
+  .ehr-given-medicines {
+    padding: 11px 13px;
+    margin: 0 0 14px;
+    background: rgba(34, 197, 94, .055);
+    border: 1px solid rgba(74, 222, 128, .2);
+    border-radius: 8px;
+  }
+
+  .ehr-given-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 8px;
+    color: #cbd5e1;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+  }
+
+  .ehr-medicine-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .ehr-medicine-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 9px;
+    color: #86efac;
+    background: rgba(34, 197, 94, .12);
+    border: 1px solid rgba(74, 222, 128, .22);
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+  }
+
+  /* Medicine dispensing */
+
   .ehr-medicine-section {
-    padding: 12px 13px;
-    margin: 1px 0 13px;
+    padding: 14px;
+    margin: 2px 0 15px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 9px;
   }
 
   .ehr-medicine-heading {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 3px;
+    gap: 9px;
+    margin-bottom: 4px;
   }
 
   .ehr-medicine-icon {
+    width: 29px;
+    height: 29px;
+    display: grid;
+    place-items: center;
     color: var(--green);
-    font-size: 15px;
+    background: rgba(34, 197, 94, .12);
+    border-radius: 7px;
+    font-size: 14px;
   }
 
   .ehr-medicine-heading h3 {
@@ -359,10 +475,10 @@
   }
 
   .ehr-medicine-description {
-    margin: 0 0 11px 23px;
+    margin: 0 0 12px 38px;
     color: var(--muted);
     font-size: 10px;
-    line-height: 1.45;
+    line-height: 1.5;
   }
 
   .ehr-medicine-row {
@@ -381,16 +497,16 @@
   }
 
   .ehr-quantity-field {
-    flex: 0 0 112px !important;
-    width: 112px !important;
-    min-width: 112px !important;
+    flex: 0 0 115px !important;
+    width: 115px !important;
+    min-width: 115px !important;
     margin: 0 !important;
   }
 
   .ehr-medicine-field select,
   .ehr-quantity-field input {
     width: 100% !important;
-    height: 38px;
+    height: 39px;
     min-width: 0;
   }
 
@@ -401,72 +517,45 @@
   }
 
   .ehr-stock-hint {
-    margin-top: 5px;
+    margin-top: 6px;
     color: var(--subtle);
     font-size: 10px;
   }
 
-  .ehr-given-medicines {
-    padding: 10px 12px;
-    margin: 0 0 13px;
-    background: rgba(34, 197, 94, .055);
-    border: 1px solid rgba(74, 222, 128, .2);
-    border-radius: 8px;
-  }
-
-  .ehr-given-title {
-    margin-bottom: 7px;
-    color: #cbd5e1;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: .4px;
-    text-transform: uppercase;
-  }
-
-  .ehr-medicine-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .ehr-medicine-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 5px 8px;
-    color: #86efac;
-    background: rgba(34, 197, 94, .12);
-    border: 1px solid rgba(74, 222, 128, .22);
-    border-radius: 6px;
-    font-size: 10.5px;
-    font-weight: 700;
-  }
+  /* Notice */
 
   .ehr-notice {
     display: flex;
     align-items: flex-start;
-    gap: 8px;
-    padding: 9px 11px;
-    margin-top: 2px;
+    gap: 9px;
+    padding: 11px 12px;
+    margin-top: 3px;
     color: #cbd5e1;
     background: rgba(34, 197, 94, .06);
     border: 1px solid rgba(74, 222, 128, .17);
-    border-radius: 7px;
+    border-radius: 8px;
     font-size: 10.5px;
-    line-height: 1.45;
+    line-height: 1.5;
+  }
+
+  .ehr-notice-icon {
+    color: var(--green);
+    font-size: 15px;
   }
 
   .ehr-notice strong {
     color: var(--green);
   }
 
+  /* Form actions */
+
   .ehr-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    padding-top: 13px;
-    margin-top: 13px;
+    padding-top: 15px;
+    margin-top: 15px;
     border-top: 1px solid var(--border);
   }
 
@@ -475,15 +564,16 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    min-height: 35px;
-    padding: 8px 13px;
+    gap: 7px;
+    min-height: 37px;
+    padding: 9px 15px;
     border-radius: 7px;
     font-family: inherit;
     font-size: 11px;
     font-weight: 750;
     text-decoration: none;
     cursor: pointer;
+    transition: background .15s ease, border-color .15s ease;
   }
 
   .ehr-cancel {
@@ -507,6 +597,13 @@
     background: #1d4ed8;
   }
 
+  .ehr-submit:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+  }
+
+  /* Responsive */
+
   @media (max-width: 720px) {
     .ehr-student-details {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -524,13 +621,25 @@
     }
 
     .ehr-updated {
-      max-width: 130px;
+      max-width: 135px;
+    }
+
+    .ehr-content {
+      padding: 13px;
     }
   }
 
   @media (max-width: 420px) {
-    .ehr-content {
-      padding: 12px;
+    .ehr-wrapper {
+      padding-top: 2px;
+    }
+
+    .ehr-title {
+      font-size: 17px;
+    }
+
+    .ehr-subtitle {
+      font-size: 10px;
     }
 
     .ehr-card-header {
@@ -545,8 +654,37 @@
       display: none;
     }
 
-    .ehr-actions {
-      align-items: stretch;
+    .ehr-student-card {
+      padding: 11px;
+    }
+
+    .ehr-avatar {
+      width: 54px;
+      height: 54px;
+    }
+
+    .ehr-student-name {
+      font-size: 14px;
+    }
+
+    .ehr-student-details {
+      gap: 7px;
+    }
+
+    .ehr-detail {
+      padding: 8px;
+    }
+
+    .ehr-detail-value {
+      font-size: 11px;
+    }
+
+    .ehr-medicine-section {
+      padding: 11px;
+    }
+
+    .ehr-medicine-row {
+      gap: 8px;
     }
 
     .ehr-quantity-field {
@@ -554,10 +692,21 @@
       width: 90px !important;
       min-width: 90px !important;
     }
+
+    .ehr-actions {
+      align-items: stretch;
+    }
+
+    .ehr-cancel,
+    .ehr-submit {
+      padding: 9px 10px;
+      font-size: 10px;
+    }
   }
 </style>
 
 <div class="ehr-wrapper">
+
   <div class="ehr-breadcrumb">
     <a href="{% url 'accounts:staff_health_records' %}">Health Records</a>
     <span>/</span>
@@ -574,11 +723,12 @@
     </div>
 
     <a href="{% url 'accounts:dashboard' %}" class="ehr-workspace">
-      Clinic Staff Workspace
+      ← Clinic Staff Workspace
     </a>
   </div>
 
   <div class="ehr-card">
+
     <div class="ehr-card-header">
       <div class="ehr-card-heading">
         <div class="ehr-card-icon" aria-hidden="true">🩺</div>
@@ -597,47 +747,96 @@
     </div>
 
     <div class="ehr-content">
-      <section class="ehr-student">
-        <div class="ehr-student-heading">
+
+      <!-- Student Information Card -->
+
+      <section class="ehr-student-card">
+
+        <div class="ehr-student-card-header">
+          <div class="ehr-student-card-title">
+            <span aria-hidden="true">♙</span>
+            Student Information
+          </div>
+
+          <span class="ehr-student-badge">
+            ● Student
+          </span>
+        </div>
+
+        <div class="ehr-student-profile">
+
           <div class="ehr-avatar">
             {% if record.student.profile_picture %}
-              <img src="{{ record.student.profile_picture.url }}" alt="{{ record.student.get_full_name|default:record.student.username }}">
+              <img
+                src="{{ record.student.profile_picture.url }}"
+                alt="{{ record.student.get_full_name|default:record.student.username }}"
+              >
             {% else %}
               {{ record.student.first_name|default:record.student.username|slice:":1"|upper }}
             {% endif %}
           </div>
 
-          <div>
-            <div class="ehr-student-label">Student Information</div>
-            <div class="ehr-student-name">{{ record.student.get_full_name|default:record.student.username }}</div>
-            <div class="ehr-student-username">@{{ record.student.username }}</div>
+          <div class="ehr-profile-info">
+            <h3 class="ehr-student-name">
+              {{ record.student.get_full_name|default:record.student.username }}
+            </h3>
+
+            <div class="ehr-student-username">
+              @{{ record.student.username }}
+            </div>
           </div>
+
         </div>
 
         <div class="ehr-student-details">
+
           <div class="ehr-detail">
-            <div class="ehr-detail-label">Student ID</div>
-            <div class="ehr-detail-value">{{ record.student.id_number|default:"Not provided" }}</div>
+            <div class="ehr-detail-label">
+              <span>▤</span> Student ID
+            </div>
+            <div class="ehr-detail-value">
+              {{ record.student.id_number|default:"Not provided" }}
+            </div>
           </div>
 
           <div class="ehr-detail">
-            <div class="ehr-detail-label">Department</div>
-            <div class="ehr-detail-value">{{ record.student.department.name|default:record.student.department|default:"Not provided" }}</div>
+            <div class="ehr-detail-label">
+              <span>⌂</span> Department
+            </div>
+            <div class="ehr-detail-value">
+              {{ record.student.department.name|default:record.student.department|default:"Not provided" }}
+            </div>
           </div>
 
           <div class="ehr-detail">
-            <div class="ehr-detail-label">Course</div>
-            <div class="ehr-detail-value">{{ record.student.course|default:"Not provided" }}</div>
+            <div class="ehr-detail-label">
+              <span>▣</span> Course
+            </div>
+            <div class="ehr-detail-value">
+              {{ record.student.course|default:"Not provided" }}
+            </div>
           </div>
 
           <div class="ehr-detail">
-            <div class="ehr-detail-label">Year / Block</div>
-            <div class="ehr-detail-value">{{ record.student.year_block|default:"Not provided" }}</div>
+            <div class="ehr-detail-label">
+              <span>▦</span> Year / Block
+            </div>
+            <div class="ehr-detail-value">
+              {{ record.student.year_block|default:"Not provided" }}
+            </div>
           </div>
+
         </div>
+
       </section>
 
-      <h3 class="ehr-section-heading">Medical Information</h3>
+      <!-- Medical Information -->
+
+      <h3 class="ehr-section-heading">
+        <span aria-hidden="true">✚</span>
+        Medical Information
+      </h3>
+
       <p class="ehr-section-description">
         Record the student's symptoms, treatment, and any medicine dispensed during the clinic visit.
       </p>
@@ -652,33 +851,61 @@
         {% endif %}
 
         <div class="ehr-form-grid">
+
           <div class="ehr-field">
-            <label for="{{ form.symptoms.id_for_label }}">Symptoms</label>
+            <label for="{{ form.symptoms.id_for_label }}">
+              Symptoms
+            </label>
+
             {{ form.symptoms }}
-            <div class="ehr-help">Record the symptoms reported by the student.</div>
+
+            <div class="ehr-help">
+              Record the symptoms reported by the student.
+            </div>
+
             {% for error in form.symptoms.errors %}
               <div class="ehr-error">{{ error }}</div>
             {% endfor %}
           </div>
 
           <div class="ehr-field">
-            <label for="{{ form.treatment.id_for_label }}">Treatment (Care / Procedure)</label>
+            <label for="{{ form.treatment.id_for_label }}">
+              Treatment (Care / Procedure)
+            </label>
+
             {{ form.treatment }}
-            <div class="ehr-help">Record non-medication care, procedures, and advice given to the student.</div>
+
+            <div class="ehr-help">
+              Record non-medication care, procedures, and advice given to the student.
+            </div>
+
             {% for error in form.treatment.errors %}
               <div class="ehr-error">{{ error }}</div>
             {% endfor %}
           </div>
+
         </div>
 
-        <div class="ehr-given-medicines" id="ehrGivenMedicineBox" style="display:none;">
-          <div class="ehr-given-title">Medicine Previously Dispensed</div>
+        <!-- Previously Dispensed Medicine -->
+
+        <div
+          class="ehr-given-medicines"
+          id="ehrGivenMedicineBox"
+          style="display:none;"
+        >
+          <div class="ehr-given-title">
+            💊 Medicine Previously Dispensed
+          </div>
+
           <div class="ehr-medicine-list" id="ehrGivenMedicineList"></div>
         </div>
 
+        <!-- Dispense Medicine -->
+
         <section class="ehr-medicine-section">
+
           <div class="ehr-medicine-heading">
-            <span class="ehr-medicine-icon" aria-hidden="true">💊</span>
+            <div class="ehr-medicine-icon">💊</div>
             <h3>Dispense Clinic Medicine</h3>
           </div>
 
@@ -687,10 +914,18 @@
           </p>
 
           <div class="ehr-medicine-row">
+
             <div class="ehr-field ehr-medicine-field">
-              <label for="id_dispense_medicine">Medicine</label>
-              <select id="id_dispense_medicine" name="dispense_medicine">
+              <label for="id_dispense_medicine">
+                Medicine
+              </label>
+
+              <select
+                id="id_dispense_medicine"
+                name="dispense_medicine"
+              >
                 <option value="">-- None selected --</option>
+
                 {% for med in available_medicines %}
                   <option
                     value="{{ med.pk }}"
@@ -707,16 +942,23 @@
               </div>
 
               {% if not available_medicines %}
-                <div class="ehr-help">There are currently no active medicines with available stock.</div>
+                <div class="ehr-help">
+                  There are currently no active medicines with available stock.
+                </div>
               {% endif %}
 
               {% if errors.dispense_medicine %}
-                <div class="ehr-error">{{ errors.dispense_medicine }}</div>
+                <div class="ehr-error">
+                  {{ errors.dispense_medicine }}
+                </div>
               {% endif %}
             </div>
 
             <div class="ehr-field ehr-quantity-field">
-              <label for="id_dispense_quantity">Quantity</label>
+              <label for="id_dispense_quantity">
+                Quantity
+              </label>
+
               <input
                 id="id_dispense_quantity"
                 type="number"
@@ -725,42 +967,66 @@
                 value="{{ dispense_quantity|default:1 }}"
               >
             </div>
+
           </div>
+
         </section>
 
+        <!-- Additional Notes -->
+
         <div class="ehr-field">
-          <label for="{{ form.notes.id_for_label }}">Additional Notes</label>
+          <label for="{{ form.notes.id_for_label }}">
+            Additional Notes
+          </label>
+
           {{ form.notes }}
-          <div class="ehr-help">Include relevant observations or follow-up instructions.</div>
+
+          <div class="ehr-help">
+            Include relevant observations or follow-up instructions.
+          </div>
+
           {% for error in form.notes.errors %}
             <div class="ehr-error">{{ error }}</div>
           {% endfor %}
         </div>
 
+        <!-- Health Notice -->
+
         <div class="ehr-notice">
-          <span aria-hidden="true">🛡️</span>
+          <span class="ehr-notice-icon" aria-hidden="true">🛡️</span>
+
           <span>
             <strong>Health information:</strong>
             Ensure all clinical entries and medicine quantities are accurate before updating this record.
           </span>
         </div>
 
+        <!-- Actions -->
+
         <div class="ehr-actions">
-          <a href="{% url 'accounts:staff_health_records' %}" class="ehr-cancel">
+
+          <a
+            href="{% url 'accounts:staff_health_records' %}"
+            class="ehr-cancel"
+          >
             ← Cancel
           </a>
 
           <button type="submit" class="ehr-submit">
             💾 Update Health Record
           </button>
+
         </div>
+
       </form>
+
     </div>
   </div>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+
   const form = document.getElementById("ehrUpdateForm");
   const treatmentField = document.getElementById("{{ form.treatment.id_for_label }}");
   const medicineBox = document.getElementById("ehrGivenMedicineBox");
@@ -769,31 +1035,47 @@ document.addEventListener("DOMContentLoaded", function () {
   const quantityInput = document.getElementById("id_dispense_quantity");
   const stockHint = document.getElementById("ehrStockHint");
 
+  /*
+   * Preserve previously dispensed medicine entries.
+   */
+
   if (treatmentField && medicineBox && medicineList) {
+
     const originalLines = (treatmentField.value || "").split(/\r?\n/);
     const medicineLines = [];
     const treatmentLines = [];
 
     originalLines.forEach(function (line) {
+
       if (/^\s*dispensed:/i.test(line)) {
-        medicineLines.push(line.trim().replace(/^dispensed:\s*/i, ""));
+        medicineLines.push(
+          line.trim().replace(/^dispensed:\s*/i, "")
+        );
       } else {
         treatmentLines.push(line);
       }
+
     });
 
     if (medicineLines.length > 0) {
+
       medicineLines.forEach(function (medicine) {
+
         const chip = document.createElement("span");
+
         chip.className = "ehr-medicine-chip";
         chip.textContent = "💊 " + medicine;
+
         medicineList.appendChild(chip);
+
       });
 
       medicineBox.style.display = "block";
+
     }
 
     const originalTreatment = treatmentLines.join("\n").trim();
+
     const originalMedicineLines = medicineLines.map(function (medicine) {
       return "Dispensed: " + medicine;
     });
@@ -801,28 +1083,46 @@ document.addEventListener("DOMContentLoaded", function () {
     treatmentField.value = originalTreatment;
 
     if (form) {
+
       form.addEventListener("submit", function () {
+
         const currentTreatment = treatmentField.value.trim();
         const preservedLines = originalMedicineLines.join("\n");
 
-        treatmentField.value = [currentTreatment, preservedLines]
-          .filter(Boolean)
-          .join("\n");
+        treatmentField.value = [
+          currentTreatment,
+          preservedLines
+        ].filter(Boolean).join("\n");
+
       });
+
     }
+
   }
 
+  /*
+   * Display available medicine stock.
+   */
+
   function updateStockHint() {
+
     if (!medicineSelect || !stockHint) return;
 
-    const selectedOption = medicineSelect.options[medicineSelect.selectedIndex];
+    const selectedOption =
+      medicineSelect.options[medicineSelect.selectedIndex];
 
     if (!selectedOption || !selectedOption.value) {
-      stockHint.textContent = "Choose a medicine to view its available stock.";
+
+      stockHint.textContent =
+        "Choose a medicine to view its available stock.";
+
       if (quantityInput) {
         quantityInput.removeAttribute("max");
+        quantityInput.setCustomValidity("");
       }
+
       return;
+
     }
 
     const stock = Number(selectedOption.dataset.stock || 0);
@@ -832,40 +1132,73 @@ document.addEventListener("DOMContentLoaded", function () {
       " available in clinic inventory.";
 
     if (quantityInput) {
+
       quantityInput.max = stock;
 
       if (Number(quantityInput.value) > stock) {
         quantityInput.value = stock;
       }
+
+      quantityInput.setCustomValidity("");
+
     }
+
   }
 
   if (medicineSelect) {
+
     medicineSelect.addEventListener("change", updateStockHint);
+
     updateStockHint();
+
   }
 
+  /*
+   * Validate requested medicine quantity.
+   */
+
   if (quantityInput) {
+
     quantityInput.addEventListener("input", function () {
+
       const selectedOption = medicineSelect
         ? medicineSelect.options[medicineSelect.selectedIndex]
         : null;
 
       if (!selectedOption || !selectedOption.value) {
+
         quantityInput.setCustomValidity("");
+
         return;
+
       }
 
       const stock = Number(selectedOption.dataset.stock || 0);
       const quantity = Number(quantityInput.value);
 
-      if (quantity > stock) {
-        quantityInput.setCustomValidity("Quantity cannot exceed available stock.");
+      if (quantity < 1) {
+
+        quantityInput.setCustomValidity(
+          "Quantity must be at least 1."
+        );
+
+      } else if (quantity > stock) {
+
+        quantityInput.setCustomValidity(
+          "Quantity cannot exceed available stock."
+        );
+
       } else {
+
         quantityInput.setCustomValidity("");
+
       }
+
     });
+
   }
+
 });
 </script>
+
 {% endblock %}
