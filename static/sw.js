@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-const CACHE_NAME = "clinic-connect-static-v2";
-const STATIC_ASSETS = [
-  "/static/manifest.json",
-  "/static/icon-192.png",
-  "/static/icon-512.png"
-];
-
-self.addEventListener("install", (event) => {
-=======
 const CACHE_NAME = 'clinic-connect-v1';
 const STATIC_ASSETS = [
   '/static/manifest.json',
@@ -16,7 +6,6 @@ const STATIC_ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
->>>>>>> 5569bfb (Add Digital Asset Links endpoint for Android TWA)
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(STATIC_ASSETS).catch(() => Promise.resolve());
@@ -25,11 +14,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-<<<<<<< HEAD
-self.addEventListener("activate", (event) => {
-=======
 self.addEventListener('activate', (event) => {
->>>>>>> 5569bfb (Add Digital Asset Links endpoint for Android TWA)
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -42,36 +27,6 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-<<<<<<< HEAD
-self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") {
-    return;
-  }
-
-  const url = new URL(event.request.url);
-  if (url.origin !== self.location.origin) {
-    return;
-  }
-
-  if (url.pathname.startsWith("/static/")) {
-    event.respondWith(
-      caches.match(event.request).then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        return fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone);
-            });
-          }
-          return networkResponse;
-        });
-      })
-    );
-  }
-=======
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -97,5 +52,4 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(fetch(request));
->>>>>>> 5569bfb (Add Digital Asset Links endpoint for Android TWA)
 });
