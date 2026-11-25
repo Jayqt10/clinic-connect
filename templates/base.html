@@ -23,11 +23,13 @@
             font-family: Arial, sans-serif;
             background: #0b1120;
             color: #e5e7eb;
+            overflow-x: hidden;
         }
 
         .layout {
             display: flex;
             min-height: 100vh;
+            width: 100%;
         }
 
         .sidebar {
@@ -42,6 +44,39 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
+            z-index: 1000;
+            transition: transform 0.25s ease;
+        }
+
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.72);
+            z-index: 950;
+        }
+
+        .sidebar-backdrop.show {
+            display: block;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #1f2937;
+            color: #f8fafc;
+            font-size: 16px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .mobile-menu-btn:hover {
+            background: #334155;
         }
 
         .logo {
@@ -190,29 +225,42 @@
         .main {
             margin-left: 250px;
             width: calc(100% - 250px);
+            min-width: 0;
             min-height: 100vh;
         }
 
         .topbar {
-            height: 70px;
+            min-height: 70px;
             background: #111827;
             border-bottom: 1px solid #1f2937;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 12px;
             padding: 0 30px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
         }
 
         .topbar-title {
             font-size: 18px;
             font-weight: 600;
             color: #f8fafc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .user-area {
             display: flex;
             align-items: center;
             gap: 18px;
+            flex-shrink: 0;
         }
 
         .topbar-clock {
@@ -281,6 +329,8 @@
         .content {
             padding: 30px;
             min-height: calc(100vh - 70px);
+            width: 100%;
+            max-width: 100%;
         }
 
         .messages {
@@ -397,12 +447,12 @@
 
         @media (max-width: 800px) {
             .sidebar {
-                width: 210px;
+                width: 220px;
             }
 
             .main {
-                margin-left: 210px;
-                width: calc(100% - 210px);
+                margin-left: 220px;
+                width: calc(100% - 220px);
             }
 
             .topbar {
@@ -419,22 +469,30 @@
         }
 
         @media (max-width: 600px) {
+            .mobile-menu-btn {
+                display: inline-flex;
+            }
+
             .sidebar {
-                width: 190px;
-                padding: 18px 10px;
+                width: 250px;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
             }
 
             .main {
-                margin-left: 190px;
-                width: calc(100% - 190px);
+                margin-left: 0;
+                width: 100%;
             }
 
             .topbar {
-                padding: 0 12px;
+                padding: 0 14px;
             }
 
             .topbar-title {
-                font-size: 15px;
+                font-size: 16px;
             }
 
             .user-area {
@@ -451,12 +509,20 @@
             }
 
             .content {
-                padding: 15px;
+                padding: 16px 14px;
+            }
+
+            .content [class*="grid"],
+            .content .stats-row,
+            .content .cards-row {
+                grid-template-columns: 1fr !important;
             }
 
             .appointment-toast {
                 top: 80px;
-                right: 10px;
+                right: 12px;
+                left: 12px;
+                width: auto;
             }
         }
     </style>
@@ -464,9 +530,11 @@
 
 <body>
 
+<div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
 <div class="layout">
 
-    <aside class="sidebar">
+    <aside id="sidebar" class="sidebar">
 
         <div class="logo">
             <h2>Clinic Connect</h2>
@@ -600,8 +668,18 @@
 
         <header class="topbar">
 
-            <div class="topbar-title">
-                {% block page_title %}Clinic Connect{% endblock %}
+            <div class="topbar-left">
+                <button type="button"
+                        id="mobile-menu-btn"
+                        class="mobile-menu-btn"
+                        aria-label="Toggle navigation menu"
+                        aria-expanded="false">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="topbar-title">
+                    {% block page_title %}Clinic Connect{% endblock %}
+                </div>
             </div>
 
             <div class="user-area">
@@ -701,6 +779,45 @@
     </a>
 </div>
 {% endif %}
+
+<script>
+(function () {
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+
+    if (!menuBtn || !sidebar || !backdrop) return;
+
+    function setSidebarState(isOpen) {
+        sidebar.classList.toggle('open', isOpen);
+        backdrop.classList.toggle('show', isOpen);
+        menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    menuBtn.addEventListener('click', function () {
+        const isOpen = !sidebar.classList.contains('open');
+        setSidebarState(isOpen);
+    });
+
+    backdrop.addEventListener('click', function () {
+        setSidebarState(false);
+    });
+
+    sidebar.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+            if (window.innerWidth <= 600) {
+                setSidebarState(false);
+            }
+        });
+    });
+
+    window.addEventListener('resize', function () {
+        if (window.innerWidth > 600) {
+            setSidebarState(false);
+        }
+    });
+})();
+</script>
 
 <script>
 (function () {

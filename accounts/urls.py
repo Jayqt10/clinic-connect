@@ -1,6 +1,7 @@
 
 from django.contrib.auth import views as auth_views
 from django.urls import path, reverse_lazy
+from accounts import views as accounts_views
 
 from . import views
 
@@ -321,8 +322,8 @@ path(
     name="email_sick_note",
 ),
 path(
-    "staff/medicines/",
-    views.staff_medicines,
+    "staff/medicines/", 
+    views.staff_medicines, 
     name="staff_medicines"
 ),
 path(
