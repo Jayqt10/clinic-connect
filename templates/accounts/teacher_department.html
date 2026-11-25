@@ -1,732 +1,525 @@
 {% extends 'base.html' %}
 
-{% block title %}Sick Notes{% endblock %}
+{% block title %}Departments | Clinic Connect{% endblock %}
+{% block page_title %}Departments{% endblock %}
 
 {% block content %}
-
 <style>
-    .sick-notes-page {
-        max-width: 1300px;
+    .dept-page {
+        max-width: 1320px;
         margin: 0 auto;
         color: #e5e7eb;
     }
 
-    .sick-notes-page *,
-    .sick-notes-page *::before,
-    .sick-notes-page *::after {
+    .dept-page *,
+    .dept-page *::before,
+    .dept-page *::after {
         box-sizing: border-box;
     }
 
-    .page-header {
-        margin-bottom: 20px;
+    .dept-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
     }
 
-    .page-header h1 {
-        margin: 0;
+    .dept-header h1 {
+        margin: 0 0 4px;
         color: #f8fafc;
-        font-size: 24px;
-        font-weight: 600;
+        font-size: clamp(20px, 2.4vw, 25px);
+        font-weight: 700;
+        letter-spacing: -0.02em;
     }
 
-    .page-header p {
-        margin: 7px 0 0;
+    .dept-header p {
+        margin: 0;
         color: #94a3b8;
         font-size: 13px;
         line-height: 1.45;
     }
 
-    .notes-card {
+    .dept-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+        padding: 12px 16px;
         background: #111827;
         border: 1px solid #1f2937;
         border-radius: 10px;
-        overflow: hidden;
-    }
-
-    .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        padding: 18px 20px;
-        border-bottom: 1px solid #1f2937;
-    }
-
-    .card-header > div {
-        min-width: 0;
-    }
-
-    .card-header h2 {
-        margin: 0 0 5px;
-        color: #f8fafc;
-        font-size: 16px;
-        font-weight: 600;
-    }
-
-    .card-header p {
-        margin: 0;
-        color: #94a3b8;
         font-size: 12px;
-        line-height: 1.45;
-    }
-
-    .note-count {
-        color: #4ade80;
-        background: #052e16;
-        border: 1px solid #14532d;
-        padding: 7px 11px;
-        border-radius: 6px;
-        font-size: 11px;
-        font-weight: 600;
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-
-    .table-wrapper {
-        width: 100%;
-        overflow-x: auto;
-    }
-
-    table {
-        width: 100%;
-        min-width: 820px;
-        border-collapse: collapse;
-    }
-
-    th {
-        padding: 13px 16px;
-        text-align: left;
         color: #94a3b8;
-        background: #0b1120;
-        font-size: 10px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.7px;
-        white-space: nowrap;
     }
 
-    td {
-        padding: 14px 16px;
-        color: #cbd5e1;
-        font-size: 12px;
-        border-top: 1px solid #1f2937;
-        vertical-align: middle;
-    }
-
-    tbody tr {
-        transition: background 0.2s;
-    }
-
-    tbody tr:hover {
-        background: #0f172a;
-    }
-
-    .date {
-        color: #94a3b8;
-        white-space: nowrap;
-    }
-
-    .symptoms {
-        color: #f8fafc;
-        font-weight: 500;
+    .dept-search-input {
+        width: 100%;
         max-width: 280px;
-        line-height: 1.5;
-        overflow-wrap: anywhere;
+        height: 36px;
+        padding: 0 12px;
+        background: #0b1120;
+        color: #f8fafc;
+        border: 1px solid #263449;
+        border-radius: 8px;
+        font-size: 12px;
+        outline: none;
     }
 
-    .days {
-        color: #4ade80;
-        font-weight: 700;
-        white-space: nowrap;
+    .dept-search-input:focus {
+        border-color: #22c55e;
     }
 
-    .issued-by {
-        color: #cbd5e1;
-        white-space: nowrap;
+    .dept-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
     }
 
-    .actions {
+    .dept-card-item {
+        position: relative;
         display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 16px;
+        min-width: 0;
+        padding: 18px;
+        overflow: hidden;
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 12px;
+        transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
     }
 
-    .action-btn {
+    .dept-card-item:hover {
+        transform: translateY(-2px);
+        background: #131d31;
+        border-color: #334155;
+    }
+
+    .dept-card-top-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--dept-accent, #22c55e);
+    }
+
+    .dept-card-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .dept-icon-badge {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-height: 34px;
-        padding: 7px 11px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-size: 10.5px;
-        font-weight: 600;
-        white-space: nowrap;
-        transition: 0.2s;
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: var(--dept-badge-bg, rgba(34, 197, 94, 0.14));
+        border: 1px solid var(--dept-badge-border, rgba(34, 197, 94, 0.35));
+        color: var(--dept-accent, #4ade80);
     }
 
-    .view-btn {
-        background: #172554;
-        border: 1px solid #1e3a8a;
-        color: #93c5fd;
+    .dept-icon-badge svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
     }
 
-    .view-btn:hover {
-        background: #1e3a8a;
-        color: #dbeafe;
-    }
-
-    .download-btn {
-        background: #14532d;
-        border: 1px solid #166534;
-        color: #bbf7d0;
-    }
-
-    .download-btn:hover {
-        background: #166534;
-        color: #dcfce7;
-    }
-
-    .email-btn {
-        background: #1f2937;
-        border: 1px solid #374151;
-        color: #cbd5e1;
-        cursor: pointer;
-        font-family: inherit;
-    }
-
-    .email-btn:hover {
-        background: #374151;
-        color: #f8fafc;
-    }
-
-    .email-form {
-        display: inline;
-        margin: 0;
-        padding: 0;
-    }
-
-    .mobile-note-list {
-        display: none;
-    }
-
-    .mobile-note-item {
-        padding: 13px;
+    .dept-code-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 9px;
+        border-radius: 999px;
         background: #0b1120;
         border: 1px solid #263449;
-        border-radius: 9px;
+        color: var(--dept-accent, #4ade80);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
     }
 
-    .mobile-note-top {
+    .dept-card-title {
+        margin: 0 0 12px;
+        color: #f8fafc;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+    }
+
+    .dept-card-stats-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 14px;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .dept-stat-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+    .dept-stat-item svg {
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
+        color: var(--dept-accent, #4ade80);
+    }
+
+    .dept-card-footer-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-bottom: 9px;
+        gap: 10px;
+        padding-top: 14px;
+        border-top: 1px solid #1f2937;
     }
 
-    .mobile-note-meta {
-        display: grid;
-        gap: 6px;
-        margin-bottom: 11px;
+    .dept-footer-caption {
+        color: #64748b;
         font-size: 11px;
     }
 
-    .mobile-note-label {
-        color: #94a3b8;
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        display: block;
-        margin-bottom: 2px;
-    }
-
-    .mobile-note-value {
-        color: #f8fafc;
-        overflow-wrap: anywhere;
-        line-height: 1.45;
-    }
-
-    .empty-state {
-        padding: 50px 18px;
-        text-align: center;
-    }
-
-    .empty-icon {
-        width: 48px;
-        height: 48px;
-        display: flex;
+    .dept-action-link {
+        display: inline-flex;
         align-items: center;
-        justify-content: center;
-        margin: 0 auto 14px;
-        border-radius: 50%;
-        background: #1f2937;
-        color: #94a3b8;
-        font-size: 22px;
-    }
-
-    .empty-state h3 {
-        color: #f8fafc;
-        font-size: 16px;
-        margin: 0 0 7px;
-    }
-
-    .empty-state p {
-        color: #94a3b8;
+        gap: 6px;
+        padding: 7px 12px;
+        border-radius: 8px;
+        background: rgba(34, 197, 94, 0.14);
+        border: 1px solid rgba(34, 197, 94, 0.35);
+        color: #4ade80;
         font-size: 12px;
-        margin: 0;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: background 0.18s ease, color 0.18s ease;
     }
 
-    @media (max-width: 720px) {
-        .card-header {
-            align-items: flex-start;
+    .dept-action-link:hover {
+        background: #22c55e;
+        color: #052e16;
+    }
+
+    .dept-theme-cs {
+        --dept-accent: #34d399;
+        --dept-badge-bg: rgba(16, 185, 129, 0.14);
+        --dept-badge-border: rgba(16, 185, 129, 0.35);
+    }
+
+    .dept-theme-dit {
+        --dept-accent: #38bdf8;
+        --dept-badge-bg: rgba(14, 165, 233, 0.14);
+        --dept-badge-border: rgba(14, 165, 233, 0.35);
+    }
+
+    .dept-theme-dbm {
+        --dept-accent: #a78bfa;
+        --dept-badge-bg: rgba(139, 92, 246, 0.14);
+        --dept-badge-border: rgba(139, 92, 246, 0.35);
+    }
+
+    .dept-theme-dgtt {
+        --dept-accent: #facc15;
+        --dept-badge-bg: rgba(234, 179, 8, 0.14);
+        --dept-badge-border: rgba(234, 179, 8, 0.35);
+    }
+
+    .dept-theme-ccje {
+        --dept-accent: #2dd4bf;
+        --dept-badge-bg: rgba(45, 212, 191, 0.14);
+        --dept-badge-border: rgba(45, 212, 191, 0.35);
+    }
+
+    @media (max-width: 640px) {
+        .dept-toolbar {
             flex-direction: column;
+            align-items: stretch;
+        }
+
+        .dept-search-input {
+            max-width: 100%;
+        }
+
+        .dept-cards-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .dept-card-item {
             padding: 15px;
-        }
-
-        .page-header h1 {
-            font-size: 21px;
-        }
-
-        .table-wrapper {
-            display: none;
-        }
-
-        .mobile-note-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 13px;
-        }
-
-        .actions {
-            width: 100%;
-        }
-
-        .action-btn,
-        .email-form {
-            flex: 1 1 auto;
-        }
-
-        .email-form .action-btn {
-            width: 100%;
         }
     }
 </style>
 
-<div class="sick-notes-page">
-
-    <div class="page-header">
-        <h1>Sick Notes</h1>
-        <p>View and download your official sick notes issued by the school clinic.</p>
+<div class="dept-page">
+    <div class="dept-header">
+        <div>
+            <h1>Departments</h1>
+            <p>Overview of active academic units, buildings, and clinic room assignments.</p>
+        </div>
     </div>
 
-    <div class="notes-card">
-
-        <div class="card-header">
-
-            <div>
-                <h2>My Sick Notes</h2>
-                <p>Official sick notes issued after completed clinic appointments.</p>
-            </div>
-
-            <div class="note-count">
-                {{ sick_notes|length }}
-                note{{ sick_notes|length|pluralize }}
-            </div>
-
+    <div class="dept-toolbar">
+        <span>Overview of active academic units</span>
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <span>
+                Showing <strong id="deptVisibleCount" style="color: #f1f5f9;">{% if departments %}{{ departments|length }}{% else %}5{% endif %}</strong> departments
+            </span>
+            <input
+                type="search"
+                id="deptSearchInput"
+                class="dept-search-input"
+                placeholder="Filter department or code..."
+                aria-label="Filter department or code"
+            >
         </div>
+    </div>
 
-        {% if sick_notes %}
+    <div id="deptGrid" class="dept-cards-grid">
+        {% if departments %}
+            {% for department in departments %}
+                {% with code=department.code|default:''|upper %}
+                <article
+                    data-search="{{ department.name|default:''|lower }} {{ department.code|default:''|lower }}"
+                    class="dept-card-item {% if code == 'CS' or code == 'DCS' %}dept-theme-cs{% elif code == 'DIT' %}dept-theme-dit{% elif code == 'DBM' %}dept-theme-dbm{% elif code == 'DGTT' %}dept-theme-dgtt{% elif code == 'CCJE' %}dept-theme-ccje{% else %}dept-theme-cs{% endif %}"
+                >
+                    <div class="dept-card-top-bar"></div>
 
-            <div class="table-wrapper">
-
-                <table>
-
-                    <thead>
-                        <tr>
-                            <th>Date Issued</th>
-                            <th>Symptoms</th>
-                            <th>Recommended Rest</th>
-                            <th>Issued By</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        {% for sick_note in sick_notes %}
-
-                        <tr>
-
-                            <td class="date">
-                                {{ sick_note.issued_at|date:"M d, Y" }}
-                            </td>
-
-                            <td class="symptoms">
-                                {% if sick_note.appointment.health_record.symptoms %}
-                                    {{ sick_note.appointment.health_record.symptoms|truncatechars:100 }}
+                    <div>
+                        <div class="dept-card-header-row">
+                            <div class="dept-icon-badge">
+                                {% if code == 'CS' or code == 'DCS' %}
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 21h8M12 17v4M8 9l-2 2 2 2M16 9l2 2-2 2M13 8l-2 6"></path></svg>
+                                {% elif code == 'DIT' %}
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" stroke-width="1.8"></rect><rect x="9" y="9" width="6" height="6" rx="1" stroke-width="1.8"></rect><path stroke-width="1.8" d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"></path></svg>
+                                {% elif code == 'DBM' %}
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2"></path></svg>
+                                {% elif code == 'DGTT' %}
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M20.5 3.5C12 3 5 6.5 5 13a5 5 0 0 0 5 5c6.5 0 10-7 10.5-14.5Z"></path><path stroke-width="1.8" d="M3 21c4-6 7-8 12-11"></path></svg>
+                                {% elif code == 'CCJE' %}
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M12 3v18M5 6h14M4 6 1.5 13h5L4 6ZM20 6l-2.5 7h5L20 6ZM8 21h8"></path><path stroke-width="1.8" d="M2 13c.5 2 3.5 2 4 0M18 13c.5 2 3.5 2 4 0"></path></svg>
                                 {% else %}
-                                    <span style="color: #64748b;">
-                                        No symptoms recorded
-                                    </span>
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1M10 21v-4h4v4"></path></svg>
                                 {% endif %}
-                            </td>
+                            </div>
 
-                            <td class="days">
-                                {{ sick_note.days_recommended }}
-                                day{{ sick_note.days_recommended|pluralize }}
-                            </td>
+                            {% if department.code %}
+                                <span class="dept-code-pill">{{ department.code }}</span>
+                            {% endif %}
+                        </div>
 
-                            <td class="issued-by">
-                                {{ sick_note.issued_by.get_full_name|default:sick_note.issued_by.username }}
-                            </td>
+                        <h2 class="dept-card-title">{{ department.name }}</h2>
 
-                            <td>
-
-                                <div class="actions">
-
-                                    <a
-                                        href="{% url 'accounts:view_sick_note' sick_note.id %}"
-                                        class="action-btn view-btn">
-                                        View
-                                    </a>
-
-                                    <a
-                                        href="{% url 'accounts:download_sick_note' sick_note.id %}"
-                                        class="action-btn download-btn">
-                                        Download
-                                    </a>
-
-                                    <form
-                                        method="post"
-                                        action="{% url 'accounts:email_sick_note' sick_note.id %}"
-                                        class="email-form">
-
-                                        {% csrf_token %}
-
-                                        <button
-                                            type="submit"
-                                            class="action-btn email-btn">
-                                            Email
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-            <div class="mobile-note-list">
-                {% for sick_note in sick_notes %}
-                    <div class="mobile-note-item">
-                        <div class="mobile-note-top">
-                            <span class="date">{{ sick_note.issued_at|date:"M d, Y" }}</span>
-                            <span class="days">
-                                {{ sick_note.days_recommended }}
-                                day{{ sick_note.days_recommended|pluralize }}
+                        <div class="dept-card-stats-row">
+                            <span class="dept-stat-item">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
+                                {{ department.building_total|default:0 }} building{{ department.building_total|default:0|pluralize }}
+                            </span>
+                            <span class="dept-stat-item">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
+                                {{ department.room_total|default:0 }} room{{ department.room_total|default:0|pluralize }}
                             </span>
                         </div>
-
-                        <div class="mobile-note-meta">
-                            <div>
-                                <span class="mobile-note-label">Symptoms</span>
-                                <div class="mobile-note-value">
-                                    {% if sick_note.appointment.health_record.symptoms %}
-                                        {{ sick_note.appointment.health_record.symptoms|truncatechars:100 }}
-                                    {% else %}
-                                        <span style="color: #64748b;">No symptoms recorded</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div>
-                                <span class="mobile-note-label">Issued By</span>
-                                <div class="mobile-note-value">
-                                    {{ sick_note.issued_by.get_full_name|default:sick_note.issued_by.username }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="actions">
-                            <a
-                                href="{% url 'accounts:view_sick_note' sick_note.id %}"
-                                class="action-btn view-btn">
-                                View
-                            </a>
-
-                            <a
-                                href="{% url 'accounts:download_sick_note' sick_note.id %}"
-                                class="action-btn download-btn">
-                                Download
-                            </a>
-
-                            <form
-                                method="post"
-                                action="{% url 'accounts:email_sick_note' sick_note.id %}"
-                                class="email-form">
-
-                                {% csrf_token %}
-
-                                <button
-                                    type="submit"
-                                    class="action-btn email-btn">
-                                    Email
-                                </button>
-
-                            </form>
-                        </div>
                     </div>
-                {% endfor %}
-            </div>
 
+                    <div class="dept-card-footer-row">
+                        <span class="dept-footer-caption">View department info</span>
+                        <a href="{% url 'accounts:teacher_department_detail' pk=department.pk %}" class="dept-action-link">
+                            View Department <span>→</span>
+                        </a>
+                    </div>
+                </article>
+                {% endwith %}
+            {% endfor %}
         {% else %}
+            <article data-search="department of computer studies dcs cs" class="dept-card-item dept-theme-cs">
+                <div class="dept-card-top-bar"></div>
+                <div>
+                    <div class="dept-card-header-row">
+                        <div class="dept-icon-badge">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 21h8M12 17v4M8 9l-2 2 2 2M16 9l2 2-2 2M13 8l-2 6"></path></svg>
+                        </div>
+                        <span class="dept-code-pill">DCS</span>
+                    </div>
+                    <h2 class="dept-card-title">Department of Computer Studies</h2>
+                    <div class="dept-card-stats-row">
+                        <span class="dept-stat-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
+                            0 buildings
+                        </span>
+                        <span class="dept-stat-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
+                            0 rooms
+                        </span>
+                    </div>
+                </div>
+                <div class="dept-card-footer-row">
+                    <span class="dept-footer-caption">View department info</span>
+                    <a href="{% url 'accounts:teacher_department_detail' pk=1 %}" class="dept-action-link">
+                        View Department <span>→</span>
+                    </a>
+                </div>
+            </article>
 
-            <div class="empty-state">
+            <article data-search="department of industrial technology dit" class="dept-card-item dept-theme-dit">
+                <div class="dept-card-top-bar"></div>
+                <div>
+                    <div class="dept-card-header-row">
+                        <div class="dept-icon-badge">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" stroke-width="1.8"></rect><rect x="9" y="9" width="6" height="6" rx="1" stroke-width="1.8"></rect><path stroke-width="1.8" d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"></path></svg>
+                        </div>
+                        <span class="dept-code-pill">DIT</span>
+                    </div>
+                    <h2 class="dept-card-title">Department of Industrial Technology</h2>
+                    <div class="dept-card-stats-row">
+                        <span class="dept-stat-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
+                            0 buildings
+                        </span>
+                        <span class="dept-stat-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
+                            0 rooms
+                        </span>
+                    </div>
+                </div>
+                <div class="dept-card-footer-row">
+                    <span class="dept-footer-caption">View department info</span>
+                    <a href="{% url 'accounts:teacher_department_detail' pk=2 %}" class="dept-action-link">
+                        View Department <span>→</span>
+                    </a>
+                </div>
+            </article>
 
-                <div class="empty-icon">□</div>
+            <article data-search="department of business management dbm" class="dept-card-item dept-theme-dbm">
+                <div class="dept-card-top-bar"></div>
+                <div>
+                    <div class="dept-card-header-row">
+                        <div class="dept-icon-badge">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2"></path></svg>
+                        </div>
+                        <span class="dept-code-pill">DBM</span>
+                    </div>
+                    <h2 class="dept-card-title">Department of Business Management</h2>
+                    <div class="dept-card-stats-row">
+                        <span class="dept-stat-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
+                            0 buildings
+                        </span>
+                        <span class="dept-stat-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
+                            0 rooms
+                        </span>
+                    </div>
+                </div>
+                <div class="dept-card-footer-row">
+                    <span class="dept-footer-caption">View department info</span>
+                    <a href="{% url 'accounts:teacher_department_detail' pk=3 %}" class="dept-action-link">
+                        View Department <span>→</span>
+                    </a>
+                </div>
+            </article>
 
-                <h3>No Sick Notes</h3>
+            <article data-search="department of general teacher training dgtt" class="dept-card-item dept-theme-dgtt">
+                <div class="dept-card-top-bar"></div>
+                <div>
+                    <div class="dept-card-header-row">
+                        <div class="dept-icon-badge">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M20.5 3.5C12 3 5 6.5 5 13a5 5 0 0 0 5 5c6.5 0 10-7 10.5-14.5Z"></path><path stroke-width="1.8" d="M3 21c4-6 7-8 12-11"></path></svg>
+                        </div>
+                        <span class="dept-code-pill">DGTT</span>
+                    </div>
+                    <h2 class="dept-card-title">Department of General Teacher Training</h2>
+                    <div class="dept-card-stats-row">
+                        <span class="dept-stat-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
+                            0 buildings
+                        </span>
+                        <span class="dept-stat-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
+                            0 rooms
+                        </span>
+                    </div>
+                </div>
+                <div class="dept-card-footer-row">
+                    <span class="dept-footer-caption">View department info</span>
+                    <a href="{% url 'accounts:teacher_department_detail' pk=4 %}" class="dept-action-link">
+                        View Department <span>→</span>
+                    </a>
+                </div>
+            </article>
 
-                <p>
-                    You don't have any issued sick notes yet.
-                </p>
-
-            </div>
-
+            <article data-search="college of criminal justice education ccje" class="dept-card-item dept-theme-ccje">
+                <div class="dept-card-top-bar"></div>
+                <div>
+                    <div class="dept-card-header-row">
+                        <div class="dept-icon-badge">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M12 3v18M5 6h14M4 6 1.5 13h5L4 6ZM20 6l-2.5 7h5L20 6ZM8 21h8"></path><path stroke-width="1.8" d="M2 13c.5 2 3.5 2 4 0M18 13c.5 2 3.5 2 4 0"></path></svg>
+                        </div>
+                        <span class="dept-code-pill">CCJE</span>
+                    </div>
+                    <h2 class="dept-card-title">College of Criminal Justice Education</h2>
+                    <div class="dept-card-stats-row">
+                        <span class="dept-stat-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
+                            0 buildings
+                        </span>
+                        <span class="dept-stat-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
+                            0 rooms
+                        </span>
+                    </div>
+                </div>
+                <div class="dept-card-footer-row">
+                    <span class="dept-footer-caption">View department info</span>
+                    <a href="{% url 'accounts:teacher_department_detail' pk=5 %}" class="dept-action-link">
+                        View Department <span>→</span>
+                    </a>
+                </div>
+            </article>
         {% endif %}
-
     </div>
-
-  <div style="display: flex; justify-content: space-between; font-size: 12px; color: #94a3b8; margin-bottom: 16px; padding: 0 4px;">
-    <span>Overview of active academic units</span>
-    <span>
-      Showing <strong id="deptVisibleCount" style="color: #f1f5f9;">{% if departments %}{{ departments|length }}{% else %}5{% endif %}</strong> departments
-    </span>
-  </div>
-
-  <div id="deptGrid" class="dept-cards-grid">
-    {% if departments %}
-      {% for department in departments %}
-        {% with code=department.code|default:''|upper %}
-        <article data-search="{{ department.name|default:''|lower }} {{ department.code|default:''|lower }}" class="dept-card-item {% if code == 'CS' or code == 'DCS' %}dept-theme-cs{% elif code == 'DIT' %}dept-theme-dit{% elif code == 'DBM' %}dept-theme-dbm{% elif code == 'DGTT' %}dept-theme-dgtt{% elif code == 'CCJE' %}dept-theme-ccje{% else %}dept-theme-cs{% endif %}">
-          <div class="dept-card-top-bar"></div>
-
-          <div>
-            <div class="dept-card-header-row">
-              <div class="dept-icon-badge">
-                {% if code == 'CS' or code == 'DCS' %}
-                  <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 21h8M12 17v4M8 9l-2 2 2 2M16 9l2 2-2 2M13 8l-2 6"></path></svg>
-                {% elif code == 'DIT' %}
-                  <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" stroke-width="1.8"></rect><rect x="9" y="9" width="6" height="6" rx="1" stroke-width="1.8"></rect><path stroke-width="1.8" d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"></path></svg>
-                {% elif code == 'DBM' %}
-                  <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2"></path></svg>
-                {% elif code == 'DGTT' %}
-                  <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M20.5 3.5C12 3 5 6.5 5 13a5 5 0 0 0 5 5c6.5 0 10-7 10.5-14.5Z"></path><path stroke-width="1.8" d="M3 21c4-6 7-8 12-11"></path></svg>
-                {% elif code == 'CCJE' %}
-                  <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M12 3v18M5 6h14M4 6 1.5 13h5L4 6ZM20 6l-2.5 7h5L20 6ZM8 21h8"></path><path stroke-width="1.8" d="M2 13c.5 2 3.5 2 4 0M18 13c.5 2 3.5 2 4 0"></path></svg>
-                {% else %}
-                  <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1M10 21v-4h4v4"></path></svg>
-                {% endif %}
-              </div>
-
-              {% if department.code %}
-                <span class="dept-code-pill">{{ department.code }}</span>
-              {% endif %}
-            </div>
-
-            <h2 class="dept-card-title">{{ department.name }}</h2>
-
-            <div class="dept-card-stats-row">
-              <span class="dept-stat-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
-                {{ department.building_total|default:0 }} building{{ department.building_total|default:0|pluralize }}
-              </span>
-              <span class="dept-stat-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
-                {{ department.room_total|default:0 }} room{{ department.room_total|default:0|pluralize }}
-              </span>
-            </div>
-          </div>
-
-          <div class="dept-card-footer-row">
-            <span class="dept-footer-caption">View department info</span>
-            <a href="{% url 'accounts:teacher_department_detail' pk=department.pk %}" class="dept-action-link">
-              View Department <span style="font-size:14px;">→</span>
-            </a>
-          </div>
-        </article>
-        {% endwith %}
-      {% endfor %}
-
-    {% else %}
-
-      <!-- Static 5 Departments Fallback Layout -->
-
-      <!-- 1. DCS -->
-      <article data-search="department of computer science dcs dcs" class="dept-card-item dept-theme-cs">
-        <div class="dept-card-top-bar"></div>
-        <div>
-          <div class="dept-card-header-row">
-            <div class="dept-icon-badge">
-              <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 21h8M12 17v4M8 9l-2 2 2 2M16 9l2 2-2 2M13 8l-2 6"></path></svg>
-            </div>
-            <span class="dept-code-pill">CS</span>
-          </div>
-          <h2 class="dept-card-title">Department of Computer Science</h2>
-          <div class="dept-card-stats-row">
-            <span class="dept-stat-item">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
-              0 buildings
-            </span>
-            <span class="dept-stat-item">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
-              0 rooms
-            </span>
-          </div>
-        </div>
-        <div class="dept-card-footer-row">
-          <span class="dept-footer-caption">View department info</span>
-          <a href="{% url 'accounts:teacher_department_detail' pk=1 %}" class="dept-action-link">
-            View Department <span style="font-size:14px;">→</span>
-          </a>
-        </div>
-      </article>
-
-      <!-- 2. DIT -->
-      <article data-search="department of industrial technology dit" class="dept-card-item dept-theme-dit">
-        <div class="dept-card-top-bar"></div>
-        <div>
-          <div class="dept-card-header-row">
-            <div class="dept-icon-badge">
-              <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" stroke-width="1.8"></rect><rect x="9" y="9" width="6" height="6" rx="1" stroke-width="1.8"></rect><path stroke-width="1.8" d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"></path></svg>
-            </div>
-            <span class="dept-code-pill">DIT</span>
-          </div>
-          <h2 class="dept-card-title">Department of Industrial Technology</h2>
-          <div class="dept-card-stats-row">
-            <span class="dept-stat-item">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
-              0 buildings
-            </span>
-            <span class="dept-stat-item">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
-              0 rooms
-            </span>
-          </div>
-        </div>
-        <div class="dept-card-footer-row">
-          <span class="dept-footer-caption">View department info</span>
-          <a href="{% url 'accounts:teacher_department_detail' pk=2 %}" class="dept-action-link">
-            View Department <span style="font-size:14px;">→</span>
-          </a>
-        </div>
-      </article>
-
-      <!-- 3. DBM -->
-      <article data-search="department of business management dbm" class="dept-card-item dept-theme-dbm">
-        <div class="dept-card-top-bar"></div>
-        <div>
-          <div class="dept-card-header-row">
-            <div class="dept-icon-badge">
-              <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2"></path></svg>
-            </div>
-            <span class="dept-code-pill">DBM</span>
-          </div>
-          <h2 class="dept-card-title">Department of Business Management</h2>
-          <div class="dept-card-stats-row">
-            <span class="dept-stat-item">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
-              0 buildings
-            </span>
-            <span class="dept-stat-item">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
-              0 rooms
-            </span>
-          </div>
-        </div>
-        <div class="dept-card-footer-row">
-          <span class="dept-footer-caption">View department info</span>
-          <a href="{% url 'accounts:teacher_department_detail' pk=3 %}" class="dept-action-link">
-            View Department <span style="font-size:14px;">→</span>
-          </a>
-        </div>
-      </article>
-
-      <!-- 4. DGTT -->
-      <article data-search="department of general teacher training dgtt" class="dept-card-item dept-theme-dgtt">
-        <div class="dept-card-top-bar"></div>
-        <div>
-          <div class="dept-card-header-row">
-            <div class="dept-icon-badge">
-              <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M20.5 3.5C12 3 5 6.5 5 13a5 5 0 0 0 5 5c6.5 0 10-7 10.5-14.5Z"></path><path stroke-width="1.8" d="M3 21c4-6 7-8 12-11"></path></svg>
-            </div>
-            <span class="dept-code-pill">DGTT</span>
-          </div>
-          <h2 class="dept-card-title">Department of General Teachers Training</h2>
-          <div class="dept-card-stats-row">
-            <span class="dept-stat-item">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
-              0 buildings
-            </span>
-            <span class="dept-stat-item">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
-              0 rooms
-            </span>
-          </div>
-        </div>
-        <div class="dept-card-footer-row">
-          <span class="dept-footer-caption">View department info</span>
-          <a href="{% url 'accounts:teacher_department_detail' pk=4 %}" class="dept-action-link">
-            View Department <span style="font-size:14px;">→</span>
-          </a>
-        </div>
-      </article>
-
-
-      <article data-search="college of criminal justice education ccje" class="dept-card-item dept-theme-ccje">
-        <div class="dept-card-top-bar"></div>
-        <div>
-          <div class="dept-card-header-row">
-            <div class="dept-icon-badge">
-              <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M12 3v18M5 6h14M4 6 1.5 13h5L4 6ZM20 6l-2.5 7h5L20 6ZM8 21h8"></path><path stroke-width="1.8" d="M2 13c.5 2 3.5 2 4 0M18 13c.5 2 3.5 2 4 0"></path></svg>
-            </div>
-            <span class="dept-code-pill">CCJE</span>
-          </div>
-          <h2 class="dept-card-title">College of Criminal Justice Education</h2>
-          <div class="dept-card-stats-row">
-            <span class="dept-stat-item">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 10h1M14 10h1M9 14h1M14 14h1"></path></svg>
-              0 buildings
-            </span>
-            <span class="dept-stat-item">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke-width="1.8"></rect><path stroke-width="1.8" d="M8 7h8M8 11h8M8 15h5"></path></svg>
-              0 rooms
-            </span>
-          </div>
-        </div>
-        <div class="dept-card-footer-row">
-          <span class="dept-footer-caption">View department info</span>
-          <a href="{% url 'accounts:teacher_department_detail' pk=5 %}" class="dept-action-link">
-            View Department <span style="font-size:14px;">→</span>
-          </a>
-        </div>
-      </article>
-
-    {% endif %}
-  </div>
-=======
->>>>>>> 5569bfb (Add Digital Asset Links endpoint for Android TWA)
 </div>
 
+<script>
+(function () {
+    const searchInput = document.getElementById("deptSearchInput");
+    const cards = Array.from(document.querySelectorAll("#deptGrid .dept-card-item"));
+    const visibleCountEl = document.getElementById("deptVisibleCount");
+
+    if (!searchInput || !cards.length) return;
+
+    searchInput.addEventListener("input", function () {
+        const query = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        cards.forEach(function (card) {
+            const hay = (card.dataset.search || "").toLowerCase();
+            const matches = !query || hay.includes(query);
+            card.style.display = matches ? "" : "none";
+            if (matches) visibleCount += 1;
+        });
+
+        if (visibleCountEl) {
+            visibleCountEl.textContent = String(visibleCount);
+        }
+    });
+})();
+</script>
 {% endblock %}
