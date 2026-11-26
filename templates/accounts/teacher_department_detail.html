@@ -920,7 +920,7 @@
   </a>
 
   <section class="dept-header-card">
-    {% if department.is_active %}
+    {% if department.is_active|default:True %}
       <div class="dept-pill-active">
         <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;"></span>
         ACTIVE DEPARTMENT OVERVIEW
@@ -935,7 +935,7 @@
     <div class="dept-header-top">
       <div>
         <h1 class="dept-title-h1">
-          {{ department.name }}
+          {{ department.name|default:"Department Detail" }}
           {% if department.code %}({{ department.code }}){% endif %}
         </h1>
         <p class="dept-sub-txt">
@@ -1062,7 +1062,7 @@
                         >
                       {% else %}
                         <span class="user-avatar-initials" aria-hidden="true">
-                          {{ student.first_name|default:student.username|slice:":1"|upper }}{{ student.last_name|slice:":1"|upper }}
+                          {{ student.first_name|default:student.username|slice:":1"|upper }}{{ student.last_name|default:""|slice:":1"|upper }}
                         </span>
                       {% endif %}
                       <span style="font-weight:700;color:#fff;font-size:13px;">
@@ -1252,7 +1252,7 @@
                 data-announcement-message="{{ announcement.message }}"
                 data-announcement-date="{{ announcement.event_date|date:'F d, Y' }}"
                 data-announcement-time="{% if announcement.start_time %}{{ announcement.start_time|time:'h:i A' }}{% else %}Time not specified{% endif %}{% if announcement.end_time %} – {{ announcement.end_time|time:'h:i A' }}{% endif %}"
-                data-announcement-department="{{ announcement.department.name|default:department.name }}"
+                data-announcement-department="{{ announcement.department.name|default:department.name|default:'Department' }}"
                 aria-label="View announcement: {{ announcement.title }}"
               >
                 <span style="display:flex;align-items:flex-start;gap:11px;min-width:0;">
@@ -1283,7 +1283,7 @@
                     </span>
 
                     <span class="schedule-dept-label">
-                      {{ announcement.department.name|default:department.name }}
+                      {{ announcement.department.name|default:department.name|default:"Department" }}
                     </span>
                   </span>
                 </span>
@@ -1301,7 +1301,7 @@
             </div>
             <strong style="color:#e2e8f0;">No upcoming department schedules</strong>
             <div style="margin-top:6px;">
-              There are currently no active announcements scheduled for {{ department.name }}.
+              There are currently no active announcements scheduled for {{ department.name|default:"this department" }}.
             </div>
           </div>
         {% endif %}
@@ -1386,7 +1386,7 @@
                   >
                 {% else %}
                   <div class="user-avatar-initials" aria-hidden="true">
-                    {{ teacher.first_name|default:teacher.username|slice:":1"|upper }}{{ teacher.last_name|default:teacher.username|slice:":1"|upper }}
+                    {{ teacher.first_name|default:teacher.username|slice:":1"|upper }}{{ teacher.last_name|default:""|slice:":1"|upper }}
                   </div>
                 {% endif %}
 

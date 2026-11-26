@@ -21,6 +21,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_GET, require_POST
+import logging
 
 from .models import ClinicAnnouncement
 
@@ -28,6 +29,8 @@ from .models import User
 
 from pptx import Presentation
 from pptx.util import Inches, Pt
+
+logger = logging.getLogger(__name__)
 
 from .forms import (
     SignUpForm,
@@ -307,7 +310,7 @@ def create_authorized_account(request):
     )
 
 
-@staff_position_required("admin", "receptionist", "records")
+@staff_position_required("admin")
 def staff_student_verification(request):
     from collections import Counter, defaultdict
 
@@ -571,7 +574,7 @@ def staff_verify_student(request, student_id):
     return redirect("accounts:staff_student_verification")
 
 
-@staff_position_required("admin", "receptionist", "records")
+@staff_position_required("admin")
 @require_GET
 @xframe_options_sameorigin
 def staff_verification_evidence(request, pk):
@@ -3560,6 +3563,7 @@ def download_sick_note(request, sick_note_id):
     return response
 
 
+
 @student_required
 @require_POST
 def email_sick_note(request, sick_note_id):
@@ -3583,50 +3587,98 @@ def email_sick_note(request, sick_note_id):
             sick_note_id=sick_note.id,
         )
 
-    presentation, student_name = build_sick_note_presentation(sick_note)
-    pptx_file = BytesIO()
-    presentation.save(pptx_file)
-    pptx_file.seek(0)
-
-    email = EmailMessage(
-        subject="Clinic Connect - Sick Note",
-        body=(
-            f"Hello {student_name},\n\n"
-            "Your sick note from Clinic Connect is attached to this email.\n\n"
-            "Please contact the clinic if you have questions.\n\n"
-            "Clinic Connect"
-        ),
-        from_email=None,
-        to=[request.user.email],
-    )
-
-    email.attach(
-        f"Sick_Note_{sick_note.id}.pptx",
-        pptx_file.getvalue(),
-        (
-            "application/vnd.openxmlformats-officedocument."
-            "presentationml.presentation"
-        ),
-    )
-
     try:
-        if email.send(fail_silently=True) > 0:
+        logger.info(
+            "Starting sick note email process for sick note %s",
+            sick_note.id,
+        )
+
+        presentation, student_name = build_sick_note_presentation(
+            sick_note
+        )
+
+        logger.info(
+            "Sick note presentation generated for sick note %s",
+            sick_note.id,
+        )
+
+        pptx_file = BytesIO()
+        presentation.save(pptx_file)
+        pptx_file.seek(0)
+
+        logger.info(
+            "Sick note attachment prepared for sick note %s",
+            sick_note.id,
+        )
+
+        email = EmailMessage(
+            subject="Clinic Connect - Sick Note",
+            body=(
+                f"Hello {student_name},\n\n"
+                "Your sick note from Clinic Connect is attached "
+                "to this email.\n\n"
+                "Please contact the clinic if you have questions.\n\n"
+                "Clinic Connect"
+            ),
+            from_email=None,
+            to=[request.user.email],
+        )
+
+        email.attach(
+            f"Sick_Note_{sick_note.id}.pptx",
+            pptx_file.getvalue(),
+            (
+                "application/vnd.openxmlformats-officedocument."
+                "presentationml.presentation"
+            ),
+        )
+
+        logger.info(
+            "Sending sick note email to %s",
+            request.user.email,
+        )
+
+        sent = email.send(fail_silently=False)
+
+        if sent > 0:
+            logger.info(
+                "Sick note email successfully sent for sick note %s",
+                sick_note.id,
+            )
             messages.success(
                 request,
                 f"The sick note has been sent to {request.user.email}.",
             )
         else:
-            messages.error(request, "The email could not be sent.")
+            logger.error(
+                "Email backend did not send sick note %s",
+                sick_note.id,
+            )
+            messages.error(
+                request,
+                "The email could not be sent. Please try again later.",
+            )
+
     except Exception:
+        logger.exception(
+            "Failed to email sick note %s",
+            sick_note.id,
+        )
         messages.error(
             request,
-            "An error occurred while sending the email.",
+            "An error occurred while sending the email. "
+            "Please try again later.",
         )
+
+    finally:
+        if "pptx_file" in locals():
+            pptx_file.close()
 
     return redirect(
         "accounts:view_sick_note",
         sick_note_id=sick_note.id,
     )
+
 
 
 @admin_required

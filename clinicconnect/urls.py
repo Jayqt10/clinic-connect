@@ -1,3 +1,4 @@
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -8,7 +9,15 @@ from accounts import views as accounts_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('.well-known/assetlinks.json', accounts_views.assetlinks_json, name='assetlinks_json'),
+
+    path(
+        '.well-known/assetlinks.json',
+        accounts_views.assetlinks_json,
+        name='assetlinks_json'
+    ),
+
+    path('api/', include('api.urls')),
+
     path('', include('accounts.urls')),
 ]
 

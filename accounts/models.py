@@ -5,6 +5,7 @@ from django.db.models.functions import Lower, Trim
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
+from accounts.storage import (CloudinaryProfilePictureStorage,CloudinaryEvidenceStorage,)
 
 
 def validate_profile_picture_size(value):
@@ -45,7 +46,9 @@ class User(AbstractUser):
         default='student'
     )
 
+    
     profile_picture = models.ImageField(
+        storage=CloudinaryProfilePictureStorage(),
         upload_to='profile_pictures/',
         blank=True,
         null=True,
@@ -56,6 +59,7 @@ class User(AbstractUser):
             validate_profile_picture_size
         ]
     )
+
 
     middle_name = models.CharField(
         max_length=100,
@@ -127,6 +131,7 @@ class User(AbstractUser):
     )
 
     verification_evidence = models.FileField(
+        storage=CloudinaryEvidenceStorage(),
         upload_to='student_verification_evidence/',
         blank=True,
         null=True

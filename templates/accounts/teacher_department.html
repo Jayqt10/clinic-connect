@@ -52,8 +52,8 @@
         background: #111827;
         border: 1px solid #1f2937;
         border-radius: 10px;
-        font-size: 12px;
         color: #94a3b8;
+        font-size: 12px;
     }
 
     .dept-search-input {
@@ -131,8 +131,8 @@
     }
 
     .dept-icon-badge svg {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
         flex-shrink: 0;
     }
 
@@ -250,6 +250,8 @@
     @media (max-width: 640px) {
         .dept-toolbar {
             flex-direction: column;
+            gap: 10px;
+            padding: 13px;
             align-items: stretch;
         }
 
@@ -301,7 +303,6 @@
                     class="dept-card-item {% if code == 'CS' or code == 'DCS' %}dept-theme-cs{% elif code == 'DIT' %}dept-theme-dit{% elif code == 'DBM' %}dept-theme-dbm{% elif code == 'DGTT' %}dept-theme-dgtt{% elif code == 'CCJE' %}dept-theme-ccje{% else %}dept-theme-cs{% endif %}"
                 >
                     <div class="dept-card-top-bar"></div>
-
                     <div>
                         <div class="dept-card-header-row">
                             <div class="dept-icon-badge">
@@ -349,6 +350,7 @@
                 {% endwith %}
             {% endfor %}
         {% else %}
+            <!-- 1. DCS -->
             <article data-search="department of computer studies dcs cs" class="dept-card-item dept-theme-cs">
                 <div class="dept-card-top-bar"></div>
                 <div>
@@ -378,6 +380,7 @@
                 </div>
             </article>
 
+            <!-- 2. DIT -->
             <article data-search="department of industrial technology dit" class="dept-card-item dept-theme-dit">
                 <div class="dept-card-top-bar"></div>
                 <div>
@@ -407,6 +410,7 @@
                 </div>
             </article>
 
+            <!-- 3. DBM -->
             <article data-search="department of business management dbm" class="dept-card-item dept-theme-dbm">
                 <div class="dept-card-top-bar"></div>
                 <div>
@@ -436,6 +440,7 @@
                 </div>
             </article>
 
+            <!-- 4. DGTT -->
             <article data-search="department of general teacher training dgtt" class="dept-card-item dept-theme-dgtt">
                 <div class="dept-card-top-bar"></div>
                 <div>
@@ -465,6 +470,7 @@
                 </div>
             </article>
 
+            <!-- 5. CCJE -->
             <article data-search="college of criminal justice education ccje" class="dept-card-item dept-theme-ccje">
                 <div class="dept-card-top-bar"></div>
                 <div>
