@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get(
     'DJANGO_SECRET_KEY',
-    'django-insecure-CHANGE-THIS-BEFORE-DEPLOYING'
+    'django-insecure-CHANGE-THIS-BEFORE-DEPLOYING',
 )
 
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() == 'true'
@@ -17,7 +17,7 @@ ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get(
         'ALLOWED_HOSTS',
-        'clinic-connect-a9zm.onrender.com,.onrender.com,127.0.0.1,localhost,192.168.1.19',
+        'clinic-connect-a9zm.onrender.com,.onrender.com,127.0.0.1,localhost,10.23.96.40,192.168.1.19',
     ).split(',')
     if host.strip()
 ]
@@ -27,6 +27,8 @@ for default_host in (
     '.onrender.com',
     '127.0.0.1',
     'localhost',
+    '10.23.96.40',
+    '192.168.1.19',
 ):
     if default_host not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(default_host)
@@ -35,7 +37,7 @@ CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get(
         'CSRF_TRUSTED_ORIGINS',
-        'https://clinic-connect-a9zm.onrender.com,https://*.onrender.com,http://127.0.0.1:8000,http://localhost:8000,http://192.168.1.19:8000',
+        'https://clinic-connect-a9zm.onrender.com,https://*.onrender.com,http://127.0.0.1:8000,http://localhost:8000,http://10.23.96.40:8000,http://192.168.1.19:8000',
     ).split(',')
     if origin.strip()
 ]
@@ -43,6 +45,10 @@ CSRF_TRUSTED_ORIGINS = [
 for default_origin in (
     'https://clinic-connect-a9zm.onrender.com',
     'https://*.onrender.com',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    'http://10.23.96.40:8000',
+    'http://192.168.1.19:8000',
 ):
     if default_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(default_origin)
@@ -55,6 +61,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'accounts',
     'api',
 ]
@@ -94,6 +101,7 @@ DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
         conn_max_age=600,
+        ssl_require=not DEBUG and bool(os.environ.get('DATABASE_URL')),
     )
 }
 
@@ -137,7 +145,14 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '').strip()
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '').strip()
+
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.smtp.EmailBackend',
+)
+
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
@@ -147,7 +162,7 @@ EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '10'))
 
 DEFAULT_FROM_EMAIL = os.environ.get(
     'DEFAULT_FROM_EMAIL',
-    EMAIL_HOST_USER or 'shanahoneh@gmail.com'
+    EMAIL_HOST_USER or 'shanahoneh@gmail.com',
 )
 
 LANGUAGE_CODE = 'en-us'
@@ -160,9 +175,31 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+HAS_CLOUDINARY = bool(
+    os.environ.get('CLOUDINARY_URL')
+    or (
+        os.environ.get('CLOUDINARY_CLOUD_NAME')
+        and os.environ.get('CLOUDINARY_API_KEY')
+        and os.environ.get('CLOUDINARY_API_SECRET')
+    )
+)
+
+if HAS_CLOUDINARY:
+    import cloudinary
+
+    cloudinary.config(
+        cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+        api_key=os.environ.get('CLOUDINARY_API_KEY'),
+        api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
+        secure=True,
+    )
+    default_storage_backend = 'accounts.storage.CloudinaryMediaStorage'
+else:
+    default_storage_backend = 'django.core.files.storage.FileSystemStorage'
+
 STORAGES = {
     'default': {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        'BACKEND': default_storage_backend,
     },
     'staticfiles': {
         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',

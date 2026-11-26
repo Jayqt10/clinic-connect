@@ -1,34 +1,45 @@
-import mimetypes
+import base64
 import calendar
+import json
+import logging
+import mimetypes
+import urllib.error
+import urllib.request
+
+from datetime import date, datetime
 from functools import wraps
 from io import BytesIO
-from .models import Medicine
-from django.db import transaction
-from datetime import date, datetime
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordChangeView
 from django.core.mail import EmailMessage
+from django.db import transaction
 from django.db.models import Q
-from django.http import FileResponse, Http404, HttpResponse, JsonResponse
-from django.views.decorators.clickjacking import xframe_options_sameorigin
+from django.http import (
+    FileResponse,
+    Http404,
+    HttpResponse,
+    JsonResponse,
+)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.http import JsonResponse
 from django.views.decorators.cache import cache_control
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.views.decorators.http import require_GET, require_POST
-import logging
-
-from .models import ClinicAnnouncement
-
-from .models import User
 
 from pptx import Presentation
 from pptx.util import Inches, Pt
+
+from .models import (
+    ClinicAnnouncement,
+    Medicine,
+    User,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -3563,6 +3574,207 @@ def download_sick_note(request, sick_note_id):
     return response
 
 
+def _send_via_brevo(
+    to_email,
+    student_name,
+    subject,
+    text_body,
+    filename,
+    file_bytes,
+):
+    api_key = (getattr(settings, "BREVO_API_KEY", "") or "").strip()
+
+    if not api_key:
+        return False
+
+    sender_email = (
+        getattr(settings, "DEFAULT_FROM_EMAIL", "")
+        or getattr(settings, "EMAIL_HOST_USER", "")
+    ).strip()
+
+    sender_name = (
+        getattr(settings, "BREVO_SENDER_NAME", "")
+        or "Clinic Connect"
+    ).strip()
+
+    if not sender_email:
+        logger.error("Brevo sender email is not configured.")
+        return False
+
+    payload = {
+        "sender": {
+            "name": sender_name,
+            "email": sender_email,
+        },
+        "to": [
+            {
+                "email": to_email,
+                "name": student_name,
+            }
+        ],
+        "subject": subject,
+        "textContent": text_body,
+        "attachment": [
+            {
+                "name": filename,
+                "content": base64.b64encode(file_bytes).decode("ascii"),
+            }
+        ],
+    }
+
+    req = urllib.request.Request(
+        "https://api.brevo.com/v3/smtp/email",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "accept": "application/json",
+            "api-key": api_key,
+            "content-type": "application/json",
+        },
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=20) as response:
+            return 200 <= response.status < 300
+
+    except urllib.error.HTTPError as exc:
+        error_body = exc.read().decode("utf-8", errors="replace")
+        logger.error(
+            "Brevo API failed (%s): %s",
+            exc.code,
+            error_body,
+        )
+        return False
+
+    except Exception:
+        logger.exception("Brevo API request error.")
+        return False
+
+
+def _send_via_resend(
+    to_email,
+    student_name,
+    subject,
+    text_body,
+    filename,
+    file_bytes,
+):
+    api_key = (getattr(settings, "RESEND_API_KEY", "") or "").strip()
+
+    if not api_key:
+        return False
+
+    from_email = (
+        getattr(settings, "RESEND_FROM_EMAIL", "")
+        or getattr(settings, "DEFAULT_FROM_EMAIL", "")
+    ).strip()
+
+    if not from_email:
+        logger.error("Resend sender email is not configured.")
+        return False
+
+    payload = {
+        "from": from_email,
+        "to": [to_email],
+        "subject": subject,
+        "text": text_body,
+        "attachments": [
+            {
+                "filename": filename,
+                "content": base64.b64encode(file_bytes).decode("ascii"),
+            }
+        ],
+    }
+
+    req = urllib.request.Request(
+        "https://api.resend.com/emails",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=20) as response:
+            return 200 <= response.status < 300
+
+    except urllib.error.HTTPError as exc:
+        error_body = exc.read().decode("utf-8", errors="replace")
+        logger.error(
+            "Resend API failed (%s): %s",
+            exc.code,
+            error_body,
+        )
+        return False
+
+    except Exception:
+        logger.exception("Resend API request error.")
+        return False
+
+
+def _deliver_sick_note_email(
+    to_email,
+    student_name,
+    subject,
+    text_body,
+    filename,
+    file_bytes,
+):
+    brevo_key = (getattr(settings, "BREVO_API_KEY", "") or "").strip()
+    resend_key = (getattr(settings, "RESEND_API_KEY", "") or "").strip()
+
+    if brevo_key:
+        if _send_via_brevo(
+            to_email,
+            student_name,
+            subject,
+            text_body,
+            filename,
+            file_bytes,
+        ):
+            logger.info("Sick note email accepted by Brevo.")
+            return True
+
+        logger.warning("Brevo failed. Trying Resend.")
+
+    if resend_key:
+        if _send_via_resend(
+            to_email,
+            student_name,
+            subject,
+            text_body,
+            filename,
+            file_bytes,
+        ):
+            logger.info("Sick note email accepted by Resend.")
+            return True
+
+        logger.warning("Resend sick note delivery failed.")
+
+    if not brevo_key and not resend_key:
+        email = EmailMessage(
+            subject=subject,
+            body=text_body,
+            from_email=None,
+            to=[to_email],
+        )
+
+        email.attach(
+            filename,
+            file_bytes,
+            (
+                "application/vnd.openxmlformats-officedocument."
+                "presentationml.presentation"
+            ),
+        )
+
+        return email.send(fail_silently=False) > 0
+
+    return False
+
+
 
 @student_required
 @require_POST
@@ -3587,6 +3799,8 @@ def email_sick_note(request, sick_note_id):
             sick_note_id=sick_note.id,
         )
 
+    pptx_file = BytesIO()
+
     try:
         logger.info(
             "Starting sick note email process for sick note %s",
@@ -3597,63 +3811,48 @@ def email_sick_note(request, sick_note_id):
             sick_note
         )
 
-        logger.info(
-            "Sick note presentation generated for sick note %s",
-            sick_note.id,
-        )
-
-        pptx_file = BytesIO()
         presentation.save(pptx_file)
-        pptx_file.seek(0)
 
-        logger.info(
-            "Sick note attachment prepared for sick note %s",
-            sick_note.id,
+        file_bytes = pptx_file.getvalue()
+        filename = f"Sick_Note_{sick_note.id}.pptx"
+
+        subject = "Clinic Connect - Sick Note"
+
+        text_body = (
+            f"Hello {student_name},\n\n"
+            "Your sick note from Clinic Connect is attached "
+            "to this email.\n\n"
+            "Please contact the clinic if you have questions.\n\n"
+            "Clinic Connect"
         )
 
-        email = EmailMessage(
-            subject="Clinic Connect - Sick Note",
-            body=(
-                f"Hello {student_name},\n\n"
-                "Your sick note from Clinic Connect is attached "
-                "to this email.\n\n"
-                "Please contact the clinic if you have questions.\n\n"
-                "Clinic Connect"
-            ),
-            from_email=None,
-            to=[request.user.email],
+        sent = _deliver_sick_note_email(
+            to_email=request.user.email,
+            student_name=student_name,
+            subject=subject,
+            text_body=text_body,
+            filename=filename,
+            file_bytes=file_bytes,
         )
 
-        email.attach(
-            f"Sick_Note_{sick_note.id}.pptx",
-            pptx_file.getvalue(),
-            (
-                "application/vnd.openxmlformats-officedocument."
-                "presentationml.presentation"
-            ),
-        )
-
-        logger.info(
-            "Sending sick note email to %s",
-            request.user.email,
-        )
-
-        sent = email.send(fail_silently=False)
-
-        if sent > 0:
+        if sent:
             logger.info(
-                "Sick note email successfully sent for sick note %s",
+                "Sick note email accepted for sick note %s to %s",
                 sick_note.id,
+                request.user.email,
             )
+
             messages.success(
                 request,
                 f"The sick note has been sent to {request.user.email}.",
             )
         else:
             logger.error(
-                "Email backend did not send sick note %s",
+                "Failed to deliver sick note %s to %s",
                 sick_note.id,
+                request.user.email,
             )
+
             messages.error(
                 request,
                 "The email could not be sent. Please try again later.",
@@ -3664,6 +3863,7 @@ def email_sick_note(request, sick_note_id):
             "Failed to email sick note %s",
             sick_note.id,
         )
+
         messages.error(
             request,
             "An error occurred while sending the email. "
@@ -3671,8 +3871,7 @@ def email_sick_note(request, sick_note_id):
         )
 
     finally:
-        if "pptx_file" in locals():
-            pptx_file.close()
+        pptx_file.close()
 
     return redirect(
         "accounts:view_sick_note",
