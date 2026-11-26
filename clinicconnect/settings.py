@@ -1,3 +1,4 @@
+
 import os
 from pathlib import Path
 
@@ -16,7 +17,7 @@ ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get(
         'ALLOWED_HOSTS',
-        'clinic-connect-a9zm.onrender.com,.onrender.com,127.0.0.1,localhost',
+        'clinic-connect-a9zm.onrender.com,.onrender.com,127.0.0.1,localhost,192.168.1.19',
     ).split(',')
     if host.strip()
 ]
@@ -34,7 +35,7 @@ CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get(
         'CSRF_TRUSTED_ORIGINS',
-        'https://clinic-connect-a9zm.onrender.com,https://*.onrender.com',
+        'https://clinic-connect-a9zm.onrender.com,https://*.onrender.com,http://127.0.0.1:8000,http://localhost:8000,http://192.168.1.19:8000',
     ).split(',')
     if origin.strip()
 ]
@@ -53,7 +54,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'accounts',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -111,6 +114,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+}
+
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'accounts:dashboard'
 LOGOUT_REDIRECT_URL = 'accounts:login'
@@ -133,11 +143,11 @@ EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() == 'true'
-EMAIL_TIMEOUT = 30
+EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '10'))
 
 DEFAULT_FROM_EMAIL = os.environ.get(
     'DEFAULT_FROM_EMAIL',
-    EMAIL_HOST_USER
+    EMAIL_HOST_USER or 'shanahoneh@gmail.com'
 )
 
 LANGUAGE_CODE = 'en-us'
